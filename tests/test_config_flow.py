@@ -295,7 +295,7 @@ async def test_pvs_full_flow(hass: HomeAssistant, dashboard: AsyncMock) -> None:
     res = await flow.send({"label": "Back", "panels": prefill["panels"]})
 
     assert res["step_id"] == "battery"
-    assert res["description_placeholders"]["found"] == "SunPower PVS"
+    assert res["description_placeholders"]["found"] == "Found: SunPower PVS."
     prefill = suggested(res)
     assert prefill == {
         "battery_soc": "sensor.pvs_live_battery_soc",
@@ -307,7 +307,7 @@ async def test_pvs_full_flow(hass: HomeAssistant, dashboard: AsyncMock) -> None:
     assert res["type"] is FlowResultType.MENU
     assert res["step_id"] == "cars"
     assert res["menu_options"] == ["car_add", "cars_done"]
-    assert res["description_placeholders"]["found"] == "Tesla Fleet"
+    assert res["description_placeholders"]["found"] == "Car integrations found: Tesla Fleet"
     assert "Tesla]" not in res["description_placeholders"]["links"]
     assert "Rivian" in res["description_placeholders"]["links"]
 
@@ -324,7 +324,7 @@ async def test_pvs_full_flow(hass: HomeAssistant, dashboard: AsyncMock) -> None:
     assert prefill["presence"] == "device_tracker.ty_location"
     res = await flow.send({**prefill, "image": "suv"})
     assert res["step_id"] == "cars"
-    assert res["description_placeholders"]["cars"] == "Model Y"
+    assert res["description_placeholders"]["cars"] == "Cars so far: Model Y"
     assert res["menu_options"] == ["car_add", "car_edit", "car_remove", "cars_done"]
 
     # the Tesla is used, so a second car goes straight to the manual form
@@ -701,7 +701,7 @@ async def test_options_cars_add_edit_remove(hass: HomeAssistant) -> None:
     flow = Flow(hass, "options")
     await flow.start(entry)
     res = await flow.menu("cars")
-    assert res["description_placeholders"]["cars"] == "Car"
+    assert res["description_placeholders"]["cars"] == "Cars so far: Car"
 
     # an old car without an image or the newer roles opens fine
     await flow.menu("car_edit")
@@ -717,11 +717,11 @@ async def test_options_cars_add_edit_remove(hass: HomeAssistant) -> None:
 
     await flow.menu("car_add")
     res = await flow.send(CAR)
-    assert res["description_placeholders"]["cars"] == "Car, Truck"
+    assert res["description_placeholders"]["cars"] == "Cars so far: Car, Truck"
 
     await flow.menu("car_remove")
     res = await flow.send({"cars": ["0"]})
-    assert res["description_placeholders"]["cars"] == "Truck"
+    assert res["description_placeholders"]["cars"] == "Cars so far: Truck"
     res = await flow.menu("cars_done")
     assert res["type"] is FlowResultType.CREATE_ENTRY
     assert entry.options["cars"] == [CAR]

@@ -226,7 +226,8 @@ await check("statistics fetch by day and hour", async () => {
 
 await check("history stream subscription", async () => {
   const got = await new Promise((resolve) => {
-    WS.subscribeHistory(hass, { entityIds: ["sensor.sunflow_grid_power"], hours: 6 }, resolve);
+    // a full day, so the series has daytime changes whatever time the test runs
+    WS.subscribeHistory(hass, { entityIds: ["sensor.sunflow_grid_power"], start: WS.hoursAgo(24, hass._now) }, resolve);
   });
   assert.ok(got["sensor.sunflow_grid_power"].length > 5);
 });
