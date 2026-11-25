@@ -86,7 +86,7 @@ Needs Home Assistant 2026.8 or newer.
    [this link](https://my.home-assistant.io/redirect/hacs_repository/?owner=Derkaramma&repository=sunflow-solar&category=integration)
    instead, or add `https://github.com/Derkaramma/sunflow-solar` as a custom
    repository (type: Integration) in HACS by hand.
-2. Download **SunFlow Solar**. Restart if it asks.
+2. Press **Install** on **SunFlow Solar** (in HACS it's called **Download**). Restart if it asks.
 3. Start the setup:
    [![Start SunFlow setup](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=sunflow_solar)
 
