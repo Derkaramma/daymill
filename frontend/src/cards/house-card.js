@@ -282,7 +282,9 @@ class SunFlowHouseCard extends SunFlowCard {
     const pic = (cls, href) => s("image", { class: cls, href, x: b.x, y: b.y, width: b.w, height: b.h, preserveAspectRatio: "xMidYMid meet" });
     g.append(pic("bday", opts.image));
     if (opts.image_night) g.append(pic("bnight", opts.image_night));
-    svg.append(g);
+    // under its own line (so the glow doesn't hide the flow), and like the
+    // line, under the meter panel
+    svg.insertBefore(g, this._flows.battery || null);
     return g;
   }
 
@@ -380,8 +382,6 @@ class SunFlowHouseCard extends SunFlowCard {
     if (this._hasBattery && L.battery.image) {
       this.$batt = this._batteryPicture(svg, box(L.battery), L.battery);
       this._battStrip = null;
-      // keep its line on top of the glow, so the flow stays easy to see
-      if (this._flows.battery) svg.append(this._flows.battery);
     } else if (this._hasBattery) {
       const b = batterySvg(box(L.battery));
       svgInto(svg, b.svg);
@@ -701,9 +701,14 @@ class SunFlowHouseCard extends SunFlowCard {
       this._set("battery", soc === undefined ? (batt === null ? U : pw(hass, batt)) : `${Math.round(soc)}%`, status);
       if (this._chips.battery) {
         this._bar(this._chips.battery, soc, undefined, "batt");
-        // the dot shows how full it is: green 50% and up, orange 20-49%, red under 20%
-        const level = soc === undefined ? null : soc >= 50 ? "dot_battery_high" : soc >= 20 ? "dot_battery_mid" : "dot_battery_low";
+        // the dot and the charge bar show how full it is: green 50% and up,
+        // orange 20-49%, red under 20%
+        // judged on the same rounded number the chip shows
+        const pct = soc === undefined ? null : Math.round(soc);
+        const level = pct === null ? null : pct >= 50 ? "dot_battery_high" : pct >= 20 ? "dot_battery_mid" : "dot_battery_low";
         this._chips.battery.dot.style.background = v(level || "battery");
+        const fill = this._chips.battery.bar?.fill;
+        if (fill) fill.style.background = level ? v(level) : "";
       }
       if (this.$batt) {
         this.$batt.classList.toggle("charging", charging);

@@ -73,6 +73,9 @@ const applied = new WeakMap();
 export function applyColors(el, colors) {
   const next = new Set();
   if (colors && typeof colors === "object") {
+    // a Battery color saved before the line got its own charging and in-use
+    // colors keeps coloring the line
+    if (colors.battery && !colors.battery_charge && !colors.battery_use) colors = { battery_charge: colors.battery, battery_use: colors.battery, ...colors };
     for (const [key, value] of Object.entries(colors)) {
       if (typeof value === "string" && COLOR_RE.test(value.trim())) {
         el.style.setProperty(cssVar(key), value.trim());

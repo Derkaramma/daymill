@@ -68,7 +68,7 @@ export const DEMO_LAYOUT = {
     today: { stack: true },
     battery: { x: 0.015, y: 0.4, align: "left", tether: [r(BATT.x - 0.004), r(BATT.y + BATT.h * 0.35)] },
     home: { x: 0.235, y: 0.63, align: "left" },
-    grid: { x: 0.015, y: 0.69, align: "left" },
+    grid: { x: 0.03, y: 0.645, align: "left" },
   },
 };
 
