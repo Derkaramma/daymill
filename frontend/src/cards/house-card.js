@@ -452,11 +452,19 @@ class SunFlowHouseCard extends SunFlowCard {
       m.append(im);
       (this._maskImgs[i] ||= []).push(im);
     };
-    // its own car first, then the reveal spots (the plug sits on that car's
-    // near side), then any other car, which hides the plug too
-    if (c.cableBehind.includes(c.index)) cut(c.index);
+    // Cars farther back than this one, and this one itself, go first; then
+    // the reveal spots (the plug sits on this car's near side, in front of
+    // anything behind it); then nearer cars, which hide the plug too.
+    const depth = (i) => {
+      const o = this._placed.find((p) => p.index === i);
+      return o ? o.slot.y + o.h : 0;
+    };
+    const mine = depth(c.index);
+    const behind = c.cableBehind.filter((i) => i === c.index || depth(i) <= mine);
+    const front = c.cableBehind.filter((i) => i !== c.index && depth(i) > mine);
+    behind.forEach(cut);
     for (const [x, y, r] of c.cableReveal) m.append(s("circle", { cx: x * VW, cy: y * VH, r: r * VW, fill: "#fff" }));
-    for (const i of c.cableBehind) if (i !== c.index) cut(i);
+    front.forEach(cut);
     defs.append(m);
     return id;
   }
@@ -814,6 +822,7 @@ class SunFlowHouseCard extends SunFlowCard {
       chip.v.hidden = !big;
       chip.s.textContent = status;
       this._bar(chip, battery, limit);
+      chip.el.classList.toggle("charging", !!(isCh && here));
     }
     return out;
   }

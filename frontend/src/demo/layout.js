@@ -76,11 +76,19 @@ export const DEMO_CARS = [
     // down the wall, along the floor and out between the two cars, then in
     // under the SUV's back end and up to the port. Only the plug shows on
     // the car; the rest is hidden wherever a car is in front of it.
+    // under the back end it comes out at the rear corner, behind the wheel,
+    // and climbs the quarter panel into the port
     cable:
-      "M0.828,0.521 L0.828,0.562 C0.829,0.574 0.84,0.59 0.856,0.608 C0.866,0.619 0.872,0.627 0.864,0.63 C0.85,0.634 0.83,0.633 0.816,0.628 C0.809,0.625 0.81,0.6 0.8111,0.572",
+      "M0.828,0.521 L0.828,0.562 C0.829,0.574 0.84,0.59 0.856,0.608 C0.866,0.619 0.872,0.627 0.864,0.632 C0.85,0.638 0.832,0.641 0.822,0.642 C0.817,0.642 0.8175,0.632 0.8178,0.618 C0.818,0.6 0.8175,0.585 0.8111,0.572",
     cable_behind: [0, 1],
-    cable_reveal: [[0.8111, 0.572, 0.008]],
-    chip: { x: 0.728, y: 0.615, align: "right", tether: [0.7494, 0.587] },
+    cable_reveal: [
+      [0.8215, 0.638, 0.009],
+      [0.8178, 0.624, 0.009],
+      [0.8178, 0.608, 0.009],
+      [0.8165, 0.592, 0.009],
+      [0.813, 0.578, 0.009],
+    ],
+    chip: { x: 0.775, y: 0.675, align: "center", tether: [0.765, 0.612] },
   },
   {
     name: "Pickup",

@@ -147,7 +147,22 @@ g.on .track { opacity: .9; } g.on .pulse { opacity: .95; } g.on .halo { opacity:
 @media (prefers-reduced-motion: reduce) {
   .halo, .pulse { opacity: 0 !important; }
   .cable.on .hglow { animation: none; }
+  .chip.charging, .chip.charging .bar i { animation: none !important; }
 }
+.still .chip.charging, .still .chip.charging .bar i { animation: none !important; }
+
+/* a charging car's chip breathes and its bar runs */
+.chip.charging { animation: sf-chg-glow 2.4s ease-in-out infinite; }
+.chip.charging .bar i {
+  background-image: linear-gradient(110deg, transparent 0 35%, rgba(255, 255, 255, .55) 50%, transparent 65% 100%);
+  background-size: 220% 100%; background-repeat: no-repeat;
+  animation: sf-chg-run 1.6s linear infinite;
+}
+@keyframes sf-chg-glow {
+  0%, 100% { box-shadow: 0 2px 10px rgba(0, 0, 0, .35), 0 0 0 0 rgba(47, 224, 138, 0); }
+  50% { box-shadow: 0 2px 10px rgba(0, 0, 0, .35), 0 0 0 3px rgba(47, 224, 138, .45); }
+}
+@keyframes sf-chg-run { from { background-position: 120% 0; } to { background-position: -120% 0; } }
 
 /* chips */
 .chip {
