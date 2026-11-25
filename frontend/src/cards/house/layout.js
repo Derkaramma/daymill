@@ -18,7 +18,10 @@
 //         cable: line, cable_start: [x, y], cable_sag (extra drop, 0-1 of car height),
 //         chip: {x, y, align, show}, sunflow: <slug>,
 //         presence_entity, charging_entity, power_entity, battery_entity,
-//         plugged_entity, limit_entity, charging_states: [...]}]
+//         plugged_entity, limit_entity, charging_states: [...],
+//         cable_behind: [car index, ...]   cars that hide the cable where they stand in front of it
+//         cable_reveal: [[x, y, r], ...]   spots where the cable always shows, e.g. where it plugs in}]
+// Any chip can take tether: [x, y], a thin line from the chip to that spot.
 
 // Internal drawing width. Height follows the picture's aspect ratio.
 export const VW = 1600;
@@ -113,6 +116,7 @@ function chip(v, base, where) {
   }
   if (!["left", "center", "right"].includes(out.align)) out.align = "center";
   out.show = out.show !== false;
+  out.tether = out.tether === undefined || out.tether === null ? null : point(out.tether, `${where}.tether`);
   return out;
 }
 
@@ -175,6 +179,13 @@ function car(c, i, where) {
     sunflow: c.sunflow ? String(c.sunflow) : "",
     chargingStates: Array.isArray(c.charging_states) ? c.charging_states.map((s) => String(s).toLowerCase()) : null,
     showCable: c.show_cable !== false,
+    cableBehind: Array.isArray(c.cable_behind) ? c.cable_behind.map(Number).filter((n) => Number.isInteger(n) && n >= 0) : [],
+    cableReveal: Array.isArray(c.cable_reveal)
+      ? c.cable_reveal.map((r, j) => {
+          if (!Array.isArray(r) || r.length < 3 || r.some((v) => !isNum(+v))) fail(`${where}.cable_reveal[${j}] must be [x, y, r]`);
+          return [+r[0], +r[1], +r[2]];
+        })
+      : [],
   };
   for (const r of ROLES) out[r] = typeof c[r] === "string" && c[r] ? c[r] : "";
   return out;

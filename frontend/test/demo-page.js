@@ -17,7 +17,7 @@ window.demoSnapshot = () => {
   const has = (e, c) => e.classList.contains(c);
   return {
     night: has(root.querySelector(".scene"), "is-night"),
-    cars: [...root.querySelectorAll(".bcar, .carimg")].map((e) => has(e, "here")),
+    cars: [...root.querySelectorAll(".bcar, .carimg")].sort((a, b) => (a.dataset.car ?? 0) - (b.dataset.car ?? 0)).map((e) => has(e, "here")),
     cables: [...root.querySelectorAll(".cable")].map((g) => ({ on: has(g, "on"), plugged: has(g, "plugged") })),
     flows: [...root.querySelectorAll("g[data-flow]:not(.cable)")].map((g) => `${g.dataset.flow}:${["on", "solar", "import", "export", "home", "batt"].filter((c) => has(g, c)).join(",")}`),
     // a hidden chip keeps whatever it said last; only what shows counts

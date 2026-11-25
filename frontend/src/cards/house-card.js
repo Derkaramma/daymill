@@ -249,6 +249,8 @@ class SunFlowHouseCard extends SunFlowCard {
     this._flows = {};
     this._chips = {};
     this._cables = {};
+    this._maskImgs = {};
+    this._tethers = {};
     this._carEls = {};
     this._chargers = {};
 
@@ -258,9 +260,11 @@ class SunFlowHouseCard extends SunFlowCard {
 
     // car pictures sit between the photo and the overlay
     this._placed = this._carList.map((c) => placeCar({ ...c, ratio: this._ratios[c.index] || c.ratio }, this._aspect));
-    for (const c of this._placed) {
+    // nearer cars (lower on the picture) go on top of farther ones
+    const byDepth = [...this._placed].sort((a, b) => a.slot.y + a.h - (b.slot.y + b.h));
+    for (const c of byDepth) {
       if (!c.image || builtinCar(c.image)) continue;
-      const im = h("img", { class: ["carimg", c.flip && "flip"], alt: "" });
+      const im = h("img", { class: ["carimg", c.flip && "flip"], alt: "", "data-car": c.index });
       setStyle(im, { left: `${c.slot.x * 100}%`, top: `${c.slot.y * 100}%`, width: `${c.slot.w * 100}%` });
       im.addEventListener("load", () => this._carLoaded(c, im));
       im.src = c.image;
@@ -348,6 +352,7 @@ class SunFlowHouseCard extends SunFlowCard {
       const handle = s("g", { class: "handle" });
       handle.innerHTML = HANDLE;
       g.append(handle);
+      if (c.cableBehind.length) g.setAttribute("mask", `url(#${this._cableMask(defs, c)})`);
       svg.append(g);
       this._cables[c.index] = { g, core, handle, k };
       this._flows[`car${c.index}`] = g;
@@ -365,6 +370,17 @@ class SunFlowHouseCard extends SunFlowCard {
         ),
       );
     }
+    // thin lines from chips out to what they describe, under the chips
+    const tether = (key, pos) => {
+      if (!pos?.show || !pos.tether) return;
+      const [x1, y1] = P([pos.x, pos.y]);
+      const [x2, y2] = P(pos.tether);
+      const g = s("g", { class: "tether" }, s("line", { x1, y1, x2, y2 }), s("circle", { cx: x2, cy: y2, r: 3.2 }));
+      svg.append(g);
+      this._tethers[key] = g;
+    };
+    for (const key of ["solar", "home", "grid", "battery"]) tether(key, L.chips[key]);
+    for (const c of this._placed) tether(`car${c.index}`, c.chipPos);
     layer.append(svg);
 
     // pulse animations, paused until a flow turns on
@@ -417,6 +433,32 @@ class SunFlowHouseCard extends SunFlowCard {
       if (!c.chipPos.show) continue;
       add(`car${c.index}`, c.chipPos, "dot_car", c.name || t("car_n", { n: c.index + 1 }));
     }
+  }
+
+  // A mask that hides a car's cable wherever another car stands in front of
+  // it: the cars' pictures, turned into solid silhouettes (soft shadows
+  // left out), cut it away. cable_reveal circles keep the bit at the port.
+  _cableMask(defs, c) {
+    const id = `cablemask${c.index}`;
+    const VH = VW / this._aspect;
+    const m = s("mask", { id, maskUnits: "userSpaceOnUse", x: 0, y: 0, width: VW, height: VH });
+    m.append(s("rect", { x: 0, y: 0, width: VW, height: VH, fill: "#fff" }));
+    const cut = (i) => {
+      const o = this._placed.find((p) => p.index === i);
+      if (!o?.image || builtinCar(o.image)) return;
+      const x = o.slot.x * VW, y = o.slot.y * VH, w = o.slot.w * VW, hh = o.h * VH;
+      const im = s("image", { href: o.image, x, y, width: w, height: hh, preserveAspectRatio: "none", filter: "url(#carsil)" });
+      if (o.flip) im.setAttribute("transform", `translate(${2 * x + w} 0) scale(-1 1)`);
+      m.append(im);
+      (this._maskImgs[i] ||= []).push(im);
+    };
+    // its own car first, then the reveal spots (the plug sits on that car's
+    // near side), then any other car, which hides the plug too
+    if (c.cableBehind.includes(c.index)) cut(c.index);
+    for (const [x, y, r] of c.cableReveal) m.append(s("circle", { cx: x * VW, cy: y * VH, r: r * VW, fill: "#fff" }));
+    for (const i of c.cableBehind) if (i !== c.index) cut(i);
+    defs.append(m);
+    return id;
   }
 
   _carLoaded(c, im) {
@@ -741,6 +783,8 @@ class SunFlowHouseCard extends SunFlowCard {
       const name = c.name || t("car_n", { n: c.index + 1 });
 
       this._carEls[c.index]?.classList.toggle("here", here);
+      for (const m of this._maskImgs[c.index] || []) m.setAttribute("display", here ? "inline" : "none");
+      this._tethers[`car${c.index}`]?.classList.toggle("off", !here);
       this._chargers[c.index]?.classList.toggle("here", here);
       if (this._cables[c.index]) {
         setFlow(key, isCh && here, power || 3);

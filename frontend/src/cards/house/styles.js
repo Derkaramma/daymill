@@ -159,6 +159,10 @@ g.on .track { opacity: .9; } g.on .pulse { opacity: .95; } g.on .halo { opacity:
   box-shadow: 0 2px 10px rgba(0, 0, 0, .35); box-sizing: border-box;
 }
 .chip[role="button"] { cursor: pointer; }
+.tether { transition: opacity 1s; }
+.tether.off { opacity: 0; }
+.tether line { stroke: rgba(255, 255, 255, .6); stroke-width: 1.6; }
+.tether circle { fill: rgba(255, 255, 255, .9); }
 .chip:focus-visible { outline: 2px solid var(--primary-color, #03a9f4); outline-offset: 2px; }
 .chip.right { transform: translate(-100%, 0); }
 .chip.left { transform: none; }

@@ -46,6 +46,10 @@ ha-card { background: transparent; border: 0; box-shadow: none; }
 .chip .s { opacity: .78; }
 .chip .dot { box-shadow: 0 0 0 1px rgb(20 50 34 / .18); }
 .chip:focus-visible { outline-color: #1e4d35; }
+/* both car chips the same size, tied to their cars by a thin line */
+.chip[data-k^="car"] { min-width: 12.4cqw; box-sizing: border-box; }
+.tether line { stroke: rgb(20 50 34 / .62); stroke-width: 2; }
+.tether circle { fill: #fff; stroke: #143222; stroke-width: 1.6; }
 .bar { background: rgb(20 50 34 / .12); }
 .bar b { background: #143222; }
 .share .rg { stroke: rgb(20 50 34 / .18); }
@@ -66,6 +70,6 @@ ha-card { background: transparent; border: 0; box-shadow: none; }
   .chip.unconfigured { display: none; }
 }
 @container (max-width: 420px) {
-  .chip[data-k^="car"] .k { display: none; }
+  .chip[data-k^="car"] { min-width: 4.6em; }
 }
 `);

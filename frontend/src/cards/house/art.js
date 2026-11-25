@@ -8,6 +8,7 @@
 const f = (n) => Math.round(n * 100) / 100;
 
 export const DEFS = `
+<filter id="carsil" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 20 -16"/></filter>
 <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5"/></filter>
 <linearGradient id="hgrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5b5e64"/><stop offset=".35" stop-color="#3a3c41"/><stop offset="1" stop-color="#16171a"/></linearGradient>
 <radialGradient id="hglowg"><stop offset="0" stop-color="#4dffa6" stop-opacity=".75"/><stop offset=".4" stop-color="#2fe08a" stop-opacity=".3"/><stop offset="1" stop-color="#2fe08a" stop-opacity="0"/></radialGradient>

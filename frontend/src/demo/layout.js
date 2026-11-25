@@ -53,29 +53,47 @@ export const DEMO_LAYOUT = {
 };
 
 // Two generic EVs made for this picture, same camera and light, with their
-// ground shadows baked in. Each sits in its own lane of the driveway
-// (measured on the picture: back edge 70.2,55.1 to 84,52.9, front edge
-// 79.8,65.1 to 96.7,59.3), nose toward the garage. Sizes come from the garage
-// door. The pickup is farther back, so it goes first and the SUV overlaps it.
+// ground shadows baked in. Where they sit came from fitting each car's
+// footprint (where its tires and bumpers meet the ground) inside the
+// driveway outline, measured on the picture: back edge 70.2,55.1 to 84,52.9,
+// front edge 79.8,65.1 to 96.7,59.3. Sizes come from the garage door.
+//
+// The cables lie on the floor. cable_behind lets the cars hide them where a
+// car stands in front, and cable_reveal keeps the bit that plugs in. The card
+// draws the nearer car on top, so the SUV overlaps the pickup.
+// The SUV is the one that charges and leaves in the demo, since its port is
+// the one you can see. The pickup's port is behind the SUV, so its cable
+// drops from the charger and disappears behind the cars, until the SUV
+// leaves.
 export const DEMO_CARS = [
-  {
-    name: "Pickup",
-    image: "pickup",
-    slot: { x: 0.795, y: 0.505, w: 0.13 },
-    flip: false,
-    port: [0.8105, 0.5447], // front left fender
-    cable_start: CHARGER,
-    cable: "M0.828,0.521 C0.828,0.54 0.818,0.553 0.8105,0.5447",
-    chip: { x: 0.885, y: 0.8, align: "center" },
-  },
   {
     name: "SUV",
     image: "suv",
-    slot: { x: 0.72, y: 0.552, w: 0.12 },
+    slot: { x: 0.74, y: 0.522, w: 0.125 },
     flip: false,
-    port: [0.788, 0.601], // rear left corner
+    port: [0.8111, 0.572], // rear left quarter
     cable_start: CHARGER,
-    cable: "M0.828,0.521 C0.836,0.6 0.81,0.627 0.795,0.62 C0.788,0.616 0.786,0.608 0.788,0.601",
-    chip: { x: 0.715, y: 0.8, align: "center" },
+    // down the wall, along the floor and out between the two cars, then in
+    // under the SUV's back end and up to the port. Only the plug shows on
+    // the car; the rest is hidden wherever a car is in front of it.
+    cable:
+      "M0.828,0.521 L0.828,0.562 C0.829,0.574 0.84,0.59 0.856,0.608 C0.866,0.619 0.872,0.627 0.864,0.63 C0.85,0.634 0.83,0.633 0.816,0.628 C0.809,0.625 0.81,0.6 0.8111,0.572",
+    cable_behind: [0, 1],
+    cable_reveal: [[0.8111, 0.572, 0.008]],
+    chip: { x: 0.728, y: 0.615, align: "right", tether: [0.7494, 0.587] },
+  },
+  {
+    name: "Pickup",
+    image: "pickup",
+    slot: { x: 0.8, y: 0.502, w: 0.1325 },
+    flip: false,
+    port: [0.8157, 0.5404], // front left fender, behind the SUV
+    cable_start: CHARGER,
+    // down the wall and round the pickup's nose into the fender. The SUV
+    // hides it unless the SUV is away.
+    cable: "M0.828,0.521 L0.828,0.56 C0.828,0.574 0.82,0.578 0.8157,0.5404",
+    cable_behind: [1, 0],
+    cable_reveal: [[0.8157, 0.5404, 0.008]],
+    chip: { x: 0.92, y: 0.64, align: "center", tether: [0.9, 0.596] },
   },
 ];
