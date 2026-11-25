@@ -20,10 +20,14 @@ export const at = (x, y) => [r(x / 100), r(TOP + HEIGHT * (y / 100))];
 const CX = 16.7; // middle of the box, left to right
 const MID = 46.9; // middle of the box, top to bottom
 const BOX_TOP = at(CX, 37.8); // just above the box
+// The wall's edges run about 5 degrees downhill to the right (the box's top
+// edge, the slats), so lines across the wall follow that slope to look level.
+const WALL_SLOPE = Math.tan((5 * Math.PI) / 180) * 2; // picture % down per % across (2:1 picture)
+const alongWall = (x0, y0, x) => at(x, y0 + (x - x0) * WALL_SLOPE);
 const BOX_RIGHT = at(18.2, MID); // just right of it
 const BOX_BOTTOM = at(CX, 55.4); // just below it
 const ROOF = at(CX, 22.5); // up on the roof, straight above the box
-const SLATS = at(21.3, MID)[0]; // wood slats right of the box
+const SLATS = alongWall(18.2, MID, 21.3); // wood slats right of the box
 const BELOW = at(CX, 62); // straight down from the box onto the lawn
 const LAWN_EDGE = at(11.2, 62); // then square left to the lawn edge
 // The battery picture hangs on the wall left of the box, under the window and
@@ -37,7 +41,7 @@ const BATT_H = 8.27;
 const BATT_MID = BATT_TOP + BATT_H / 2;
 const BATT = { x: at(BATT_LEFT, BATT_TOP)[0], y: at(BATT_LEFT, BATT_TOP)[1], w: BATT_W / 100, h: 0.8 * BATT_H / 100 };
 const BOX_LEFT = at(15.15, BATT_MID); // just left of the box
-const BATT_EDGE = at(BATT_LEFT + BATT_W + 0.15, BATT_MID); // just right of the battery
+const BATT_EDGE = alongWall(15.15, BATT_MID, BATT_LEFT + BATT_W + 0.15); // just right of the battery
 const CHARGER = at(82.8, 47.6); // bottom of the wall charger
 const CHARGER_FACE = at(82.8, 43.6); // middle of the charger, where it glows
 
@@ -49,7 +53,7 @@ export const DEMO_LAYOUT = {
   round_corners: 0.006,
   lines: {
     solar: [[ROOF, BOX_TOP]],
-    home: [BOX_RIGHT, [SLATS, BOX_RIGHT[1]]],
+    home: [BOX_RIGHT, SLATS],
     grid: [BOX_BOTTOM, BELOW, LAWN_EDGE],
     battery: [BOX_LEFT, BATT_EDGE],
   },
