@@ -12,36 +12,40 @@ const HEIGHT = 1.6 / 2; // share of the card height the picture takes
 const r = (v) => Math.round(v * 10000) / 10000;
 export const at = (x, y) => [r(x / 100), r(TOP + HEIGHT * (y / 100))];
 
-// Spots on the picture
-const HUB = at(55.2, 47.3); // front door, where the lines meet
-const ROOF = at(46.7, 24.7); // middle of the panels
-const WINDOW = at(41.7, 46.7); // living room
-const BATTERY = at(16.7, 52); // bottom of the wall battery
+// Spots on the picture. The gray box on the left wall is where the lines
+// meet: solar comes down off the roof into its top, the house feeds off its
+// right side and the grid line runs out the bottom to the lawn corner.
+const BOX = at(16.7, 46.9); // middle of the gray box
+const BOX_TOP = at(16.7, 38)[1];
+const BOX_BOTTOM = at(16.7, 55)[1];
+const BOX_RIGHT = at(18, 46.9)[0];
+const EAVE = at(16.7, 26.4); // roof edge right above the box
+const ROOF = at(18.8, 24.6); // up on the roof
+const SLATS = at(21.3, 46.9)[0]; // wood slats right of the box
+const WALL_FOOT = at(21.3, 57.7)[1]; // where the slats meet the plants
+const BELOW = at(16.3, 59.2); // just under the box
+const CORNER = at(12.8, 65.3); // lawn edge out front
 const CHARGER = at(82.8, 47.6); // bottom of the wall charger
-const GRID = at(95.3, 58); // lawn edge past the driveway
-const BASE = at(0, 55.8)[1]; // along the foot of the walls
-const STEP = at(55.2, 61)[1]; // the lawn just past the front step
-const DRIVE = at(76.6, 65.4); // front corner of the driveway, nearest us
 
 export const DEMO_LAYOUT = {
-  panel: { x: HUB[0], y: HUB[1], w: 0.001, h: 0.001, show: false },
-  junction: HUB,
+  panel: { x: BOX[0], y: BOX[1], w: 0.001, h: 0.001, show: false },
+  junction: BOX,
   round_corners: 0.006,
   lines: {
-    solar: [[ROOF, [HUB[0], ROOF[1]], HUB]],
-    home: [HUB, WINDOW],
-    // out the front, then along the front edge of the driveway
-    grid: [HUB, [HUB[0], STEP], DRIVE, GRID],
-    battery: [HUB, [HUB[0], BASE], [BATTERY[0], BASE], BATTERY],
+    solar: [[ROOF, EAVE, [BOX[0], BOX_TOP], BOX]],
+    home: [BOX, [BOX_RIGHT, BOX[1]], [SLATS, BOX[1]], [SLATS, WALL_FOOT]],
+    grid: [BOX, [BOX[0], BOX_BOTTOM], [BELOW[0], BELOW[1]], CORNER],
+    // the box is the battery, so its line is just a short drop inside it
+    battery: [BOX, [BOX[0], at(16.7, 52)[1]]],
   },
-  battery: { x: BATTERY[0], y: BATTERY[1], w: 0.02, h: 0.05, show: true },
+  battery: { x: BOX[0], y: at(16.7, 52)[1], w: 0.02, h: 0.05, show: true },
   chips: {
-    solar: { x: ROOF[0], y: 0.035, align: "center" },
-    rate: { x: 0.015, y: 0.035, align: "left" },
+    solar: { x: 0.19, y: 0.035, align: "center" },
+    rate: { x: 0.985, y: 0.035, align: "right" },
     today: { stack: true },
-    grid: { x: 0.985, y: 0.035, align: "right" },
+    grid: { x: 0.015, y: 0.83, align: "left" },
+    battery: { x: 0.18, y: 0.83, align: "left" },
     home: { x: 0.43, y: 0.83, align: "center" },
-    battery: { x: 0.035, y: 0.79, align: "left" },
   },
 };
 
