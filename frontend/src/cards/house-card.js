@@ -692,10 +692,6 @@ class SunFlowHouseCard extends SunFlowCard {
     if (!c) return;
     const hass = this.hass;
     const e = this.entities;
-    const cost = num(hass, e.cost_today);
-    const credit = cost !== undefined && cost < 0;
-    c.v.textContent = cost === undefined ? money(hass, 0) : credit ? t("credit", { amount: money(hass, cost, { abs: true }) }) : money(hass, cost);
-    c.dot.style.background = v(credit ? "dot_credit" : "dot_today");
     const a = (k) => {
       const x = Number(attr(hass, e.totals, k));
       return Number.isFinite(x) ? x : undefined;
@@ -703,6 +699,13 @@ class SunFlowHouseCard extends SunFlowCard {
     const used = a("used_today");
     const prod = a("produced_today");
     const sent = a("exported_today");
+    // Right after setup nothing has been counted yet and the cost is just the
+    // daily charge, which looks like a bug. Show a dash until energy comes in.
+    const started = (used ?? 0) > 0.01 || (sent ?? 0) > 0.01;
+    const cost = started ? num(hass, e.cost_today) : undefined;
+    const credit = cost !== undefined && cost < 0;
+    c.v.textContent = !started ? "–" : cost === undefined ? money(hass, 0) : credit ? t("credit", { amount: money(hass, cost, { abs: true }) }) : money(hass, cost);
+    c.dot.style.background = v(credit ? "dot_credit" : "dot_today");
     const ok = used !== undefined && used > 0.01 && prod !== undefined && sent !== undefined;
     const share = ok ? Math.max(0, Math.min(1, (prod - sent) / used)) : 0;
     c.ringGrid.setAttribute("opacity", ok ? "0.9" : "0.3");

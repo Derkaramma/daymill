@@ -75,7 +75,7 @@
       },
       "battery": {
         "title": "Home battery (beta)",
-        "description": "Found: {found}. Leave both sensors empty if you don't have a battery.\n\nBattery support is new. If the numbers look off, please open an issue.",
+        "description": "{found} Leave both sensors empty if you don't have a battery.\n\nBattery support is new. If the numbers look off, please open an issue.",
         "data": {
           "battery_soc": "Battery level",
           "battery_power": "Battery power",
@@ -89,7 +89,7 @@
       },
       "cars": {
         "title": "Cars",
-        "description": "Cars so far: {cars}\n\nCar integrations found: {found}\n\nSet up your car's own integration first, then add it here. Not installed yet:\n{links}",
+        "description": "{cars}\n\n{found}\n\nSet up your car's own integration first, then add it here.{links}",
         "menu_options": {
           "car_add": "Add a car",
           "car_edit": "Change a car",
@@ -270,7 +270,7 @@
       },
       "battery": {
         "title": "Home battery (beta)",
-        "description": "Found: {found}. Leave both sensors empty if you don't have a battery.\n\nBattery support is new. If the numbers look off, please open an issue.",
+        "description": "{found} Leave both sensors empty if you don't have a battery.\n\nBattery support is new. If the numbers look off, please open an issue.",
         "data": {
           "battery_soc": "Battery level",
           "battery_power": "Battery power",
@@ -284,7 +284,7 @@
       },
       "cars": {
         "title": "Cars",
-        "description": "Cars so far: {cars}\n\nCar integrations found: {found}\n\nSet up your car's own integration first, then add it here. Not installed yet:\n{links}",
+        "description": "{cars}\n\n{found}\n\nSet up your car's own integration first, then add it here.{links}",
         "menu_options": {
           "car_add": "Add a car",
           "car_edit": "Change a car",

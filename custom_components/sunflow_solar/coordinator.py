@@ -719,7 +719,7 @@ class SunFlowEntity(CoordinatorEntity[SunFlowCoordinator]):
             identifiers={(DOMAIN, entry_id)},
             name=DEVICE_NAME,
             manufacturer=NAME,
-            model=coordinator.engine.tariff.name,
+            model="Solar dashboard",
             sw_version=VERSION,
             entry_type=DeviceEntryType.SERVICE,
         )

@@ -602,7 +602,7 @@ class _Steps:
             step_id="battery",
             data_schema=schema,
             errors=errors,
-            description_placeholders={"found": found or "-"},
+            description_placeholders={"found": f"Found: {found}." if found else "No battery found."},
         )
 
     def _battery_systems(self) -> list[detection.SolarSystem]:
@@ -629,9 +629,21 @@ class _Steps:
             step_id="cars",
             menu_options=options,
             description_placeholders={
-                "cars": ", ".join(_car_label(i, c) for i, c in enumerate(cars)) or "-",
-                "found": ", ".join(found) or "-",
-                "links": "\n".join(f"- [{label}]({url})" for label, url in links) or "-",
+                "cars": (
+                    "Cars so far: " + ", ".join(_car_label(i, c) for i, c in enumerate(cars))
+                    if cars
+                    else "No cars added yet."
+                ),
+                "found": (
+                    "Car integrations found: " + ", ".join(found)
+                    if found
+                    else "No car integrations found yet."
+                ),
+                "links": (
+                    " Not installed yet:\n" + "\n".join(f"- [{label}]({url})" for label, url in links)
+                    if links
+                    else ""
+                ),
             },
         )
 
@@ -769,7 +781,7 @@ class _Steps:
             step_id="car",
             data_schema=schema,
             errors=errors,
-            description_placeholders={"controls": _bullets(controls, "None found.")},
+            description_placeholders={"controls": _bullets(controls, "Nothing to turn off. Every control on this car is already off.")},
         )
 
     def _check_car(

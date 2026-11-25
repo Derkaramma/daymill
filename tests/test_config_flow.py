@@ -331,7 +331,7 @@ async def test_pvs_full_flow(hass: HomeAssistant, dashboard: AsyncMock) -> None:
     res = await flow.menu("car_add")
     assert res["step_id"] == "car"
     assert suggested(res)["name"] == "Car 2"
-    assert res["description_placeholders"]["controls"] == "None found."
+    assert res["description_placeholders"]["controls"] == "Nothing to turn off. Every control on this car is already off."
     res = await flow.send(CAR)
     assert res["step_id"] == "cars"
     res = await flow.menu("cars_done")
