@@ -1,0 +1,112 @@
+# PG&E Schedule E-TOU-C (peak 4-9 pm every day), bundled service,
+# non-CARE/FERA (Income Tier 3). Unofficial. Numbers copied from the PG&E
+# tariff book, USD/kWh, no rounding. Check the effective date before trusting
+# any bill estimate.
+id: pge_e_tou_c
+name: PG&E E-TOU-C (unofficial)
+utility: PG&E
+plan: E-TOU-C
+timezone: America/Los_Angeles
+currency: USD
+effective_date: "2026-06-01"
+
+period_labels:
+  peak: Peak
+  off_peak: Off-Peak
+
+# Summer Jun 1 - Sep 30, winter Oct 1 - May 31.
+# Peak 4-9pm every day, weekends and holidays included. Everything else off-peak.
+seasons:
+  - key: summer
+    start: "06-01"
+    default_period: off_peak
+    rules:
+      - period: peak
+        days: all
+        windows: [["16:00", "21:00"]]
+  - key: winter
+    start: "10-01"
+    default_period: off_peak
+    rules:
+      - period: peak
+        days: all
+        windows: [["16:00", "21:00"]]
+
+# Same price every day of the week, so no holidays.
+holidays:
+  sunday_shift: false
+  rules: []
+
+# Prices are the "Total Usage" rates, which is the price above your baseline
+# allowance. Generation here includes the Bundled PCIA, as on the bill.
+components:
+  # Distribution + Transmission + Trans. Rate Adj. + Reliability Services +
+  # PPP + ND + CTC + ECRA + Wildfire Fund + NSGC + Wildfire Hardening +
+  # Recovery Bond Charge and Credit + CIA (over baseline)
+  - key: delivery
+    label: Delivery
+    per_kwh:
+      summer: {peak: 0.32469, off_peak: 0.30469}
+      winter: {peak: 0.27058, off_peak: 0.26726}
+  # Generation + Bundled PCIA ($-0.01011)
+  - key: generation
+    label: Generation
+    per_kwh:
+      summer: {peak: 0.19771, off_peak: 0.09471}
+      winter: {peak: 0.12699, off_peak: 0.10031}
+
+# NEM2 non-bypassable charges (NEM2 Special Condition 2.c), billed on each
+# interval's net import.
+nbc:
+  per_kwh: 0.0123
+  interval_minutes: 60
+  parts: {PPP: 0.00614, ND: -0.00002, CTC: 0.00027, WFC: 0.00591}
+
+# Base Services Charge, Income Tier 3, $/day
+daily_charge: 0.79343
+
+nem:
+  nem1: {}
+  nem2: {}
+
+extras:
+  climate_credit: -36.18
+  baseline_credit_per_kwh: -0.0814
+  advice_letter: "7921-E"
+  decision: "D.26-04-036"
+  plan_detail: "PG&E E-TOU-C, bundled service, Income Tier 3 (non-CARE/FERA)"
+  period_source: "E-TOU-C Sheet 5 (Cal. P.U.C. 61128-E), Special Condition 2 time periods"
+  definitions: >-
+    period_total = Delivery + Generation = PG&E's "Total Usage" rate, which applies to usage
+    above your baseline allowance. Energy rate = period_total - NBCs; it is what a net imported
+    kWh costs in energy charges and what a net exported kWh is credited under NEM 2.0, per TOU
+    period. NBCs are charged on each interval's net import and never credited.
+  citations: >-
+    E-TOU-C Sheet 2 (Cal. P.U.C. 61364-E, Advice 7921-E, D.26-04-036, effective 2026-06-01):
+    total rates, Baseline Credit $(0.08140)/kWh, Base Services Charge by income tier, Climate
+    Credit. Sheets 3-4 (61126-E, 61127-E, Advice 7846-E, effective 2026-03-01): rate
+    components; they add up to the Sheet 2 totals. Sheet 5 (61128-E): baseline quantities and
+    time periods. NEM2 Sheet 13 (61194-E): NBCs are PPP, ND, CTC and Wildfire Fund Charge,
+    billed on each metered interval's net consumption.
+  unverified_items:
+    - >-
+      Baseline Credit not modeled. PG&E takes $0.08140 off each kWh of baseline usage, any hour.
+      Your baseline allowance is a daily kWh amount that depends on your baseline territory,
+      season and heating type (E-TOU-C Sheet 5), and the engine has no monthly kWh cap. So the
+      prices here are the over-baseline rate, and bill estimates run high by up to $0.08140 x
+      your baseline kWh each month. NEM2 also values net exports at the baseline rate up to the
+      baseline quantity (NEM2 Special Condition 2.a); that is not modeled either.
+    - >-
+      Net Surplus Compensation rate not included. PG&E posts it monthly; add it yourself if you
+      expect a yearly surplus.
+    - >-
+      NEM 3.0 is not offered for this preset. PG&E's Net Billing Tariff requires residential
+      customers to take E-ELEC, and PG&E's export price tables are not bundled.
+    - >-
+      Base Services Charge uses Income Tier 3. Tier 1 is $0.19713/day and Tier 2 is
+      $0.39688/day. CARE, FERA and Medical Baseline discounts are not modeled.
+    - >-
+      NBC metering interval assumed to be 1 hour (it depends on the meter).
+    - >-
+      Assumes bundled service (PG&E generation, no CCA). CCA customers pay a vintaged PCIA and
+      their CCA's generation rate instead of the Generation line.

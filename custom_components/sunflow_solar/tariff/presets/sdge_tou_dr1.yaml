@@ -1,0 +1,124 @@
+# SDG&E Schedule TOU-DR1, bundled service, non-CARE/FERA.
+# Unofficial. Numbers copied from SDG&E's Total Rates Table, USD/kWh, no
+# rounding. Check the effective date before trusting any bill estimate.
+id: sdge_tou_dr1
+name: SDG&E TOU-DR1 (unofficial)
+utility: SDG&E
+plan: TOU-DR1
+timezone: America/Los_Angeles
+currency: USD
+effective_date: "2026-08-01"
+
+period_labels:
+  on_peak: On-Peak
+  off_peak: Off-Peak
+  super_off_peak: Super Off-Peak
+
+# Summer Jun 1 - Oct 31, winter Nov 1 - May 31. Same hours all year:
+# every day 4-9pm on-peak. Weekdays: midnight-6am and 10am-2pm super
+# off-peak. Weekends and holidays: midnight-2pm super off-peak. Everything
+# else off-peak.
+seasons:
+  - key: summer
+    start: "06-01"
+    default_period: off_peak
+    rules: &dr1_hours
+      - period: on_peak
+        days: all
+        windows: [["16:00", "21:00"]]
+      - period: super_off_peak
+        days: [weekday]
+        windows: [["00:00", "06:00"], ["10:00", "14:00"]]
+      - period: super_off_peak
+        days: [weekend, holiday]
+        windows: [["00:00", "14:00"]]
+  - key: winter
+    start: "11-01"
+    default_period: off_peak
+    rules: *dr1_hours
+
+# SDG&E Rule 1: a holiday on a Sunday moves to Monday. Saturday ones stay put.
+holidays:
+  sunday_shift: true
+  rules:
+    - {name: "New Year's Day", date: "01-01"}
+    - {name: "Independence Day", date: "07-04"}
+    - {name: "Veterans Day", date: "11-11"}
+    - {name: "Christmas Day", date: "12-25"}
+    - {name: "Presidents' Day", month: 2, weekday: monday, nth: 3}
+    - {name: "Labor Day", month: 9, weekday: monday, nth: 1}
+    - {name: "Thanksgiving", month: 11, weekday: thursday, nth: 4}
+    - {name: "Memorial Day", month: 5, weekday: monday, nth: last}
+
+components:
+  # UDC Total (Transm + Distr + PPP + ND + CTC + LGC + RS + TRAC) plus
+  # WF-NBC + DWR-BC ($0.00591), before the Baseline Adjustment Credit
+  - key: delivery
+    label: Delivery
+    per_kwh:
+      summer: {on_peak: 0.33192, off_peak: 0.33192, super_off_peak: 0.33192}
+      winter: {on_peak: 0.33192, off_peak: 0.33192, super_off_peak: 0.33192}
+  # EECC (SDG&E commodity)
+  - key: generation
+    label: Generation
+    per_kwh:
+      summer: {on_peak: 0.35943, off_peak: 0.13229, super_off_peak: 0.04241}
+      winter: {on_peak: 0.28279, off_peak: 0.19868, super_off_peak: 0.10527}
+
+# NEM-ST non-bypassable charges: PPP, ND, CTC and the DWR bond charge, now
+# billed as WF-NBC + DWR-BC. Billed on each interval's net import.
+nbc:
+  per_kwh: 0.02099
+  interval_minutes: 60
+  parts: {PPP: 0.01515, ND: 0.0, CTC: -0.00007, WF-NBC: 0.00591}
+
+# Base Services Charge, $/day
+daily_charge: 0.79343
+
+nem:
+  nem1: {}
+  nem2: {}
+
+extras:
+  baseline_credit_per_kwh: -0.10702
+  plan_detail: "SDG&E TOU-DR1, bundled service, non-CARE/FERA"
+  period_source: "sdge.com TOU-DR1 time periods (weekday 10am-2pm super off-peak all year); SDG&E Rule 1 holidays"
+  definitions: >-
+    period_total = Delivery + Generation = SDG&E's Total Electric Rate. Energy rate =
+    period_total - NBCs; it is what a net imported kWh costs in energy charges and what a net
+    exported kWh is credited under NEM 2.0, per TOU period. NBCs are charged on each interval's
+    net import and never credited.
+  citations: >-
+    SDG&E "Schedule TOU-DR1 - Residential Time of Use Service Effective 8/1/2026" Total Rates
+    Table (sdge.com/total-electric-rates): UDC components, WF-NBC + DWR-BC, EECC, Baseline
+    Adjustment Credit $(0.10702)/kWh up to 130% of baseline, Base Services Charge $0.79343/day.
+    Seasons: SDG&E time period notice (summer Jun 1 - Oct 31, winter Nov 1 - May 31). Time
+    periods: sdge.com TOU-DR1 pricing plan page and sdge.com/super-off-peak-residential.
+    Holidays: SDG&E Electric Rule 1. NBCs: SDG&E Schedule NEM-ST Special Condition 1.f.
+  unverified_items:
+    - >-
+      Baseline Adjustment Credit not modeled. SDG&E takes $0.10702 off each kWh up to 130% of
+      your baseline allowance, which depends on climate zone, season and heating type. The
+      engine has no monthly kWh cap, so bill estimates run high by up to $0.10702 x 130% of your
+      baseline kWh each month.
+    - >-
+      Weekday 10am-2pm super off-peak is modeled for every month. SDG&E's pages say it became
+      year-round in 2026 (before that it was March and April only); the exact start date was
+      not checked against a tariff sheet.
+    - >-
+      The current TOU-DR1 and NEM-ST tariff sheets could not be downloaded. Rates come from
+      SDG&E's published Total Rates Table; the NBC list comes from a 2017 NEM-ST sheet, with
+      WF-NBC + DWR-BC standing in for the old DWR bond charge.
+    - >-
+      Net Surplus Compensation rate not included. Add it yourself if you expect a yearly
+      surplus.
+    - >-
+      NEM 3.0 is not offered for this preset. SDG&E's export price tables are not bundled.
+    - >-
+      The 5.78% Franchise Fee Differential inside the City of San Diego, CARE, FERA and Medical
+      Baseline discounts are not modeled.
+    - >-
+      NBC metering interval assumed to be 1 hour (it depends on the meter).
+    - >-
+      Assumes bundled service (SDG&E commodity, no CCA). CCA customers pay a vintaged PCIA and
+      their CCA's generation rate instead of the Generation line.

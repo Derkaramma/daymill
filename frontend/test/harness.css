@@ -1,0 +1,40 @@
+/* Rough stand-in for the HA frontend theme. */
+:root {
+  font-family: Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 14px;
+  --primary-color: #03a9f4;
+  --warning-color: #ffa600;
+  --error-color: #db4437;
+  --success-color: #43a047;
+}
+body {
+  margin: 0;
+  padding: 16px;
+  --primary-text-color: #e1e1e1;
+  --secondary-text-color: #9b9b9b;
+  --divider-color: rgba(225, 225, 225, 0.12);
+  --primary-background-color: #111111;
+  --card-background-color: #1c1c1c;
+  --ha-card-background: #1c1c1c;
+  --ha-card-border-radius: 12px;
+  --ha-card-border-color: #2c2c2c;
+  background: var(--primary-background-color);
+  color: var(--primary-text-color);
+}
+body.light {
+  --primary-text-color: #212121;
+  --secondary-text-color: #727272;
+  --divider-color: rgba(0, 0, 0, 0.12);
+  --primary-background-color: #fafafa;
+  --card-background-color: #ffffff;
+  --ha-card-background: #ffffff;
+  --ha-card-border-color: #e0e0e0;
+}
+#stage {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+#stage > .slot {
+  display: block;
+}

@@ -1,0 +1,548 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Welcome to SunFlow",
+        "description": "Found: {found}. Pick your system and SunFlow fills in the sensors for you.",
+        "data": {
+          "system": "Solar system"
+        }
+      },
+      "no_solar": {
+        "title": "Welcome to SunFlow",
+        "description": "SunFlow didn't find any solar in Home Assistant yet.\n\n**SunPower:** install [pvs-hass]({pvs_url}). The password is the last 5 characters of your PVS serial number. Turn on live data and keep polling at 15 seconds or more.\n\n**Other brands:** add [your solar integration]({integrations_url}) first.\n\nThen come back here, or try SunFlow with demo data.",
+        "menu_options": {
+          "user": "Check again",
+          "custom": "I'll pick the sensors myself",
+          "demo": "Use demo data"
+        }
+      },
+      "sources": {
+        "title": "Power and energy sensors",
+        "description": "Detected: {system}. Check each sensor and change any that look wrong.\n\n{tip}",
+        "data": {
+          "solar_power": "Solar power",
+          "solar_power_fallback": "Solar power backup",
+          "grid_power": "Grid power",
+          "grid_power_fallback": "Grid power backup",
+          "grid_positive_is_import": "Positive grid power means buying from the grid",
+          "home_power": "Home power",
+          "solar_energy": "Solar energy (lifetime)",
+          "import_energy": "Energy bought from the grid (lifetime)",
+          "export_energy": "Energy sent to the grid (lifetime)",
+          "max_age": "Switch to the backup after"
+        },
+        "data_description": {
+          "solar_power": "Your fastest-updating solar power sensor. W and kW both work.",
+          "solar_power_fallback": "Optional. A slower meter used when the one above stops updating.",
+          "grid_power": "Net power to or from the grid.",
+          "grid_power_fallback": "Optional. A slower meter used when the one above stops updating.",
+          "grid_positive_is_import": "Turn off if your grid sensor goes positive when you send power out.",
+          "home_power": "Optional. Without it, SunFlow works it out from solar and grid.",
+          "solar_energy": "A counter that only goes up.",
+          "import_energy": "A counter that only goes up.",
+          "export_energy": "A counter that only goes up.",
+          "max_age": "How long a sensor can go without updating before SunFlow uses its backup."
+        }
+      },
+      "panels": {
+        "title": "Panels (optional)",
+        "description": "Found {count} panels. Group them into roof faces so SunFlow can compare panels that face the same way and spot one that's falling behind. Set roof faces to 0 to skip.",
+        "data": {
+          "roof_faces": "Roof faces",
+          "gateway_uptime": "Gateway status sensor",
+          "gateway_diagnostics": "Gateway diagnostics"
+        },
+        "data_description": {
+          "roof_faces": "How many groups of panels point in different directions.",
+          "gateway_uptime": "Optional. SunFlow flags the gateway as offline when this goes unavailable.",
+          "gateway_diagnostics": "Optional. Extra gateway sensors to show on the panels page."
+        }
+      },
+      "panel_face": {
+        "title": "Roof face {number} of {total}",
+        "description": "Name this roof face and pick its panels.",
+        "data": {
+          "label": "Name",
+          "facing": "Facing",
+          "panels": "Panels"
+        },
+        "data_description": {
+          "label": "For example Front or Garage.",
+          "facing": "Optional, for example South or 180°.",
+          "panels": "The power sensor of each panel on this face."
+        }
+      },
+      "battery": {
+        "title": "Home battery (beta)",
+        "description": "Found: {found}. Leave both sensors empty if you don't have a battery.\n\nBattery support is new. If the numbers look off, please open an issue.",
+        "data": {
+          "battery_soc": "Battery level",
+          "battery_power": "Battery power",
+          "battery_positive_is_discharge": "Positive power means the battery is discharging"
+        },
+        "data_description": {
+          "battery_soc": "Charge level in %.",
+          "battery_power": "Power going in or out of the battery.",
+          "battery_positive_is_discharge": "Turn off if your sensor is positive while charging."
+        }
+      },
+      "cars": {
+        "title": "Cars",
+        "description": "Cars so far: {cars}\n\nCar integrations found: {found}\n\nSet up your car's own integration first, then add it here. Not installed yet:\n{links}",
+        "menu_options": {
+          "car_add": "Add a car",
+          "car_edit": "Change a car",
+          "car_remove": "Remove cars",
+          "cars_done": "Done with cars"
+        }
+      },
+      "car_add": {
+        "title": "Add a car",
+        "description": "Pick a car or charger SunFlow found. Its sensors get filled in for you.",
+        "data": {
+          "car": "Car"
+        }
+      },
+      "car_edit": {
+        "title": "Change a car",
+        "data": {
+          "car": "Car"
+        }
+      },
+      "car_remove": {
+        "title": "Remove cars",
+        "data": {
+          "cars": "Cars to remove"
+        }
+      },
+      "car": {
+        "title": "Car details",
+        "description": "Pick the sensors for this car. Only **Charging** is needed. The others show up on the cards when you pick them.\n\n**Keep it read-only.** SunFlow only reads your car. These entities can change things on it, so if you don't use them, open each one and turn off **Enabled**:\n{controls}",
+        "data": {
+          "name": "Name",
+          "image": "Picture",
+          "presence": "Location",
+          "charging": "Charging",
+          "power": "Charging power",
+          "battery": "Battery level",
+          "plugged": "Plugged in",
+          "limit": "Charge limit"
+        },
+        "data_description": {
+          "image": "Used on the house card. You can upload your own in the card editor.",
+          "presence": "Optional. A tracker that reads home when the car is home. Without it, charging always counts as at home.",
+          "charging": "On (or charging) while the car is charging.",
+          "plugged": "On while the cable is plugged in.",
+          "limit": "Optional. The charge limit in %."
+        }
+      },
+      "rates": {
+        "title": "Utility rates",
+        "description": "Rate presets are unofficial estimates. Check them against your bill.",
+        "data": {
+          "tariff": "Rate plan",
+          "nem": "Net metering",
+          "cycle_day": "Billing cycle day",
+          "track_cost": "Track costs"
+        },
+        "data_description": {
+          "tariff": "Your utility rate plan.",
+          "nem": "How your utility credits power you send to the grid. NEM 3.0 is in beta.",
+          "cycle_day": "Day of the month your bill starts (1-28).",
+          "track_cost": "Turn off to only track energy, with no money sensors."
+        }
+      },
+      "nem3": {
+        "title": "NEM 3.0 settings",
+        "description": "Used for export credit, the ACC Plus adder and the annual true-up. Leave a field empty if you don't know it.",
+        "data": {
+          "pto_date": "Permission to Operate date",
+          "acc_plus_class": "ACC Plus adder",
+          "arecr": "Average Retail Export Compensation Rate",
+          "nsc_opt_in": "Net surplus compensation",
+          "nsc_rate": "Net surplus compensation rate"
+        },
+        "data_description": {
+          "pto_date": "The date your utility let the system turn on. Sets the price lock-in, the ACC Plus rate and the true-up date.",
+          "acc_plus_class": "Which ACC Plus rate applies to you.",
+          "arecr": "Optional, in $/kWh. Taken off leftover export credit at true-up for net surplus kWh.",
+          "nsc_opt_in": "Turn on if you signed up to be paid for net surplus kWh at true-up.",
+          "nsc_rate": "Optional, in $/kWh."
+        }
+      },
+      "finish": {
+        "title": "All set",
+        "description": "SunFlow is ready to go.\n\n**Energy dashboard:** in [Settings > Dashboards > Energy]({energy_url}), pick these:\n\n{guide}",
+        "data": {
+          "create_dashboard": "Create the SunFlow dashboard"
+        },
+        "data_description": {
+          "create_dashboard": "Adds a SunFlow dashboard to the sidebar. You can delete it any time."
+        }
+      }
+    },
+    "error": {
+      "same_as_live": "The backup must be a different sensor.",
+      "energy_not_distinct": "Solar, bought and sent energy need three different sensors.",
+      "tariff_invalid": "This rate plan can't be used with that net metering choice.",
+      "bad_unit": "This sensor's unit won't work. Power needs W or kW, energy needs Wh, kWh or MWh.",
+      "bad_unit_percent": "This sensor needs to be in %.",
+      "no_panels": "Pick at least one panel.",
+      "panel_used_twice": "A panel can only be on one roof face.",
+      "name_required": "Give it a name.",
+      "name_taken": "Another car already has this name."
+    },
+    "abort": {
+      "already_configured": "SunFlow Solar is already set up.",
+      "single_instance_allowed": "SunFlow Solar is already set up."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "SunFlow options",
+        "description": "What do you want to change?\n\n**Energy dashboard:** in [Settings > Dashboards > Energy]({energy_url}), pick these:\n\n{guide}",
+        "menu_options": {
+          "sources": "Power and energy sensors",
+          "panels": "Panels",
+          "battery": "Home battery (beta)",
+          "cars": "Cars",
+          "rates": "Utility rates",
+          "dashboard": "SunFlow dashboard"
+        }
+      },
+      "sources": {
+        "title": "Power and energy sensors",
+        "description": "Detected: {system}. Check each sensor and change any that look wrong.\n\n{tip}",
+        "data": {
+          "solar_power": "Solar power",
+          "solar_power_fallback": "Solar power backup",
+          "grid_power": "Grid power",
+          "grid_power_fallback": "Grid power backup",
+          "grid_positive_is_import": "Positive grid power means buying from the grid",
+          "home_power": "Home power",
+          "solar_energy": "Solar energy (lifetime)",
+          "import_energy": "Energy bought from the grid (lifetime)",
+          "export_energy": "Energy sent to the grid (lifetime)",
+          "max_age": "Switch to the backup after"
+        },
+        "data_description": {
+          "solar_power": "Your fastest-updating solar power sensor. W and kW both work.",
+          "solar_power_fallback": "Optional. A slower meter used when the one above stops updating.",
+          "grid_power": "Net power to or from the grid.",
+          "grid_power_fallback": "Optional. A slower meter used when the one above stops updating.",
+          "grid_positive_is_import": "Turn off if your grid sensor goes positive when you send power out.",
+          "home_power": "Optional. Without it, SunFlow works it out from solar and grid.",
+          "solar_energy": "A counter that only goes up.",
+          "import_energy": "A counter that only goes up.",
+          "export_energy": "A counter that only goes up.",
+          "max_age": "How long a sensor can go without updating before SunFlow uses its backup."
+        }
+      },
+      "panels": {
+        "title": "Panels (optional)",
+        "description": "Found {count} panels. Group them into roof faces so SunFlow can compare panels that face the same way and spot one that's falling behind. Set roof faces to 0 to skip.",
+        "data": {
+          "roof_faces": "Roof faces",
+          "gateway_uptime": "Gateway status sensor",
+          "gateway_diagnostics": "Gateway diagnostics"
+        },
+        "data_description": {
+          "roof_faces": "How many groups of panels point in different directions.",
+          "gateway_uptime": "Optional. SunFlow flags the gateway as offline when this goes unavailable.",
+          "gateway_diagnostics": "Optional. Extra gateway sensors to show on the panels page."
+        }
+      },
+      "panel_face": {
+        "title": "Roof face {number} of {total}",
+        "description": "Name this roof face and pick its panels.",
+        "data": {
+          "label": "Name",
+          "facing": "Facing",
+          "panels": "Panels"
+        },
+        "data_description": {
+          "label": "For example Front or Garage.",
+          "facing": "Optional, for example South or 180°.",
+          "panels": "The power sensor of each panel on this face."
+        }
+      },
+      "battery": {
+        "title": "Home battery (beta)",
+        "description": "Found: {found}. Leave both sensors empty if you don't have a battery.\n\nBattery support is new. If the numbers look off, please open an issue.",
+        "data": {
+          "battery_soc": "Battery level",
+          "battery_power": "Battery power",
+          "battery_positive_is_discharge": "Positive power means the battery is discharging"
+        },
+        "data_description": {
+          "battery_soc": "Charge level in %.",
+          "battery_power": "Power going in or out of the battery.",
+          "battery_positive_is_discharge": "Turn off if your sensor is positive while charging."
+        }
+      },
+      "cars": {
+        "title": "Cars",
+        "description": "Cars so far: {cars}\n\nCar integrations found: {found}\n\nSet up your car's own integration first, then add it here. Not installed yet:\n{links}",
+        "menu_options": {
+          "car_add": "Add a car",
+          "car_edit": "Change a car",
+          "car_remove": "Remove cars",
+          "cars_done": "Done with cars"
+        }
+      },
+      "car_add": {
+        "title": "Add a car",
+        "description": "Pick a car or charger SunFlow found. Its sensors get filled in for you.",
+        "data": {
+          "car": "Car"
+        }
+      },
+      "car_edit": {
+        "title": "Change a car",
+        "data": {
+          "car": "Car"
+        }
+      },
+      "car_remove": {
+        "title": "Remove cars",
+        "data": {
+          "cars": "Cars to remove"
+        }
+      },
+      "car": {
+        "title": "Car details",
+        "description": "Pick the sensors for this car. Only **Charging** is needed. The others show up on the cards when you pick them.\n\n**Keep it read-only.** SunFlow only reads your car. These entities can change things on it, so if you don't use them, open each one and turn off **Enabled**:\n{controls}",
+        "data": {
+          "name": "Name",
+          "image": "Picture",
+          "presence": "Location",
+          "charging": "Charging",
+          "power": "Charging power",
+          "battery": "Battery level",
+          "plugged": "Plugged in",
+          "limit": "Charge limit"
+        },
+        "data_description": {
+          "image": "Used on the house card. You can upload your own in the card editor.",
+          "presence": "Optional. A tracker that reads home when the car is home. Without it, charging always counts as at home.",
+          "charging": "On (or charging) while the car is charging.",
+          "plugged": "On while the cable is plugged in.",
+          "limit": "Optional. The charge limit in %."
+        }
+      },
+      "rates": {
+        "title": "Utility rates",
+        "description": "Rate presets are unofficial estimates. Check them against your bill.",
+        "data": {
+          "tariff": "Rate plan",
+          "nem": "Net metering",
+          "cycle_day": "Billing cycle day",
+          "track_cost": "Track costs"
+        },
+        "data_description": {
+          "tariff": "Your utility rate plan.",
+          "nem": "How your utility credits power you send to the grid. NEM 3.0 is in beta.",
+          "cycle_day": "Day of the month your bill starts (1-28).",
+          "track_cost": "Turn off to only track energy, with no money sensors."
+        }
+      },
+      "nem3": {
+        "title": "NEM 3.0 settings",
+        "description": "Used for export credit, the ACC Plus adder and the annual true-up. Leave a field empty if you don't know it.",
+        "data": {
+          "pto_date": "Permission to Operate date",
+          "acc_plus_class": "ACC Plus adder",
+          "arecr": "Average Retail Export Compensation Rate",
+          "nsc_opt_in": "Net surplus compensation",
+          "nsc_rate": "Net surplus compensation rate"
+        },
+        "data_description": {
+          "pto_date": "The date your utility let the system turn on. Sets the price lock-in, the ACC Plus rate and the true-up date.",
+          "acc_plus_class": "Which ACC Plus rate applies to you.",
+          "arecr": "Optional, in $/kWh. Taken off leftover export credit at true-up for net surplus kWh.",
+          "nsc_opt_in": "Turn on if you signed up to be paid for net surplus kWh at true-up.",
+          "nsc_rate": "Optional, in $/kWh."
+        }
+      },
+      "dashboard": {
+        "title": "SunFlow dashboard",
+        "description": "Add the SunFlow dashboard to the sidebar. If you deleted it, this brings it back."
+      }
+    },
+    "error": {
+      "same_as_live": "The backup must be a different sensor.",
+      "energy_not_distinct": "Solar, bought and sent energy need three different sensors.",
+      "tariff_invalid": "This rate plan can't be used with that net metering choice.",
+      "bad_unit": "This sensor's unit won't work. Power needs W or kW, energy needs Wh, kWh or MWh.",
+      "bad_unit_percent": "This sensor needs to be in %.",
+      "no_panels": "Pick at least one panel.",
+      "panel_used_twice": "A panel can only be on one roof face.",
+      "name_required": "Give it a name.",
+      "name_taken": "Another car already has this name."
+    },
+    "abort": {
+      "dashboard_created": "The SunFlow dashboard is in your sidebar.",
+      "dashboard_exists": "You already have a SunFlow dashboard.",
+      "dashboard_failed": "The dashboard couldn't be created. Check the logs for details."
+    }
+  },
+  "selector": {
+    "nem": {
+      "options": {
+        "nem2": "NEM 2.0",
+        "nem3": "NEM 3.0 / net billing (beta)",
+        "nem1": "NEM 1.0",
+        "none": "No net metering"
+      }
+    },
+    "acc_plus_class": {
+      "options": {
+        "residential": "Residential",
+        "residential_equity": "Residential (low income / equity)",
+        "none": "None"
+      }
+    },
+    "car_image": {
+      "options": {
+        "sedan": "Sedan",
+        "suv": "SUV",
+        "truck": "Truck"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "solar_power": {
+        "name": "Solar power"
+      },
+      "grid_power": {
+        "name": "Grid power"
+      },
+      "home_power": {
+        "name": "Home power"
+      },
+      "grid_import_power": {
+        "name": "Grid import power"
+      },
+      "grid_export_power": {
+        "name": "Grid export power"
+      },
+      "self_sufficiency": {
+        "name": "Self-sufficiency"
+      },
+      "status": {
+        "name": "Status"
+      },
+      "energy_produced": {
+        "name": "Energy produced"
+      },
+      "energy_imported": {
+        "name": "Energy imported"
+      },
+      "energy_exported": {
+        "name": "Energy exported"
+      },
+      "energy_consumed": {
+        "name": "Energy consumed"
+      },
+      "tou_period": {
+        "name": "TOU period"
+      },
+      "tou_holiday": {
+        "name": "TOU holiday"
+      },
+      "import_rate": {
+        "name": "Import rate"
+      },
+      "export_rate": {
+        "name": "Export rate"
+      },
+      "cost_rate": {
+        "name": "Cost rate"
+      },
+      "import_energy_charge": {
+        "name": "Import energy charge"
+      },
+      "export_credit": {
+        "name": "Export credit"
+      },
+      "nbc_charges": {
+        "name": "Non-bypassable charges"
+      },
+      "adder_charges": {
+        "name": "Adder charges"
+      },
+      "import_cost": {
+        "name": "Import cost"
+      },
+      "net_cost": {
+        "name": "Net cost"
+      },
+      "solar_savings": {
+        "name": "Solar savings"
+      },
+      "cost_today": {
+        "name": "Cost today"
+      },
+      "self_sufficiency_today": {
+        "name": "Self-sufficiency today"
+      },
+      "bill_estimate": {
+        "name": "Bill estimate"
+      },
+      "totals": {
+        "name": "Totals"
+      },
+      "data_age": {
+        "name": "Data age"
+      },
+      "panel_health": {
+        "name": "Panel health"
+      },
+      "battery_soc": {
+        "name": "Battery level"
+      },
+      "battery_power": {
+        "name": "Battery power"
+      },
+      "battery_charge_power": {
+        "name": "Battery charge power"
+      },
+      "battery_discharge_power": {
+        "name": "Battery discharge power"
+      },
+      "car_home_charging_power": {
+        "name": "{car} home charging power"
+      }
+    },
+    "binary_sensor": {
+      "solar_problem": {
+        "name": "Solar problem"
+      },
+      "car_charging_at_home": {
+        "name": "{car} charging at home"
+      }
+    }
+  },
+  "exceptions": {
+    "tariff_load_failed": {
+      "message": "Couldn't load the rate plan: {error}"
+    }
+  },
+  "issues": {
+    "frontend_resource_yaml": {
+      "title": "Add the SunFlow cards to your dashboard resources",
+      "description": "Your dashboard resources are managed in YAML, so SunFlow can't add its cards for you. Add this to the `resources` list in your Lovelace YAML and restart Home Assistant:\n\n```yaml\n- url: {url}\n  type: module\n```"
+    },
+    "tariff_out_of_date": {
+      "title": "Your rate plan may be out of date",
+      "description": "The {tariff} prices in SunFlow are from {date}, over a year ago. Your utility has probably changed them since, so cost numbers may be off. Check for a SunFlow update, or pick another plan in [SunFlow's options]({options_url})."
+    },
+    "source_unavailable": {
+      "title": "SunFlow can't read some sensors",
+      "description": "These sensors have been missing or unavailable for over an hour: {entities}\n\nCheck the integration they come from, or pick other sensors in [SunFlow's options]({options_url})."
+    }
+  }
+}

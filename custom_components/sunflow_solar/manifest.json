@@ -1,0 +1,15 @@
+{
+  "domain": "sunflow_solar",
+  "name": "SunFlow Solar",
+  "after_dependencies": ["http", "lovelace"],
+  "codeowners": ["@Derkaramma"],
+  "config_flow": true,
+  "dependencies": ["recorder"],
+  "documentation": "https://github.com/Derkaramma/sunflow-solar",
+  "integration_type": "service",
+  "iot_class": "calculated",
+  "issue_tracker": "https://github.com/Derkaramma/sunflow-solar/issues",
+  "requirements": [],
+  "single_config_entry": true,
+  "version": "0.1.0"
+}

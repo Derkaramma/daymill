@@ -1,0 +1,6 @@
+{
+  "name": "SunFlow Solar",
+  "homeassistant": "2026.8.0",
+  "country": ["US"],
+  "render_readme": true
+}

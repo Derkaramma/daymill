@@ -1,0 +1,140 @@
+# SCE Schedule TOU-D Option 4-9 PM, bundled service, non-CARE/FERA.
+# Unofficial. Numbers copied from the SCE tariff book, USD/kWh, no rounding.
+# Check the effective date before trusting any bill estimate.
+id: sce_tou_d_4_9pm
+name: SCE TOU-D-4-9PM (unofficial)
+utility: SCE
+plan: TOU-D-4-9PM
+timezone: America/Los_Angeles
+currency: USD
+effective_date: "2026-10-01"
+
+period_labels:
+  on_peak: On-Peak
+  mid_peak: Mid-Peak
+  off_peak: Off-Peak
+  super_off_peak: Super Off-Peak
+
+# Same hours as TOU-D-PRIME.
+# Summer Jun 1 - Sep 30: weekday 4-9pm on-peak, weekend/holiday 4-9pm
+# mid-peak, everything else off-peak.
+# Winter Oct 1 - May 31, every day: 8am-4pm super off-peak, 4-9pm mid-peak,
+# 9pm-8am off-peak.
+seasons:
+  - key: summer
+    start: "06-01"
+    default_period: off_peak
+    rules:
+      - period: on_peak
+        days: [weekday]
+        windows: [["16:00", "21:00"]]
+      - period: mid_peak
+        days: [weekend, holiday]
+        windows: [["16:00", "21:00"]]
+  - key: winter
+    start: "10-01"
+    default_period: off_peak
+    rules:
+      - period: mid_peak
+        days: all
+        windows: [["16:00", "21:00"]]
+      - period: super_off_peak
+        days: all
+        windows: [["08:00", "16:00"]]
+
+# Fixed-date holidays on a Sunday move to Monday. Saturday ones stay put.
+# Holidays are priced like weekends.
+holidays:
+  sunday_shift: true
+  rules:
+    - {name: "New Year's Day", date: "01-01"}
+    - {name: "Independence Day", date: "07-04"}
+    - {name: "Veterans Day", date: "11-11"}
+    - {name: "Christmas Day", date: "12-25"}
+    - {name: "Presidents' Day", month: 2, weekday: monday, nth: 3}
+    - {name: "Labor Day", month: 9, weekday: monday, nth: 1}
+    - {name: "Thanksgiving", month: 11, weekday: thursday, nth: 4}
+    - {name: "Memorial Day", month: 5, weekday: monday, nth: last}
+
+components:
+  # Total Delivery (Trans incl. TOTCA + Distrbtn + NSGC + NDC + PPPC + CIA
+  # + WFC + DWRA + PUCRF), before the Baseline Credit
+  - key: delivery
+    label: Delivery
+    per_kwh:
+      summer: {on_peak: 0.33582, mid_peak: 0.33442, off_peak: 0.26222}
+      winter: {mid_peak: 0.31904, off_peak: 0.27056, super_off_peak: 0.25540}
+  # Generation UG, includes CTC $0.00014. DWREC is $0.00000.
+  - key: generation
+    label: Generation
+    per_kwh:
+      summer: {on_peak: 0.25729, mid_peak: 0.11506, off_peak: 0.07035}
+      winter: {mid_peak: 0.18918, off_peak: 0.09440, super_off_peak: 0.06702}
+
+# Separate per-kWh lines on Sheets 2/3, not part of Total Delivery.
+# Billed on each hour's net import, never credited (see unverified_items).
+adders:
+  - key: frc
+    label: Fixed Recovery Charge
+    per_kwh: 0.01118
+    basis: net_interval
+  - key: mcam
+    label: MCAM charge
+    per_kwh: 0.00223
+    basis: net_interval
+
+# NEM-ST non-bypassable charges (Sheet 3, 74879-E) at the OAT's rates.
+nbc:
+  per_kwh: 0.01164
+  interval_minutes: 60
+  parts: {PPPC: 0.00556, NDC: 0.00003, CTC: 0.00014, WFC: 0.00591}
+
+# Base Services Charge, $/day
+daily_charge: 0.794
+
+nem:
+  nem1: {}
+  nem2:
+    nscr: 0.01997
+  nem3:
+    export_table: nbt/sce_nbt_2026.yaml
+
+extras:
+  climate_credit: -36.00
+  baseline_credit_per_kwh: -0.09101
+  advice_letter: "5897-E"
+  decision: "D.26-04-033"
+  plan_detail: "SCE TOU-D Option 4-9 PM, bundled service, non-CARE/FERA"
+  period_source: "TOU-D Sheet 8 (Cal. PUC 91696-E) periods, Sheet 9 (91697-E) seasons and holidays"
+  definitions: >-
+    period_total = Total Delivery + Generation. Import price = period_total + FRC + MCAM.
+    Energy rate = period_total - NBCs; it is what a net imported kWh costs in energy charges
+    and what a net exported kWh is credited under NEM 2.0, per TOU period. NBCs and FRC + MCAM
+    are charged on each hour's net import and never credited. The Baseline Credit is not in
+    these prices (see unverified_items).
+  citations: >-
+    TOU-D Sheet 2 (Cal. PUC 91690-E) and Sheet 3 (91691-E): Option 4-9 PM energy rates,
+    Baseline Credit $(0.09101)/kWh, Base Services Charge $0.794/day, FRC, MCAM; Sheet 8
+    (91696-E): TOU periods; Sheet 9 (91697-E): seasons and holidays. All TOU-D sheets:
+    Advice 5897-E, D.26-04-033, effective 2026-10-01. NEM-ST: 74879-E (NBCs, per-interval
+    netting). NSCR $0.01997/kWh for Relevant Periods ending Nov 2026 (sce.com), same as the
+    TOU-D-PRIME preset.
+  unverified_items:
+    - >-
+      Baseline Credit not modeled. SCE takes $0.09101 off each kWh up to your monthly baseline
+      allocation, at any hour. The baseline allocation depends on your climate zone, season and
+      heating type (Preliminary Statement Part H), and the engine has no monthly kWh cap, so
+      prices here are the full rate. Bill estimates run high by up to $0.09101 x your baseline
+      kWh each month. How the credit applies to net usage under NEM is not covered here.
+    - >-
+      Fixed Recovery Charge $0.01118/kWh and MCAM $0.00223/kWh: treated as import-only charges on
+      each hour's net import, never credited, the same as in the TOU-D-PRIME preset. Not checked
+      against a real SCE NEM bill.
+    - >-
+      NEM 3.0: since 2025-04-23 new residential Solar Billing Plan customers must take
+      TOU-D-PRIME (Schedule NBT, Sheet 2). Use the NEM 3.0 mode here only if SCE still bills
+      you on TOU-D-4-9PM. Export prices point at the NBT26 table; pick the file for your PTO year.
+    - >-
+      NBC metering interval assumed to be 1 hour (it depends on the meter: 15-minute or hourly).
+    - >-
+      Assumes bundled service (SCE generation, no CCA) and the default Monthly Billing Option.

@@ -1,0 +1,19 @@
+{
+  "name": "sunflow-cards",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Lovelace cards for SunFlow Solar",
+  "license": "MIT",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "watch": "node scripts/build.mjs --watch",
+    "shoot": "node test/shoot.mjs",
+    "build:demo": "node scripts/build-demo.mjs",
+    "test:demo": "node scripts/build-demo.mjs && node test/demo-test.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "playwright-core": "1.65.1"
+  }
+}

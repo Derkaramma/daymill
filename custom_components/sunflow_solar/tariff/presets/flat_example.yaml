@@ -1,0 +1,50 @@
+# Example flat-rate plan. Not a real utility rate.
+# Files in this folder are replaced on every update, so edits here don't last.
+id: flat_example
+name: Flat rate, $0.30/kWh example (unofficial)
+utility: Example
+plan: Flat rate
+timezone: America/Los_Angeles
+currency: USD
+effective_date: "2026-01-01"
+
+period_labels:
+  flat: All hours
+
+# One season, one price, all day, every day.
+seasons:
+  - key: all_year
+    start: "01-01"
+    default_period: flat
+    rules: []
+
+holidays:
+  sunday_shift: false
+  rules: []
+
+components:
+  - key: energy
+    label: Energy
+    per_kwh:
+      all_year: {flat: 0.30}
+
+# Daily service charge from your bill, $/day
+daily_charge: 0.50
+
+nem:
+  nem1: {}
+  nem2: {}
+
+extras:
+  # an example, not a published rate: never flag it as out of date
+  no_expiry: true
+  plan_detail: >-
+    Example only: $0.30/kWh and $0.50/day. SunFlow can't take your own flat price yet, so treat
+    the cost numbers as a rough guide.
+  definitions: >-
+    One price for every kWh, any hour. Net exports are credited at the same price under NEM 1.0
+    and NEM 2.0.
+  unverified_items:
+    - >-
+      This is a made-up example, not a real plan. The $0.30/kWh price and $0.50/day charge are
+      placeholders.
