@@ -94,6 +94,27 @@ The white front is almost the same gray as the background, so a plain color
 cut eats into it. I cut it out along its edges instead. The card adds the
 soft wall shadow and the glow while it charges or discharges.
 
+## Prompt 5: the "before" photo
+
+The House image page shows a "before" photo next to the render, the kind of
+picture an owner would start from. The demo house isn't real, so I asked for
+an ordinary phone photo of it. Same chat as the house, with the day render
+attached again.
+
+```text
+Attached is a render of a house. Now show me what this exact house looks like in an ordinary real-life photo, the kind a homeowner snaps on their phone.
+
+Same house, same materials, colors, windows, wood slats, gray garage door, black solar panels on the roof, wall charger and gray box on the left wall. Do not change or add any features.
+
+Camera: a normal smartphone photo taken standing on the sidewalk at the front-left corner of the lot, at eye level (about 5 feet high), looking at the house at an angle, so the left side wall and the front are both visible. From this low angle only the front edge of the solar roof shows. Slight wide-angle phone lens look.
+
+Make it look like a real, unedited photo: natural late-morning daylight, a few soft shadows, slightly uneven lawn, an ordinary suburban street feel, a little bit of sky. Not a render, not stylized, no studio look.
+
+Empty driveway: no cars, no people, no pets. No text anywhere: no house numbers, no street signs, no mailbox numbers, no license plates, no logos. Neighboring houses, if any show at the edges, are blurred and generic.
+
+Landscape 4:3, at least 1600 px wide.
+```
+
 ## Before it goes in the repo
 
 - Zoom to 200% on everything and look for stray text, numbers, logos and
