@@ -171,12 +171,10 @@ async def test_diagnostics_content(hass: HomeAssistant) -> None:
     }
     assert diag["sources"]["solar_power"]["status"] == "ok"
     assert diag["sources"]["solar_power"]["unit"] == "kW"
-    assert diag["sources"]["solar_power_fallback"] == {
-        "status": "unavailable",
-        "unit": None,
-        "device_class": None,
-        "age_s": 0,
-    }
+    fallback = diag["sources"]["solar_power_fallback"]
+    # age depends on how fast the test box is
+    assert fallback.pop("age_s") <= 5
+    assert fallback == {"status": "unavailable", "unit": None, "device_class": None}
     assert diag["sources"]["gateway_uptime"] == {"status": "missing"}
 
     ledger = diag["ledger"]
