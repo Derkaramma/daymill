@@ -22,12 +22,11 @@ const MID = 46.9; // middle of the box, top to bottom
 const BOX_TOP = at(CX, 37.8); // just above the box
 const BOX_RIGHT = at(18.2, MID); // just right of it
 const BOX_BOTTOM = at(CX, 55.4); // just below it
-const EAVE = at(CX, 26.4); // roof edge right above the box
-const ROOF = at(18.8, 24.6); // up on the roof
+const ROOF = at(CX, 22.5); // up on the roof, straight above the box
 const SLATS = at(21.3, MID)[0]; // wood slats right of the box
 const WALL_FOOT = at(21.3, 57.7)[1]; // where the slats meet the plants
-const BELOW = at(16.3, 59.2); // just under the box
-const CORNER = at(12.8, 65.3); // lawn edge out front
+const BELOW = at(CX, 62); // straight down from the box onto the lawn
+const LAWN_EDGE = at(11.2, 62); // then square left to the lawn edge
 const CHARGER = at(82.8, 47.6); // bottom of the wall charger
 
 export const DEMO_LAYOUT = {
@@ -35,9 +34,9 @@ export const DEMO_LAYOUT = {
   junction: { x: at(CX, MID)[0], y: at(CX, MID)[1], show: false },
   round_corners: 0.006,
   lines: {
-    solar: [[ROOF, EAVE, BOX_TOP]],
+    solar: [[ROOF, BOX_TOP]],
     home: [BOX_RIGHT, [SLATS, BOX_RIGHT[1]], [SLATS, WALL_FOOT]],
-    grid: [BOX_BOTTOM, BELOW, CORNER],
+    grid: [BOX_BOTTOM, BELOW, LAWN_EDGE],
     // the box is the battery, so it gets a chip but no line
     battery: false,
   },
