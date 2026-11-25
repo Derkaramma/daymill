@@ -41,7 +41,9 @@ const BATT_H = 8.27;
 const BATT_MID = BATT_TOP + BATT_H / 2;
 const BATT = { x: at(BATT_LEFT, BATT_TOP)[0], y: at(BATT_LEFT, BATT_TOP)[1], w: BATT_W / 100, h: 0.8 * BATT_H / 100 };
 const BOX_LEFT = at(15.15, BATT_MID); // just left of the box
-const BATT_EDGE = alongWall(15.15, BATT_MID, BATT_LEFT + BATT_W + 0.15); // just right of the battery
+// just right of the battery; the short run looks flat at the wall's slope
+// alone, so its battery end sits a touch higher
+const BATT_EDGE = at(BATT_LEFT + BATT_W + 0.15, BATT_MID + (BATT_LEFT + BATT_W + 0.15 - 15.15) * WALL_SLOPE - 0.3);
 const CHARGER = at(82.8, 47.6); // bottom of the wall charger
 const CHARGER_FACE = at(82.8, 43.6); // middle of the charger, where it glows
 
