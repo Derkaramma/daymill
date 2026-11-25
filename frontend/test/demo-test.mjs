@@ -195,7 +195,7 @@ const settle = (page) => page.waitForTimeout(1900); // the day/night crossfade i
   }
   check(bad === 0, "every scenario survives day -> night -> day and matches a fresh load");
 
-  // away, flip the time a couple of times, then back to normal: the sedan returns
+  // away, flip the time a couple of times, then back to normal: the first car returns
   bad = 0;
   await go("setScenario", "car-away");
   await go("setTime", "night");
@@ -208,7 +208,7 @@ const settle = (page) => page.waitForTimeout(1900); // the day/night crossfade i
   await go("setTime", "day");
   await go("setScenario", "normal");
   expect(await snap(), "day", "normal", "back to normal");
-  check(bad === 0, "car away -> time flips -> normal brings the sedan back");
+  check(bad === 0, "car away -> time flips -> normal brings the first car back");
   check(errors.length === 0, "switching: no errors");
   await page.close();
 }

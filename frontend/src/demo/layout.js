@@ -49,21 +49,28 @@ export const DEMO_LAYOUT = {
   },
 };
 
-// Two drawn cars on the driveway, both wired to the one charger.
+// My two cars, parked nose-in on the driveway, both on the one charger.
+// The pictures are 800x500 rear 3/4 cutouts. Both charge ports are on the
+// side we see: the Model Y's is in the rear corner, the R1S's up front.
 export const DEMO_CARS = [
   {
-    name: "Sedan",
-    image: "builtin:sedan",
-    slot: { x: 0.747, y: at(0, 61.8)[1] - 0.075, w: 0.075 },
-    flip: true,
+    name: "Car 1",
+    image: "tesla",
+    slot: { x: 0.69, y: 0.522, w: 0.118 },
+    flip: false,
+    port: [0.73, 0.581],
     cable_start: CHARGER,
+    // its port is on the far side from the charger, so the cable comes down
+    // the wall and runs along the ground behind the bumper
+    cable: "M0.828,0.521 C0.826,0.6 0.82,0.64 0.79,0.643 L0.745,0.643 C0.728,0.643 0.726,0.61 0.73,0.581",
     chip: { x: 0.715, y: 0.8, align: "center" },
   },
   {
-    name: "Truck",
-    image: "builtin:truck",
-    slot: { x: 0.842, y: at(0, 59.6)[1] - 0.08, w: 0.08 },
+    name: "Car 2",
+    image: "rivian",
+    slot: { x: 0.83, y: 0.508, w: 0.118 },
     flip: false,
+    port: [0.83 + 0.118 * 0.17, 0.508 + 0.118 * 0.4],
     cable_start: CHARGER,
     chip: { x: 0.885, y: 0.8, align: "center" },
   },

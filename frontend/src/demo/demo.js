@@ -8,7 +8,7 @@
 //   events: sunflow-demo-ready (once), sunflow-demo-change {time, scenario}
 //
 // Styles go through adoptedStyleSheets and the CSSOM only, so it runs under a
-// strict CSP. The only requests it makes are for its own two pictures.
+// strict CSP. The only requests it makes are for its own pictures.
 
 import "../cards/house-card.js";
 import { adopt, h } from "../common/dom.js";
@@ -21,10 +21,14 @@ const IMG = {
   day: new URL("img/house-day.webp", import.meta.url).href,
   night: new URL("img/house-night.webp", import.meta.url).href,
 };
+const CAR_IMG = {
+  tesla: new URL("img/tesla.webp", import.meta.url).href,
+  rivian: new URL("img/rivian.webp", import.meta.url).href,
+};
 
 // Every car gets made-up entities, so the simulator can park, plug in and
 // charge it.
-const CARS = previewCars(DEMO_CARS);
+const CARS = previewCars(DEMO_CARS.map((c) => ({ ...c, image: CAR_IMG[c.image] || c.image })));
 
 const CONFIG = {
   type: "custom:sunflow-house-card",
