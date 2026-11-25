@@ -41,6 +41,42 @@ const pw = (hass, value) => kw(hass, Math.abs(value), { unit: "auto" });
 // don't restart anything.
 const sweepMs = (value) => Math.round(Math.max(1200, Math.min(4500, 3200 / Math.max(0.3, Math.abs(value)))) / 250) * 250;
 
+// A car picture as a solid black shape, without its soft shadow, for cable
+// masks. Cached per picture; resolves to "" if the picture can't be read.
+const SILHOUETTES = new Map();
+function silhouette(src) {
+  if (!SILHOUETTES.has(src)) {
+    SILHOUETTES.set(
+      src,
+      new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          try {
+            const c = document.createElement("canvas");
+            c.width = img.naturalWidth;
+            c.height = img.naturalHeight;
+            const g = c.getContext("2d");
+            g.drawImage(img, 0, 0);
+            const d = g.getImageData(0, 0, c.width, c.height);
+            const px = d.data;
+            for (let i = 0; i < px.length; i += 4) {
+              px[i] = px[i + 1] = px[i + 2] = 0;
+              px[i + 3] = px[i + 3] > 217 ? 255 : 0;
+            }
+            g.putImageData(d, 0, 0);
+            resolve(c.toDataURL("image/png"));
+          } catch {
+            resolve("");
+          }
+        };
+        img.onerror = () => resolve("");
+        img.src = src;
+      }),
+    );
+  }
+  return SILHOUETTES.get(src);
+}
+
 function svgInto(parent, markup) {
   const g = s("g");
   g.innerHTML = markup;
@@ -459,6 +495,14 @@ class SunFlowHouseCard extends SunFlowCard {
       if (o.flip) im.setAttribute("transform", `translate(${2 * x + w} 0) scale(-1 1)`);
       m.append(im);
       (this._maskImgs[i] ||= []).push(im);
+      // Some browsers (Safari) skip filters inside masks, so swap in a solid
+      // black copy of the car made on a canvas. The filter stays as a
+      // fallback for pictures a canvas can't read (other sites).
+      silhouette(o.image).then((url) => {
+        if (!url) return;
+        im.setAttribute("href", url);
+        im.removeAttribute("filter");
+      });
     };
     // Cars farther back than this one, and this one itself, go first; then
     // the reveal spots (the plug sits on this car's near side, in front of

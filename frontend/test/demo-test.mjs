@@ -71,7 +71,9 @@ const check = (ok, what) => {
   if (!ok) fails.push(what);
 };
 
-const browser = await chromium.launch({ executablePath: findChromium() });
+// SUNFLOW_BROWSER=webkit runs the same checks in WebKit (Safari's engine).
+const engine = process.env.SUNFLOW_BROWSER === "webkit" ? require("playwright-core").webkit : null;
+const browser = engine ? await engine.launch() : await chromium.launch({ executablePath: findChromium() });
 
 async function open({ width, height, scale = 2, mobile = false, reducedMotion = "no-preference" }) {
   const page = await browser.newPage({ viewport: { width, height }, deviceScaleFactor: scale, reducedMotion });
