@@ -52,32 +52,30 @@ export const DEMO_LAYOUT = {
   },
 };
 
-// My two cars, parked nose-in on the driveway, both on the one charger.
-// The pictures are 800x500 rear 3/4 cutouts. Each car sits in its own lane
-// of the driveway (measured on the picture: back edge 70.2,55.1 to 84,52.9,
-// front edge 79.8,65.1 to 96.7,59.3), rear toward the street.
-// Both charge ports are on the side we see: the Model Y's is in the rear
-// corner, the R1S's up front.
+// Two generic EVs made for this picture, same camera and light, with their
+// ground shadows baked in. Each sits in its own lane of the driveway
+// (measured on the picture: back edge 70.2,55.1 to 84,52.9, front edge
+// 79.8,65.1 to 96.7,59.3), nose toward the garage. Sizes come from the garage
+// door. The pickup is farther back, so it goes first and the SUV overlaps it.
 export const DEMO_CARS = [
   {
-    name: "Car 1",
-    image: "tesla",
-    slot: { x: 0.718, y: 0.538, w: 0.105 },
+    name: "Pickup",
+    image: "pickup",
+    slot: { x: 0.795, y: 0.505, w: 0.13 },
     flip: false,
-    port: [0.754, 0.591],
+    port: [0.8105, 0.5447], // front left fender
     cable_start: CHARGER,
-    // down the wall, across the driveway behind the bumper, up into the port
-    cable: "M0.828,0.521 C0.82,0.56 0.814,0.63 0.795,0.639 L0.768,0.641 C0.756,0.641 0.752,0.615 0.754,0.591",
-    chip: { x: 0.715, y: 0.8, align: "center" },
+    cable: "M0.828,0.521 C0.828,0.54 0.818,0.553 0.8105,0.5447",
+    chip: { x: 0.885, y: 0.8, align: "center" },
   },
   {
-    name: "Car 2",
-    image: "rivian",
-    slot: { x: 0.808, y: 0.513, w: 0.11 },
+    name: "SUV",
+    image: "suv",
+    slot: { x: 0.72, y: 0.552, w: 0.12 },
     flip: false,
-    port: [0.827, 0.557],
+    port: [0.788, 0.601], // rear left corner
     cable_start: CHARGER,
-    cable: "M0.828,0.521 C0.829,0.545 0.83,0.56 0.827,0.557",
-    chip: { x: 0.885, y: 0.8, align: "center" },
+    cable: "M0.828,0.521 C0.836,0.6 0.81,0.627 0.795,0.62 C0.788,0.616 0.786,0.608 0.788,0.601",
+    chip: { x: 0.715, y: 0.8, align: "center" },
   },
 ];

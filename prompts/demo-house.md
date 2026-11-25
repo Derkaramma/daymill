@@ -47,25 +47,29 @@ Exact same image, exact same camera, composition and slab, change nothing else: 
 
 ## Prompt 3: the cars
 
-Both generic, no badges, same chat.
+Same idea as the house: make the cars for this exact picture so they don't
+look pasted in. Attach the day render, then ask for one car at a time on a
+flat gray background, seen from the same camera as if it were parked in the
+driveway. Same chat for both so they match.
 
 ```text
-A generic, unbadged compact electric hatchback in red: rounded short hood,
-split tail lights, no logos, no brand lettering, no model badges, blank
-license plate area. Rear 3/4 view from about 2 stories up, as if parked
-nose-in on the driveway facing the garage, showing the rear and right side,
-with the charge port on the rear-right visible. Transparent background, no
-ground or shadow, PNG.
+Attached is a render of a house. I need a car to place into its driveway later.
+
+Create ONE generic, unbadged compact electric crossover SUV in pearl white, alone on a perfectly flat, plain, solid light gray (#E6E6E6) background.
+
+Show it exactly as it would look parked nose-in on the concrete driveway in front of the garage in the attached image: same camera height, same downward angle, same lens and perspective as the attached render. We see the back of the car and its left side, at the same angle the driveway runs in the picture. Match the soft late-morning lighting of the render exactly.
+
+Charge port door open on the rear left corner, visible.
+
+No logos, no brand lettering, no model badges, blank license plate area. No shadow under the car, no ground, no reflections of a ground surface, no text. Whole car visible with empty space around it. PNG, at least 1500 px wide.
 ```
 
 ```text
-Same angle, lighting and rules: a generic unbadged full-size electric pickup
-truck in white, plain square tail lights, open bed, charge port on the
-front-right fender visible. Transparent background, no logos, no text, PNG.
+Same exact camera angle, perspective, lighting and background as the last image, and the same rules: a generic, unbadged electric pickup truck in dark slate gray, parked nose-in in the other lane of the same driveway, so it sits just to the right of the first car. Charge port on the front left fender, visible. Flat #E6E6E6 background, no shadow, no logos, no text.
 ```
 
-If the transparency comes out fake, run them through a background remover
-(see [car-cutout.md](car-cutout.md)).
+The flat gray cuts out cleanly. I added the shadows under the tires myself
+after cutting them out, which is easier to get right than asking for them.
 
 ## Before it goes in the repo
 

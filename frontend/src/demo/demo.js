@@ -22,8 +22,8 @@ const IMG = {
   night: new URL("img/house-night.webp", import.meta.url).href,
 };
 const CAR_IMG = {
-  tesla: new URL("img/tesla.webp", import.meta.url).href,
-  rivian: new URL("img/rivian.webp", import.meta.url).href,
+  suv: new URL("img/ev1.webp", import.meta.url).href,
+  pickup: new URL("img/ev2.webp", import.meta.url).href,
 };
 
 // Every car gets made-up entities, so the simulator can park, plug in and
