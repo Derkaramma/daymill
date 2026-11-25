@@ -20,7 +20,8 @@
 //         presence_entity, charging_entity, power_entity, battery_entity,
 //         plugged_entity, limit_entity, charging_states: [...],
 //         cable_behind: [car index, ...]   cars that hide the cable where they stand in front of it
-//         cable_reveal: [[x, y, r], ...]   spots where the cable always shows, e.g. where it plugs in}]
+//         cable_reveal: [[x, y, r], ...]   spots where the cable always shows, e.g. where it plugs in
+//         charger_glow: [x, y]   where the charger glows while charging (default: cable start)}]
 // Any chip can take tether: [x, y], a thin line from the chip to that spot.
 
 // Internal drawing width. Height follows the picture's aspect ratio.
@@ -179,6 +180,7 @@ function car(c, i, where) {
     sunflow: c.sunflow ? String(c.sunflow) : "",
     chargingStates: Array.isArray(c.charging_states) ? c.charging_states.map((s) => String(s).toLowerCase()) : null,
     showCable: c.show_cable !== false,
+    chargerGlow: point(c.charger_glow, `${where}.charger_glow`),
     cableBehind: Array.isArray(c.cable_behind) ? c.cable_behind.map(Number).filter((n) => Number.isInteger(n) && n >= 0) : [],
     cableReveal: Array.isArray(c.cable_reveal)
       ? c.cable_reveal.map((r, j) => {

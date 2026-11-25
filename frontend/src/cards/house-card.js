@@ -250,6 +250,7 @@ class SunFlowHouseCard extends SunFlowCard {
     this._chips = {};
     this._cables = {};
     this._maskImgs = {};
+    this._glows = {};
     this._tethers = {};
     this._carEls = {};
     this._chargers = {};
@@ -349,11 +350,18 @@ class SunFlowHouseCard extends SunFlowCard {
         path("pulse p4", true),
         s("ellipse", { class: "cseal", cx: p.start[0], cy: p.start[1], rx: 5.2 * k, ry: 1.7 * k }),
       );
+      // the charger lights up while this car charges
+      const glowAt = c.chargerGlow ? P(c.chargerGlow) : p.start;
+      const glow = s("g", { class: "cglow" }, s("circle", { class: "cg1", cx: glowAt[0], cy: glowAt[1], r: 16 * k }), s("circle", { class: "cg2", cx: glowAt[0], cy: glowAt[1], r: 5 * k }));
       const handle = s("g", { class: "handle" });
       handle.innerHTML = HANDLE;
       g.append(handle);
       if (c.cableBehind.length) g.setAttribute("mask", `url(#${this._cableMask(defs, c)})`);
       svg.append(g);
+      // outside the cable's mask, so a car in front of the cable doesn't hide it
+      glow.setAttribute("data-glow", `car${c.index}`);
+      svg.append(glow);
+      this._glows[c.index] = glow;
       this._cables[c.index] = { g, core, handle, k };
       this._flows[`car${c.index}`] = g;
     }
@@ -797,6 +805,7 @@ class SunFlowHouseCard extends SunFlowCard {
       if (this._cables[c.index]) {
         setFlow(key, isCh && here, power || 3);
         this._cables[c.index].g.classList.toggle("plugged", !!(plugged && here));
+        this._glows[c.index]?.classList.toggle("on", !!(isCh && here));
       }
       if (isCh) out.push(power ? t("house_car_power", { name, power: pw(hass, power) }) : name);
 

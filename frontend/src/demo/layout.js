@@ -28,6 +28,7 @@ const WALL_FOOT = at(21.3, 57.7)[1]; // where the slats meet the plants
 const BELOW = at(CX, 62); // straight down from the box onto the lawn
 const LAWN_EDGE = at(11.2, 62); // then square left to the lawn edge
 const CHARGER = at(82.8, 47.6); // bottom of the wall charger
+const CHARGER_FACE = at(82.8, 43.6); // middle of the charger, where it glows
 
 export const DEMO_LAYOUT = {
   panel: { x: BOX_TOP[0], y: BOX_TOP[1], w: 0.001, h: 0.001, show: false },
@@ -73,6 +74,7 @@ export const DEMO_CARS = [
     flip: false,
     port: [0.8111, 0.572], // rear left quarter
     cable_start: CHARGER,
+    charger_glow: CHARGER_FACE,
     // down the wall, along the floor and out between the two cars, then in
     // under the SUV's back end and up to the port. Only the plug shows on
     // the car; the rest is hidden wherever a car is in front of it.
@@ -97,6 +99,7 @@ export const DEMO_CARS = [
     flip: false,
     port: [0.8157, 0.5404], // front left fender, behind the SUV
     cable_start: CHARGER,
+    charger_glow: CHARGER_FACE,
     // down the wall and round the pickup's nose into the fender. The SUV
     // hides it unless the SUV is away.
     cable: "M0.828,0.521 L0.828,0.56 C0.828,0.574 0.82,0.578 0.8157,0.5404",

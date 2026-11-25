@@ -151,6 +151,15 @@ g.on .track { opacity: .9; } g.on .pulse { opacity: .95; } g.on .halo { opacity:
 }
 .still .chip.charging, .still .chip.charging .bar i { animation: none !important; }
 
+/* the wall charger glows green while a car charges */
+.cglow { opacity: 0; transition: opacity .8s; pointer-events: none; }
+.cglow.on { opacity: 1; animation: sf-charger 1.8s ease-in-out infinite; }
+.cglow .cg1 { fill: rgba(47, 224, 138, .35); filter: url(#soft); }
+.cglow .cg2 { fill: rgba(160, 255, 205, .9); }
+@keyframes sf-charger { 0%, 100% { opacity: .45; } 50% { opacity: 1; } }
+.still .cglow.on { animation: none; }
+@media (prefers-reduced-motion: reduce) { .cglow.on { animation: none; } }
+
 /* a charging car's chip breathes and its bar runs */
 .chip.charging { animation: sf-chg-glow 2.4s ease-in-out infinite; }
 .chip.charging .bar i {
