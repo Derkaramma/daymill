@@ -27,9 +27,9 @@ const SLATS = at(21.3, MID)[0]; // wood slats right of the box
 const BELOW = at(CX, 62); // straight down from the box onto the lawn
 const LAWN_EDGE = at(11.2, 62); // then square left to the lawn edge
 // The battery picture hangs on the wall left of the box, under the window and
-// above the plants (11.6-13.7 across, 47.3-55.6 down; the wall's corner is at 11.1), tilted 5 degrees to
-// follow the wall (its edges run that much downhill to the right). Its line
-// runs straight out of the box's left side into the battery's right edge.
+// above the plants (11.6-13.7 across, 47.3-55.6 down; the wall's corner is
+// at 11.1), standing straight. Its line runs straight out of the box's left
+// side into the battery's right edge.
 const BATT_LEFT = 11.6;
 const BATT_W = 2.07;
 const BATT_TOP = 47.3;
@@ -54,7 +54,7 @@ export const DEMO_LAYOUT = {
     battery: [BOX_LEFT, BATT_EDGE],
   },
   // demo.js adds the battery pictures (BATTERY_IMG) next to the script
-  battery: { x: BATT.x, y: BATT.y, w: r(BATT.w), h: r(BATT.h), skew: 5, show: true },
+  battery: { x: BATT.x, y: BATT.y, w: r(BATT.w), h: r(BATT.h), show: true },
   // each chip sits next to the end of its own line
   chips: {
     solar: { x: 0.19, y: 0.19, align: "center" },
