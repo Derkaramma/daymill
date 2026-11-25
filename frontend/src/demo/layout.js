@@ -27,8 +27,19 @@ const SLATS = at(21.3, MID)[0]; // wood slats right of the box
 const WALL_FOOT = at(21.3, 57.7)[1]; // where the slats meet the plants
 const BELOW = at(CX, 62); // straight down from the box onto the lawn
 const LAWN_EDGE = at(11.2, 62); // then square left to the lawn edge
+// The battery picture hangs on the wall left of the box, under the window and
+// above the plants (12.9-14.6 across, 48-54.7 down). Its line runs straight
+// out of the box's left side into the battery's right edge.
+const BATT_TOP = 48;
+const BATT_H = 6.67;
+const BATT_MID = BATT_TOP + BATT_H / 2;
+const BATT = { x: at(12.9, BATT_TOP)[0], y: at(12.9, BATT_TOP)[1], w: 0.0167, h: 0.8 * BATT_H / 100 };
+const BOX_LEFT = at(15.15, BATT_MID); // just left of the box
+const BATT_EDGE = at(14.65, BATT_MID); // just right of the battery
 const CHARGER = at(82.8, 47.6); // bottom of the wall charger
 const CHARGER_FACE = at(82.8, 43.6); // middle of the charger, where it glows
+
+export const BATTERY_IMG = { day: "battery-day.webp", night: "battery-night.webp" };
 
 export const DEMO_LAYOUT = {
   panel: { x: BOX_TOP[0], y: BOX_TOP[1], w: 0.001, h: 0.001, show: false },
@@ -38,16 +49,16 @@ export const DEMO_LAYOUT = {
     solar: [[ROOF, BOX_TOP]],
     home: [BOX_RIGHT, [SLATS, BOX_RIGHT[1]], [SLATS, WALL_FOOT]],
     grid: [BOX_BOTTOM, BELOW, LAWN_EDGE],
-    // the box is the battery, so it gets a chip but no line
-    battery: false,
+    battery: [BOX_LEFT, BATT_EDGE],
   },
-  battery: { x: BOX_TOP[0], y: at(CX, 52)[1], w: 0.02, h: 0.05, show: true },
+  // demo.js adds the battery pictures (BATTERY_IMG) next to the script
+  battery: { x: BATT.x, y: BATT.y, w: BATT.w, h: r(BATT.h), show: true },
   // each chip sits next to the end of its own line
   chips: {
     solar: { x: 0.19, y: 0.19, align: "center" },
     rate: { x: 0.985, y: 0.035, align: "right" },
     today: { stack: true },
-    battery: { x: 0.015, y: 0.4, align: "left" },
+    battery: { x: 0.015, y: 0.4, align: "left", tether: [r(BATT.x - 0.004), r(BATT.y + BATT.h * 0.35)] },
     home: { x: 0.235, y: 0.63, align: "left" },
     grid: { x: 0.015, y: 0.69, align: "left" },
   },

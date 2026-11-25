@@ -119,6 +119,10 @@ addStrings("en", {
   ed_role_limit: "Charge limit",
 
   ed_show_battery: "Show the battery",
+  ed_battery_picture: "Battery picture (optional)",
+  ed_batt_day: "Day",
+  ed_batt_night: "Night (optional)",
+  ed_battery_picture_note: "A cutout of your battery with a see-through background, drawn in the battery box instead of the built-in one. It glows while the battery charges or discharges. Drag its corner to fit it to your wall.",
   ed_battery_note: "The battery and its line show up when SunFlow has a battery. Battery support is in beta.",
   ed_battery_line: "Battery line",
 

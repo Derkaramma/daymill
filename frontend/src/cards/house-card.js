@@ -261,6 +261,31 @@ class SunFlowHouseCard extends SunFlowCard {
     this.render();
   }
 
+  // The owner's battery picture in the battery box, with a soft glow behind
+  // it while it charges or discharges. Built with the DOM so a picture link
+  // can't break out of its attribute.
+  _batteryPicture(svg, b, opts) {
+    const g = s("g", { class: ["battery", "bimg", !opts.image_night && "no-night"] });
+    if (b.skew) {
+      const cx = b.x + b.w / 2;
+      const cy = b.y + b.h / 2;
+      g.setAttribute("transform", `translate(${cx},${cy}) skewY(${b.skew}) translate(${-cx},${-cy})`);
+    }
+    const pad = Math.min(b.w, b.h) * 0.35;
+    const rx = Math.min(b.w, b.h) * 0.25;
+    g.append(
+      s("rect", { class: "bshadow", x: b.x + b.w * 0.06, y: b.y + b.h * 0.04, width: b.w, height: b.h, rx: rx * 0.5, filter: "url(#soft)" }),
+      s("g", { class: "bglow" },
+        s("rect", { class: "bg1", x: b.x - pad, y: b.y - pad, width: b.w + 2 * pad, height: b.h + 2 * pad, rx: rx + pad, filter: "url(#soft)" }),
+        s("rect", { class: "bg2", x: b.x - pad * 0.3, y: b.y - pad * 0.3, width: b.w + pad * 0.6, height: b.h + pad * 0.6, rx: rx * 0.6, filter: "url(#soft)" })),
+    );
+    const pic = (cls, href) => s("image", { class: cls, href, x: b.x, y: b.y, width: b.w, height: b.h, preserveAspectRatio: "xMidYMid meet" });
+    g.append(pic("bday", opts.image));
+    if (opts.image_night) g.append(pic("bnight", opts.image_night));
+    svg.append(g);
+    return g;
+  }
+
   _imageLoaded(sync = false) {
     const img = this.$day;
     if (this._n.aspect || !img?.naturalWidth || !img.naturalHeight) return;
@@ -352,7 +377,10 @@ class SunFlowHouseCard extends SunFlowCard {
     const box = (b) => ({ x: b.x * VW, y: b.y * VH, w: b.w * VW, h: b.h * VH, skew: b.skew, style: b.style });
     if (L.panel.show) svgInto(svg, panelSvg(box(L.panel)));
     this.$batt = null;
-    if (this._hasBattery) {
+    if (this._hasBattery && L.battery.image) {
+      this.$batt = this._batteryPicture(svg, box(L.battery), L.battery);
+      this._battStrip = null;
+    } else if (this._hasBattery) {
       const b = batterySvg(box(L.battery));
       svgInto(svg, b.svg);
       this.$batt = svg.lastElementChild;
@@ -423,7 +451,8 @@ class SunFlowHouseCard extends SunFlowCard {
       svg.append(g);
       this._tethers[key] = g;
     };
-    for (const key of ["solar", "home", "grid", "battery"]) tether(key, L.chips[key]);
+    // the battery's chip (and so its tether) only exists with a battery
+    for (const key of ["solar", "home", "grid", "battery"]) if (key !== "battery" || this._hasBattery) tether(key, L.chips[key]);
     for (const c of this._placed) tether(`car${c.index}`, c.chipPos);
     layer.append(svg);
 
@@ -669,11 +698,13 @@ class SunFlowHouseCard extends SunFlowCard {
       if (this.$batt) {
         this.$batt.classList.toggle("charging", charging);
         this.$batt.classList.toggle("discharging", discharging);
-        const fill = this.$batt.querySelector(".bfill");
-        const frac = soc === undefined ? 0 : Math.max(0, Math.min(1, soc / 100));
-        const { top, len } = this._battStrip;
-        fill.setAttribute("y", String(top + len * (1 - frac)));
-        fill.setAttribute("height", String(Math.max(0.01, len * frac)));
+        const fill = this._battStrip && this.$batt.querySelector(".bfill");
+        if (fill) {
+          const frac = soc === undefined ? 0 : Math.max(0, Math.min(1, soc / 100));
+          const { top, len } = this._battStrip;
+          fill.setAttribute("y", String(top + len * (1 - frac)));
+          fill.setAttribute("height", String(Math.max(0.01, len * frac)));
+        }
       }
       if (charging) battText = t("house_sub_battery_charging", { power: pw(hass, batt) });
       else if (discharging) battText = t("house_sub_battery_discharging", { power: pw(hass, batt) });

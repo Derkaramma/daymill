@@ -14,12 +14,16 @@ import "../cards/house-card.js";
 import { adopt, h } from "../common/dom.js";
 import { SCENARIOS, TIMES } from "../common/simulator.js";
 import { previewCars, previewHass } from "../editor/preview-hass.js";
-import { DEMO_CARS, DEMO_LAYOUT } from "./layout.js";
+import { BATTERY_IMG, DEMO_CARS, DEMO_LAYOUT } from "./layout.js";
 import { cardSheet, hostSheet } from "./styles.js";
 
 const IMG = {
   day: new URL("img/house-day.webp", import.meta.url).href,
   night: new URL("img/house-night.webp", import.meta.url).href,
+};
+const BATT_IMG = {
+  day: new URL(`img/${BATTERY_IMG.day}`, import.meta.url).href,
+  night: new URL(`img/${BATTERY_IMG.night}`, import.meta.url).href,
 };
 const CAR_IMG = {
   suv: new URL("img/ev1.webp", import.meta.url).href,
@@ -36,7 +40,7 @@ const CONFIG = {
   image_night: IMG.night,
   image_aspect: "16/10",
   show_footer: false,
-  layout: DEMO_LAYOUT,
+  layout: { ...DEMO_LAYOUT, battery: { ...DEMO_LAYOUT.battery, image: BATT_IMG.day, image_night: BATT_IMG.night } },
   cars: CARS,
   colors: { scene_bg: "transparent" },
 };

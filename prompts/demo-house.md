@@ -71,6 +71,29 @@ Same exact camera angle, perspective, lighting and background as the last image,
 The flat gray cuts out cleanly. I added the shadows under the tires myself
 after cutting them out, which is easier to get right than asking for them.
 
+## Prompt 4: the battery
+
+Same idea again, for the battery that shows up on the left wall when a
+system has one. Attach the day render, same chat as the house.
+
+```text
+Attached is a render of a house. I need a home battery to place on its left side wall later, just left of the tall gray box, low on the wall above the bushes.
+
+Create ONE generic, unbranded wall-mounted home battery: a slim, rounded rectangular cabinet in matte white with a thin dark gray side trim and one small status light strip on the front. About half the height of the gray box next to it. Alone on a perfectly flat, plain, solid light gray (#E6E6E6) background.
+
+Show it exactly as it would look mounted flat on that left side wall in the attached image: same camera height, same downward angle, same lens and perspective as the render, so its front faces the same way as that wall. Match the soft late-morning lighting of the render exactly.
+
+No logos, no brand lettering, no text, no cables, no wall, no shadow, no ground. Whole unit visible with empty space around it. PNG, at least 800 px tall.
+```
+
+```text
+Exact same battery, same camera, angle and size, change nothing else: blue-hour dusk lighting to match the night version of the house, with the front status light strip glowing soft green. Background perfectly flat solid gray (#2A2A2A), no glow, no shadow.
+```
+
+The white front is almost the same gray as the background, so a plain color
+cut eats into it. I cut it out along its edges instead. The card adds the
+soft wall shadow and the glow while it charges or discharges.
+
 ## Before it goes in the repo
 
 - Zoom to 200% on everything and look for stray text, numbers, logos and

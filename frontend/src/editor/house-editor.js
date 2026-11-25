@@ -1216,8 +1216,33 @@ class HouseCardEditor extends HTMLElement {
       this._msg(t("ed_battery_note")),
       this._check(t("ed_show_battery"), L.battery.show, (v) => set({ show: v ? undefined : false }), "batt-show"),
       this._range(t("ed_tilt"), -75, 75, 1, L.battery.skew, (v) => set({ skew: v }, true), "batt-skew", "°"),
+      this._batteryPictures(L.battery, set),
       h("div", { class: "card" }, h("h4", { text: t("ed_battery_line") }), ...this._lineControls("battery")),
     ];
+  }
+
+  // Optional pictures of the owner's own battery, drawn in the battery box.
+  _batteryPictures(b, set) {
+    const row = (key, label) => {
+      const url = b[key] || "";
+      const m = this._msgs[`batt-${key}`];
+      const alpha = url ? this._alphaOf(url) : undefined;
+      return [
+        h("div", { class: "row" },
+          h("span", { class: "lab", text: label }),
+          this._fileButton(t("ed_upload_png"), "image/png,image/webp,image/*", (f) => this._uploadFile(f, "cutout", `batt-${key}`, (u) => set({ [key]: u })), `batt-${key}-up`),
+          url ? this._button(t("ed_remove"), () => set(key === "image" ? { image: undefined, image_night: undefined } : { [key]: undefined }), { k: `batt-${key}-rm`, cls: "danger" }) : null,
+        ),
+        m ? this._msg(m.text, m.kind) : null,
+        alpha === false ? this._msg(t("ed_no_alpha"), "warn") : null,
+      ];
+    };
+    return h("div", { class: "card" },
+      h("h4", { text: t("ed_battery_picture") }),
+      this._msg(t("ed_battery_picture_note")),
+      ...row("image", t("ed_batt_day")),
+      ...(b.image ? row("image_night", t("ed_batt_night")) : []),
+    );
   }
 
   // ---- labels ----

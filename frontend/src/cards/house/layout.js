@@ -9,7 +9,9 @@
 //   panel:    {x, y, w, h, skew, show, style: meter|box}
 //   junction: [x, y] (default: on the panel face) or {x, y, show}
 //   lines:    {solar: [line, ...], home: line, grid: line, battery: line}
-//   battery:  {x, y, w, h, skew, show}
+//   battery:  {x, y, w, h, skew, show, image, image_night}
+//             image: a picture of your battery (transparent PNG) drawn in the
+//             box instead of the built-in one; image_night is optional
 //   chips:    {solar|home|grid|battery|rate|today: {x, y, align, show}}
 //             today stacks under rate unless it has its own x/y.
 //   round_corners: true, or a radius as a fraction of the width
@@ -91,6 +93,16 @@ export function line(v, where) {
   const pts = v.map((p, i) => point(p, `${where}[${i}]`));
   if (pts.length < 2) fail(`${where} needs at least 2 points`);
   return { pts };
+}
+
+// optional picture links on a box: strings, or dropped when empty
+function pictureKeys(b, where) {
+  for (const k of ["image", "image_night"]) {
+    if (b[k] === undefined || b[k] === null || b[k] === "") delete b[k];
+    else if (typeof b[k] !== "string") fail(`${where}.${k} must be a picture link`);
+  }
+  if (!b.image) delete b.image_night;
+  return b;
 }
 
 function box(v, base, where) {
@@ -255,7 +267,7 @@ export function normalizeConfig(cfg) {
       junction,
       lines: lines(L.lines),
       round: L.round_corners === true ? ROUND_DEFAULT : clamp(nonNeg(L.round_corners, 0), 0, 0.05),
-      battery: box(L.battery, DEFAULT_LAYOUT.battery, "layout.battery"),
+      battery: pictureKeys(box(L.battery, DEFAULT_LAYOUT.battery, "layout.battery"), "layout.battery"),
       chips,
     },
     cars: cfg.cars === undefined || cfg.cars === null ? null : cfg.cars.map((c, i) => car(c, i, `cars[${i}]`)),

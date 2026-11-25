@@ -29,8 +29,6 @@ ha-card { background: transparent; border: 0; box-shadow: none; }
 /* the 2:1 picture runs full width in the 16:10 card; keep in step with
    PICTURE_Y in layout.js */
 .scene img.day, .scene img.night { object-fit: contain; object-position: 50% 70%; }
-/* the picture already has a battery on the wall; only the line and chip are drawn */
-.battery { display: none; }
 .node .nglow { fill: #f5e625; opacity: .55; }
 .node .ncore { fill: #fff; stroke: #1e4d35; stroke-width: 2; }
 

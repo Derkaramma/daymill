@@ -135,6 +135,22 @@ g.on .track { opacity: .9; } g.on .pulse { opacity: .95; } g.on .halo { opacity:
 /* panel, battery, junction */
 .is-night .panel, .is-night .battery { filter: brightness(.5); }
 .battery .bfill { fill: var(--sf-battery); opacity: .9; }
+/* a battery picture: night picture after dark (or the day one dimmed), and a
+   soft glow while it charges or discharges */
+.is-night .battery.bimg { filter: none; }
+.bimg .bshadow { fill: rgba(0, 0, 0, .28); }
+.bimg .bnight { opacity: 0; transition: opacity 1s; }
+.is-night .bimg .bnight { opacity: 1; }
+.is-night .bimg.no-night .bday { filter: brightness(var(--night-dim)) saturate(.8); }
+.bimg .bglow { opacity: 0; transition: opacity .8s; pointer-events: none; }
+.bimg .bg1 { fill: var(--sf-battery); opacity: .45; }
+.bimg .bg2 { fill: var(--sf-battery); opacity: .6; }
+.bimg.charging .bglow { opacity: 1; animation: sf-batt-in 2.4s ease-in-out infinite; }
+.bimg.discharging .bglow { opacity: .85; animation: sf-batt-out 2.4s ease-in-out infinite; }
+@keyframes sf-batt-in { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
+@keyframes sf-batt-out { 0% { opacity: 1; } 60%, 100% { opacity: .35; } }
+.still .bimg .bglow { animation: none; }
+@media (prefers-reduced-motion: reduce) { .bimg .bglow { animation: none !important; } }
 .battery .bled { fill: #9aa0a6; }
 .battery.charging .bled, .battery.discharging .bled { fill: var(--sf-battery); }
 .node .nglow { fill: var(--sf-export); opacity: .4; }
