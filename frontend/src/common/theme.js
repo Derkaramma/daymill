@@ -19,6 +19,13 @@ export const COLORS = {
   battery: "#b98cff",
   battery_pulse: "#efe4ff",
   battery_halo: "#c9a6ff",
+  // battery line while charging (green) and while powering the home (orange)
+  battery_charge: "#2fe08a",
+  battery_charge_pulse: "#d2ffe6",
+  battery_charge_halo: "#4dff9e",
+  battery_use: "#ff9f1c",
+  battery_use_pulse: "#ffe6c2",
+  battery_use_halo: "#ffb547",
   ev: "#3dffa0",
   ev_pulse: "#8dffc6",
   ev_core: "#e6fff2",
@@ -31,6 +38,10 @@ export const COLORS = {
   dot_today: "#c792ea",
   dot_credit: "#2fe08a",
   dot_car: "#33d6ff",
+  // battery chip dot by charge level: 50% and up, 20-49%, under 20%
+  dot_battery_high: "#3ddc84",
+  dot_battery_mid: "#ffb020",
+  dot_battery_low: "#ff5a4f",
   // ring and charts
   ring_grid: "#8a96a8",
   ring_solar: "#ffb020",

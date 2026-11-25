@@ -146,6 +146,8 @@ addStrings("en", {
   ed_col_export: "To grid",
   ed_col_home: "Home",
   ed_col_battery: "Battery",
+  ed_col_battery_charge: "Battery charging",
+  ed_col_battery_use: "Battery in use",
   ed_col_ev: "Car charging",
   ed_col_dot_car: "Car label",
   ed_reset_colors: "Reset all colors",

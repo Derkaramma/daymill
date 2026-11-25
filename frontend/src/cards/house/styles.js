@@ -94,10 +94,14 @@ g.on .track { opacity: .9; } g.on .pulse { opacity: .95; } g.on .halo { opacity:
 .export .track, .export .tglow { stroke: var(--sf-export); }
 .home .track, .home .tglow { stroke: var(--sf-home); }
 .batt .track, .batt .tglow { stroke: var(--sf-battery); }
+.batt.charging .track, .batt.charging .tglow { stroke: var(--sf-battery-charge); }
+.batt.discharging .track, .batt.discharging .tglow { stroke: var(--sf-battery-use); }
 .solar .pulse { stroke: var(--sf-solar-pulse); } .import .pulse { stroke: var(--sf-import-pulse); }
 .export .pulse { stroke: var(--sf-export-pulse); } .home .pulse { stroke: var(--sf-home-pulse); } .batt .pulse { stroke: var(--sf-battery-pulse); }
+.batt.charging .pulse { stroke: var(--sf-battery-charge-pulse); } .batt.discharging .pulse { stroke: var(--sf-battery-use-pulse); }
 .solar .halo { stroke: var(--sf-solar-halo); } .import .halo { stroke: var(--sf-import-halo); }
 .export .halo { stroke: var(--sf-export-halo); } .home .halo { stroke: var(--sf-home-halo); } .batt .halo { stroke: var(--sf-battery-halo); }
+.batt.charging .halo { stroke: var(--sf-battery-charge-halo); } .batt.discharging .halo { stroke: var(--sf-battery-use-halo); }
 
 /* EV cable: matte black cable on the ground, handle in the port, a soft
    light gliding along it while charging. Sizes scale with --k (car size). */
@@ -145,6 +149,8 @@ g.on .track { opacity: .9; } g.on .pulse { opacity: .95; } g.on .halo { opacity:
 .bimg .bglow { opacity: 0; transition: opacity .8s; pointer-events: none; }
 .bimg .bg1 { fill: var(--sf-battery); opacity: .45; }
 .bimg .bg2 { fill: var(--sf-battery); opacity: .6; }
+.bimg.charging .bg1, .bimg.charging .bg2 { fill: var(--sf-battery-charge); }
+.bimg.discharging .bg1, .bimg.discharging .bg2 { fill: var(--sf-battery-use); }
 .bimg.charging .bglow { opacity: 1; animation: sf-batt-in 2.4s ease-in-out infinite; }
 .bimg.discharging .bglow { opacity: .85; animation: sf-batt-out 2.4s ease-in-out infinite; }
 @keyframes sf-batt-in { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
@@ -152,7 +158,8 @@ g.on .track { opacity: .9; } g.on .pulse { opacity: .95; } g.on .halo { opacity:
 .still .bimg .bglow { animation: none; }
 @media (prefers-reduced-motion: reduce) { .bimg .bglow { animation: none !important; } }
 .battery .bled { fill: #9aa0a6; }
-.battery.charging .bled, .battery.discharging .bled { fill: var(--sf-battery); }
+.battery.charging .bled { fill: var(--sf-battery-charge); }
+.battery.discharging .bled { fill: var(--sf-battery-use); }
 .node .nglow { fill: var(--sf-export); opacity: .4; }
 .node .ncore { fill: #f2fff7; stroke: var(--sf-export); stroke-width: 1.5; }
 

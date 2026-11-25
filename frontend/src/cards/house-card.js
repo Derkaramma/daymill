@@ -690,13 +690,21 @@ class SunFlowHouseCard extends SunFlowCard {
       const charging = batt !== null && batt < -th.battery;
       const discharging = batt !== null && batt > th.battery;
       setFlow("battery", charging || discharging, batt, "batt", discharging);
+      // green while charging, orange while it powers the home
+      this._flows.battery?.classList.toggle("charging", charging);
+      this._flows.battery?.classList.toggle("discharging", discharging);
       const status = charging
         ? t("house_battery_charging", { power: pw(hass, batt) })
         : discharging
           ? t("house_battery_discharging", { power: pw(hass, batt) })
           : t("house_battery_idle");
       this._set("battery", soc === undefined ? (batt === null ? U : pw(hass, batt)) : `${Math.round(soc)}%`, status);
-      if (this._chips.battery) this._bar(this._chips.battery, soc, undefined, "batt");
+      if (this._chips.battery) {
+        this._bar(this._chips.battery, soc, undefined, "batt");
+        // the dot shows how full it is: green 50% and up, orange 20-49%, red under 20%
+        const level = soc === undefined ? null : soc >= 50 ? "dot_battery_high" : soc >= 20 ? "dot_battery_mid" : "dot_battery_low";
+        this._chips.battery.dot.style.background = v(level || "battery");
+      }
       if (this.$batt) {
         this.$batt.classList.toggle("charging", charging);
         this.$batt.classList.toggle("discharging", discharging);

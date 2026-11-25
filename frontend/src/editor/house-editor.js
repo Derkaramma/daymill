@@ -20,7 +20,7 @@ import "./strings.js";
 
 const TABS = ["photo", "panel", "lines", "cars", "battery", "labels", "colors", "backup"];
 const EMIT_MS = 300;
-const COLOR_KEYS = ["solar", "import", "export", "home", "battery", "ev", "dot_car"];
+const COLOR_KEYS = ["solar", "import", "export", "home", "battery_charge", "battery_use", "ev", "dot_car"];
 const ROLE_DOMAINS = {
   presence_entity: ["device_tracker", "person", "binary_sensor"],
   charging_entity: ["binary_sensor", "sensor", "switch"],
