@@ -271,7 +271,7 @@ class SunFlowHouseCard extends SunFlowCard {
       const cy = b.y + b.h / 2;
       g.setAttribute("transform", `translate(${cx},${cy}) skewY(${b.skew}) translate(${-cx},${-cy})`);
     }
-    const pad = Math.min(b.w, b.h) * 0.35;
+    const pad = Math.min(b.w, b.h) * 0.28;
     const rx = Math.min(b.w, b.h) * 0.25;
     g.append(
       s("rect", { class: "bshadow", x: b.x + b.w * 0.06, y: b.y + b.h * 0.04, width: b.w, height: b.h, rx: rx * 0.5, filter: "url(#soft)" }),
@@ -380,6 +380,8 @@ class SunFlowHouseCard extends SunFlowCard {
     if (this._hasBattery && L.battery.image) {
       this.$batt = this._batteryPicture(svg, box(L.battery), L.battery);
       this._battStrip = null;
+      // keep its line on top of the glow, so the flow stays easy to see
+      if (this._flows.battery) svg.append(this._flows.battery);
     } else if (this._hasBattery) {
       const b = batterySvg(box(L.battery));
       svgInto(svg, b.svg);

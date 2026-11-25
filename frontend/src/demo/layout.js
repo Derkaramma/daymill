@@ -24,18 +24,20 @@ const BOX_RIGHT = at(18.2, MID); // just right of it
 const BOX_BOTTOM = at(CX, 55.4); // just below it
 const ROOF = at(CX, 22.5); // up on the roof, straight above the box
 const SLATS = at(21.3, MID)[0]; // wood slats right of the box
-const WALL_FOOT = at(21.3, 57.7)[1]; // where the slats meet the plants
 const BELOW = at(CX, 62); // straight down from the box onto the lawn
 const LAWN_EDGE = at(11.2, 62); // then square left to the lawn edge
 // The battery picture hangs on the wall left of the box, under the window and
-// above the plants (12.9-14.6 across, 48-54.7 down). Its line runs straight
-// out of the box's left side into the battery's right edge.
-const BATT_TOP = 48;
-const BATT_H = 6.67;
+// above the plants (11.6-13.7 across, 47.3-55.6 down; the wall's corner is at 11.1), tilted 5 degrees to
+// follow the wall (its edges run that much downhill to the right). Its line
+// runs straight out of the box's left side into the battery's right edge.
+const BATT_LEFT = 11.6;
+const BATT_W = 2.07;
+const BATT_TOP = 47.3;
+const BATT_H = 8.27;
 const BATT_MID = BATT_TOP + BATT_H / 2;
-const BATT = { x: at(12.9, BATT_TOP)[0], y: at(12.9, BATT_TOP)[1], w: 0.0167, h: 0.8 * BATT_H / 100 };
+const BATT = { x: at(BATT_LEFT, BATT_TOP)[0], y: at(BATT_LEFT, BATT_TOP)[1], w: BATT_W / 100, h: 0.8 * BATT_H / 100 };
 const BOX_LEFT = at(15.15, BATT_MID); // just left of the box
-const BATT_EDGE = at(14.65, BATT_MID); // just right of the battery
+const BATT_EDGE = at(BATT_LEFT + BATT_W + 0.15, BATT_MID); // just right of the battery
 const CHARGER = at(82.8, 47.6); // bottom of the wall charger
 const CHARGER_FACE = at(82.8, 43.6); // middle of the charger, where it glows
 
@@ -47,12 +49,12 @@ export const DEMO_LAYOUT = {
   round_corners: 0.006,
   lines: {
     solar: [[ROOF, BOX_TOP]],
-    home: [BOX_RIGHT, [SLATS, BOX_RIGHT[1]], [SLATS, WALL_FOOT]],
+    home: [BOX_RIGHT, [SLATS, BOX_RIGHT[1]]],
     grid: [BOX_BOTTOM, BELOW, LAWN_EDGE],
     battery: [BOX_LEFT, BATT_EDGE],
   },
   // demo.js adds the battery pictures (BATTERY_IMG) next to the script
-  battery: { x: BATT.x, y: BATT.y, w: BATT.w, h: r(BATT.h), show: true },
+  battery: { x: BATT.x, y: BATT.y, w: r(BATT.w), h: r(BATT.h), skew: 5, show: true },
   // each chip sits next to the end of its own line
   chips: {
     solar: { x: 0.19, y: 0.19, align: "center" },
