@@ -10,6 +10,13 @@ VERSION: Final = "0.1.2"
 NAME: Final = "DayMill"
 DEVICE_NAME: Final = "DayMill"
 
+# DayMill used to be called SunFlow. Its entries can be imported (move.py).
+OLD_DOMAIN: Final = "sunflow_solar"
+# Kept in entry.data after an import, never part of the config itself.
+CONF_IMPORTED_FROM = "imported_from"  # old entry id, until its ledger is copied
+CONF_OLD_ENTITIES = "sunflow_entities"  # key -> old entity id and its settings
+MOVE_KEYS: Final = (CONF_IMPORTED_FROM, CONF_OLD_ENTITIES)
+
 PLATFORMS: Final = ["binary_sensor", "sensor"]
 
 # ---- config keys ----

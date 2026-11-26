@@ -2,20 +2,36 @@
 
 from __future__ import annotations
 
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.config_entries import SOURCE_INTEGRATION_DISCOVERY, ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryError
+from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers import discovery_flow
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.storage import Store
+from homeassistant.helpers.typing import ConfigType
 
 from .const import DOMAIN, MONEY_KEYS, PLATFORMS, STORAGE_VERSION
 from .coordinator import DayMillConfigEntry, DayMillCoordinator
 from .frontend import async_remove_frontend, async_setup_frontend
+from .move import async_copy_store, async_delete_issues, async_setup_move, old_entries
 from .repairs import async_setup_repairs
 from .tariff import TariffError
 
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
+
+
+async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
+    """Offer the SunFlow import when SunFlow is set up and DayMill isn't yet."""
+    if old_entries(hass) and not hass.config_entries.async_entries(DOMAIN):
+        discovery_flow.async_create_flow(
+            hass, DOMAIN, context={"source": SOURCE_INTEGRATION_DISCOVERY}, data={}
+        )
+    return True
+
 
 async def async_setup_entry(hass: HomeAssistant, entry: DayMillConfigEntry) -> bool:
+    await async_copy_store(hass, entry)  # only does something right after an import
     coordinator = DayMillCoordinator(hass, entry)
     try:
         await coordinator.async_setup()
@@ -32,6 +48,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: DayMillConfigEntry) -> b
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     await async_setup_frontend(hass, entry)
     async_setup_repairs(hass, entry)
+    await async_setup_move(hass, entry)
     # First totals read in the background; the 5 minute timer takes over after.
     entry.async_create_background_task(hass, coordinator.async_refresh_totals(), "daymill_totals")
     return True
@@ -66,4 +83,5 @@ async def async_unload_entry(hass: HomeAssistant, entry: DayMillConfigEntry) -> 
 async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Delete the stored ledger and the dashboard resource along with the entry."""
     await async_remove_frontend(hass, entry)
+    async_delete_issues(hass)
     await Store(hass, STORAGE_VERSION, f"{DOMAIN}.{entry.entry_id}").async_remove()

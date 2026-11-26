@@ -8,6 +8,24 @@
           "system": "Solar system"
         }
       },
+      "move": {
+        "title": "Coming from SunFlow?",
+        "description": "DayMill used to be called SunFlow, and SunFlow is set up here. You can bring its settings over, or start fresh.",
+        "menu_options": {
+          "import_sunflow": "Import settings from SunFlow",
+          "fresh": "Set up from scratch"
+        }
+      },
+      "import_sunflow": {
+        "title": "Import settings from SunFlow",
+        "description": "This copies everything from **{title}**: your sensors, panels, battery, cars, rate plan and billing cycle, plus the lifetime totals so far. SunFlow itself isn't changed.\n\nAfter that:\n1. Check that the DayMill dashboard looks right.\n2. Delete SunFlow in Devices & services.\n3. Delete the `custom_components/sunflow_solar` folder and restart.\n4. In Settings > Repairs, open **Take over your old SunFlow entity IDs** so your automations and Energy dashboard keep working.",
+        "data": {
+          "create_dashboard": "Create the DayMill dashboard"
+        },
+        "data_description": {
+          "create_dashboard": "Copies your SunFlow dashboard, house picture and layout included, to a new DayMill dashboard. The SunFlow one stays until you delete it."
+        }
+      },
       "no_solar": {
         "title": "Welcome to DayMill",
         "description": "DayMill didn't find any solar in Home Assistant yet.\n\n**SunPower:** install [pvs-hass]({pvs_url}). The password is the last 5 characters of your PVS serial number. Turn on live data and keep polling at 15 seconds or more.\n\n**Other brands:** add [your solar integration]({integrations_url}) first.\n\nThen come back here, or try DayMill with demo data.",
@@ -195,7 +213,8 @@
     },
     "abort": {
       "already_configured": "DayMill is already set up.",
-      "single_instance_allowed": "DayMill is already set up."
+      "single_instance_allowed": "DayMill is already set up.",
+      "no_sunflow": "SunFlow isn't set up here anymore, so there's nothing to import. Add DayMill again to set it up from scratch."
     }
   },
   "options": {
@@ -543,6 +562,29 @@
     "source_unavailable": {
       "title": "DayMill can't read some sensors",
       "description": "These sensors have been missing or unavailable for over an hour: {entities}\n\nCheck the integration they come from, or pick other sensors in [DayMill's options]({options_url})."
+    },
+    "take_over_sunflow_ids": {
+      "title": "Take over your old SunFlow entity IDs",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "Take over your old SunFlow entity IDs",
+            "description": "SunFlow is gone, so DayMill can use its {count} old entity IDs, names, icons, areas and labels. Your automations, scripts and the Energy dashboard keep working without changes.\n\nHistory and long-term statistics recorded under the old IDs carry on. What DayMill recorded under its own `daymill_` IDs since the import stays behind, and Home Assistant logs a \"Cannot rename\" or \"Cannot migrate history\" line for each of those. That's expected."
+          },
+          "skipped": {
+            "title": "Some IDs were taken",
+            "description": "These entity IDs already belong to something else, so DayMill kept its own IDs for them:\n\n{skipped}\n\nYou can rename them by hand under Settings > Entities."
+          }
+        },
+        "abort": {
+          "nothing_to_do": "There's nothing left to take over.",
+          "sunflow_still_there": "SunFlow is still set up. Delete it in Devices & services first, then come back here."
+        }
+      }
+    },
+    "remove_sunflow_folder": {
+      "title": "Delete the old SunFlow folder",
+      "description": "SunFlow is gone, but its files are still in `{folder}` in your config folder. HACS doesn't remove them for you. Delete that folder and restart Home Assistant."
     }
   }
 }

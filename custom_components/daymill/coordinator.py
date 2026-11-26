@@ -86,6 +86,7 @@ from .const import (
     DEVICE_NAME,
     DOMAIN,
     MONEY_KEYS,
+    MOVE_KEYS,
     NAME,
     SOURCE_DEMO,
     STORAGE_SAVE_DELAY,
@@ -118,8 +119,14 @@ type DayMillConfigEntry = ConfigEntry[DayMillCoordinator]
 
 
 def entry_config(entry: ConfigEntry) -> dict[str, Any]:
-    """Options win once the user has saved them; they hold the full config."""
-    return dict(entry.options) if entry.options else dict(entry.data)
+    """Options win once the user has saved them; they hold the full config.
+
+    The SunFlow import notes in entry.data are left out.
+    """
+    conf = dict(entry.options) if entry.options else dict(entry.data)
+    for key in MOVE_KEYS:
+        conf.pop(key, None)
+    return conf
 
 
 def _pto_year(conf: Mapping[str, Any]) -> int | None:

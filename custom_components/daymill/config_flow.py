@@ -2,7 +2,8 @@
 
 Setup: welcome (pick a detected system, set it up by hand, or use demo
 data) -> sources -> panels -> battery -> cars -> rates (-> NEM 3.0) ->
-finish. Demo data skips straight to rates.
+finish. Demo data skips straight to rates. When SunFlow (the old name) is
+set up, a menu first offers to import its settings instead.
 
 Options: a menu that opens any one of those pages and saves the whole
 config into entry.options, which the coordinator prefers over entry.data.
@@ -110,6 +111,7 @@ from .const import (
 )
 from .coordinator import build_engine, entry_config
 from .frontend import async_create_dashboard
+from .move import async_copy_dashboard, import_entry, old_entries
 from .sources import ENERGY_UNITS, POWER_UNITS
 from .tariff import TariffError, list_presets
 
@@ -322,10 +324,13 @@ def energy_guide(conf: Mapping[str, Any]) -> str:
     return "\n".join(lines)
 
 
-async def _create_dashboard(hass: HomeAssistant) -> str:
+async def _create_dashboard(hass: HomeAssistant, copy_sunflow: bool = False) -> str:
     """'created', 'exists' or 'failed'."""
     try:
-        created = await async_create_dashboard(hass)
+        if copy_sunflow:
+            created = await async_copy_dashboard(hass)
+        else:
+            created = await async_create_dashboard(hass)
     except HomeAssistantError as err:
         _LOGGER.warning("Could not create the DayMill dashboard: %s", err)
         return "failed"
@@ -853,6 +858,7 @@ class DayMillConfigFlow(_Steps, ConfigFlow, domain=DOMAIN):
     def __init__(self) -> None:
         self._conf: dict[str, Any] = {}
         self._init_state()
+        self._fresh = False
 
     async def _after(self, step: str) -> ConfigFlowResult:
         nxt = {
@@ -867,6 +873,8 @@ class DayMillConfigFlow(_Steps, ConfigFlow, domain=DOMAIN):
     async def async_step_user(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         await self.async_set_unique_id(DOMAIN)
         self._abort_if_unique_id_configured()
+        if user_input is None and not self._fresh and old_entries(self.hass):
+            return await self.async_step_move()
         if user_input is None:
             self._systems = None  # look again, the user may have just added something
         systems = self._detected()
@@ -894,6 +902,45 @@ class DayMillConfigFlow(_Steps, ConfigFlow, domain=DOMAIN):
             ),
             description_placeholders={"found": ", ".join(s.label for s in systems)},
         )
+
+    # ---- moving over from SunFlow ----
+
+    async def async_step_integration_discovery(
+        self, discovery_info: dict[str, Any]
+    ) -> ConfigFlowResult:
+        """Started by async_setup when SunFlow is set up and DayMill isn't."""
+        await self.async_set_unique_id(DOMAIN)
+        self._abort_if_unique_id_configured()
+        if not old_entries(self.hass):
+            return self.async_abort(reason="no_sunflow")
+        return await self.async_step_move()
+
+    async def async_step_move(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        return self.async_show_menu(step_id="move", menu_options=["import_sunflow", "fresh"])
+
+    async def async_step_fresh(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        self._fresh = True
+        return await self.async_step_user()
+
+    async def async_step_import_sunflow(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        olds = old_entries(self.hass)
+        if not olds:
+            return self.async_abort(reason="no_sunflow")
+        old = olds[0]
+        if user_input is None:
+            return self.async_show_form(
+                step_id="import_sunflow",
+                data_schema=vol.Schema(
+                    {vol.Required(CONF_CREATE_DASHBOARD, default=True): BooleanSelector()}
+                ),
+                description_placeholders={"title": old.title},
+            )
+        data, options = import_entry(self.hass, old)
+        if user_input.get(CONF_CREATE_DASHBOARD):
+            await _create_dashboard(self.hass, copy_sunflow=True)
+        return self.async_create_entry(title=NAME, data=data, options=options)
 
     async def async_step_no_solar(
         self, user_input: dict[str, Any] | None = None
