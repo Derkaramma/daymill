@@ -2,7 +2,7 @@
 
 > **SunFlow is now DayMill.** Same integration, same look, new name. This is
 > the last SunFlow release. See
-> [Moving from SunFlow](https://github.com/Derkaramma/daymill#moving-from-sunflow)
+> [Moving from SunFlow](#moving-from-sunflow)
 > for the steps.
 
 **Take your power back.**
@@ -12,6 +12,25 @@ it's saving you, and what your bill is going to be, on a picture of your own
 house with the power flowing through it.
 
 ![The house card during the day](docs/images/house-day.png)
+
+## Moving from SunFlow
+
+SunFlow is now DayMill. Same integration, same look, new name. Your setup
+keeps working as is. When DayMill 0.2.0 is out:
+
+1. When the DayMill update shows up in HACS, install it and restart Home
+   Assistant.
+2. Go to Settings > Devices & services. DayMill should show up as
+   discovered. If it doesn't, add it yourself. Then pick **Import settings
+   from SunFlow**.
+3. Open the new DayMill dashboard and check your numbers, house picture
+   and cars.
+4. Delete the SunFlow integration entry, then delete the
+   `custom_components/sunflow_solar` folder and restart.
+5. In Settings > Repairs, open **Take over your old SunFlow entity IDs**
+   so your automations and Energy dashboard keep working.
+
+The full steps will be on the DayMill page once it's out.
 
 ## Why I built this
 

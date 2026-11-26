@@ -546,7 +546,7 @@
     },
     "moved_to_daymill": {
       "title": "SunFlow is now DayMill",
-      "description": "SunFlow is now DayMill. Same integration, new name. To move:\n\n1. In HACS, update to DayMill and restart.\n2. Add DayMill in Devices & services and pick **Import settings from SunFlow**.\n3. Check your dashboard, then delete SunFlow.\n4. Open the DayMill repair to take over your old entity IDs."
+      "description": "SunFlow is now DayMill. Same integration, new name. Nothing to do until DayMill 0.2.0 is out. Then:\n\n1. When the DayMill update shows up in HACS, install it and restart.\n2. Go to Devices & services. DayMill should show up as discovered (if not, add it yourself). Add it and pick **Import settings from SunFlow**.\n3. Check your dashboard, then delete SunFlow.\n4. Open the DayMill repair to take over your old entity IDs."
     }
   }
 }

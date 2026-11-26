@@ -2,14 +2,20 @@
 
 from __future__ import annotations
 
+from unittest.mock import patch
+
 from homeassistant.components import persistent_notification
+from homeassistant.config_entries import SOURCE_INTEGRATION_DISCOVERY
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import issue_registry as ir
+from homeassistant.loader import IntegrationNotFound
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.sunflow_solar.const import DOMAIN
 from custom_components.sunflow_solar.moving import (
     ISSUE_MOVED,
     LEARN_MORE_URL,
+    NEW_DOMAIN,
     NOTIFICATION_ID,
 )
 
@@ -59,3 +65,38 @@ async def test_remove_drops_issue_keeps_store(hass: HomeAssistant, hass_storage)
     # DayMill imports the ledger later, so it has to survive the removal
     assert key in hass_storage
     assert hass_storage[key]["data"]["ledger"]
+
+
+MOVING = "custom_components.sunflow_solar.moving"
+
+
+async def test_no_daymill_installed_no_flow(hass: HomeAssistant) -> None:
+    with (
+        patch(f"{MOVING}.async_get_integration", side_effect=IntegrationNotFound(NEW_DOMAIN)),
+        patch(f"{MOVING}.discovery_flow.async_create_flow") as create,
+    ):
+        await setup_entry(hass)
+    create.assert_not_called()
+
+
+async def test_daymill_installed_starts_its_flow(hass: HomeAssistant) -> None:
+    with (
+        patch(f"{MOVING}.async_get_integration") as get,
+        patch(f"{MOVING}.discovery_flow.async_create_flow") as create,
+    ):
+        await setup_entry(hass)
+    get.assert_awaited_once_with(hass, NEW_DOMAIN)
+    create.assert_called_once()
+    assert create.call_args.args[1] == NEW_DOMAIN
+    assert create.call_args.kwargs["context"] == {"source": SOURCE_INTEGRATION_DISCOVERY}
+
+
+async def test_daymill_already_added_no_flow(hass: HomeAssistant) -> None:
+    MockConfigEntry(domain=NEW_DOMAIN, data={}).add_to_hass(hass)
+    with (
+        patch(f"{MOVING}.async_get_integration") as get,
+        patch(f"{MOVING}.discovery_flow.async_create_flow") as create,
+    ):
+        await setup_entry(hass)
+    get.assert_not_called()
+    create.assert_not_called()
