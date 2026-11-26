@@ -220,8 +220,7 @@ history behind them.
 
 **What doesn't:** the old dashboard URL (the new one is `/daymill`), the
 statistics DayMill recorded under its own `daymill_` IDs between steps 3 and
-7, and any YAML that uses the `sunflow_solar` domain. Home Assistant logs a
-"Cannot rename" line for each sensor in step 7. That's expected.
+7, and any YAML that uses the `sunflow_solar` domain.
 
 Old `custom:sunflow-*` cards and `custom:sunflow` dashboards still work. New
 ones are `custom:daymill-*`.
