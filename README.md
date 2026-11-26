@@ -1,5 +1,8 @@
 # DayMill
 
+> **Used SunFlow?** This is the same integration with a new name. See
+> [Moving from SunFlow](#moving-from-sunflow).
+
 **Take your power back.**
 
 A free Home Assistant integration that shows what your solar is doing, what
@@ -187,6 +190,39 @@ prices, and your real bill has stuff DayMill can't see. It should land close,
 but trust your bill over the dashboard.
 
 Not on your plan? Open an issue with a link to your utility's rate sheet.
+
+## Moving from SunFlow
+
+DayMill used to be called SunFlow. Same integration, same look, new name.
+Moving over takes a few minutes:
+
+1. Update SunFlow to 0.1.2 in HACS and restart. You'll see a "SunFlow is now
+   DayMill" notice. (If you skip this, that's fine.)
+2. In HACS, update again. The repo is now DayMill (0.2.0). Restart Home
+   Assistant.
+3. Go to **Settings > Devices & services**. DayMill shows up there, or add it
+   yourself. Pick **Import settings from SunFlow**.
+4. Open the new DayMill dashboard and check that your numbers, house picture
+   and cars look right.
+5. Delete the SunFlow integration entry.
+6. Delete the `custom_components/sunflow_solar` folder (HACS won't do it for
+   you), then restart.
+7. In **Settings > Repairs**, open **Take over your old SunFlow entity IDs**
+   and confirm. Your automations and Energy dashboard keep working.
+8. Optional: delete the old SunFlow dashboard.
+
+**What comes with you:** your settings, the billing cycle, lifetime totals,
+the house layout and pictures, and, after step 7, your old entity IDs with
+their names, icons, areas and labels, plus the Energy dashboard links and the
+history behind them.
+
+**What doesn't:** the old dashboard URL (the new one is `/daymill`), the
+statistics DayMill recorded under its own `daymill_` IDs between steps 3 and
+7, and any YAML that uses the `sunflow_solar` domain. Home Assistant logs a
+"Cannot rename" line for each sensor in step 7. That's expected.
+
+Old `custom:sunflow-*` cards and `custom:sunflow` dashboards still work. New
+ones are `custom:daymill-*`.
 
 ## Privacy
 

@@ -6,7 +6,7 @@ from datetime import timedelta
 from typing import Final
 
 DOMAIN: Final = "daymill"
-VERSION: Final = "0.1.2"
+VERSION: Final = "0.2.0"
 NAME: Final = "DayMill"
 DEVICE_NAME: Final = "DayMill"
 
