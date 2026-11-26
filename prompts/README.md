@@ -59,13 +59,13 @@ The easy way is the house card editor: open the card, pick your day picture,
 night picture and car cutouts, then drag the lines and cars into place. The
 pictures get uploaded to your own Home Assistant.
 
-You can also copy the files into `/config/www/sunflow/` and point the card at
+You can also copy the files into `/config/www/daymill/` and point the card at
 them yourself:
 
 ```yaml
 type: custom:daymill-house-card
-image_day: /local/sunflow/house-day.jpg
-image_night: /local/sunflow/house-night.jpg
+image_day: /local/daymill/house-day.jpg
+image_night: /local/daymill/house-night.jpg
 ```
 
 Heads up: anything in `/config/www` (and any uploaded picture link) can be
