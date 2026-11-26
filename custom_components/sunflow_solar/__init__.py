@@ -6,11 +6,11 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryError
 from homeassistant.helpers import entity_registry as er
-from homeassistant.helpers.storage import Store
 
-from .const import DOMAIN, MONEY_KEYS, PLATFORMS, STORAGE_VERSION
+from .const import DOMAIN, MONEY_KEYS, PLATFORMS
 from .coordinator import SunFlowConfigEntry, SunFlowCoordinator
 from .frontend import async_remove_frontend, async_setup_frontend
+from .moving import async_setup_moving, remove_moving_issue
 from .repairs import async_setup_repairs
 from .tariff import TariffError
 
@@ -32,6 +32,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: SunFlowConfigEntry) -> b
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     await async_setup_frontend(hass, entry)
     async_setup_repairs(hass, entry)
+    await async_setup_moving(hass, entry)
     # First totals read in the background; the 5 minute timer takes over after.
     entry.async_create_background_task(
         hass, coordinator.async_refresh_totals(), "sunflow_solar_totals"
@@ -66,6 +67,10 @@ async def async_unload_entry(hass: HomeAssistant, entry: SunFlowConfigEntry) -> 
 
 
 async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
-    """Delete the stored ledger and the dashboard resource along with the entry."""
+    """Drop the dashboard resource and the move notice along with the entry.
+
+    The stored ledger stays on purpose: DayMill imports it, and people may
+    delete SunFlow before they get around to that.
+    """
     await async_remove_frontend(hass, entry)
-    await Store(hass, STORAGE_VERSION, f"{DOMAIN}.{entry.entry_id}").async_remove()
+    remove_moving_issue(hass)

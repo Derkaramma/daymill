@@ -1,5 +1,10 @@
 # SunFlow Solar
 
+> **SunFlow is now DayMill.** Same integration, same look, new name. This is
+> the last SunFlow release. See
+> [Moving from SunFlow](https://github.com/Derkaramma/daymill#moving-from-sunflow)
+> for the steps.
+
 **Take your power back.**
 
 A free Home Assistant integration that shows what your solar is doing, what

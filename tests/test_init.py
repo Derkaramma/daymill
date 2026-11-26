@@ -144,16 +144,6 @@ async def test_cycle_day_change_keeps_cycle(hass: HomeAssistant, freezer) -> Non
     assert attrs["import_kwh"] == 5.0
 
 
-async def test_remove_entry_deletes_store(hass: HomeAssistant, hass_storage) -> None:
-    entry = await setup_entry(hass)
-    assert await hass.config_entries.async_unload(entry.entry_id)
-    await hass.async_block_till_done()
-    assert f"{DOMAIN}.{entry.entry_id}" in hass_storage
-    await hass.config_entries.async_remove(entry.entry_id)
-    await hass.async_block_till_done()
-    assert f"{DOMAIN}.{entry.entry_id}" not in hass_storage
-
-
 async def test_nem3_settings_reach_the_ledger(hass: HomeAssistant, freezer) -> None:
     freezer.move_to("2026-07-15 12:00:00-07:00")
     config = {**BASE_CONFIG, "nem": "nem3", "pto_date": "2024-05-01", "arecr": 0.02}

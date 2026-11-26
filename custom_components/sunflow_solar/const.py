@@ -6,7 +6,7 @@ from datetime import timedelta
 from typing import Final
 
 DOMAIN: Final = "sunflow_solar"
-VERSION: Final = "0.1.1"
+VERSION: Final = "0.1.2"
 NAME: Final = "SunFlow Solar"
 # Short device name: entity names already say "Solar" where it matters.
 DEVICE_NAME: Final = "SunFlow"

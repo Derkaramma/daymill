@@ -266,6 +266,7 @@ class SunFlowCoordinator(DataUpdateCoordinator[Snapshot]):
         self.cars = cars_from_config(self.conf)
         self.max_age = float(self.conf.get(CONF_MAX_AGE, DEFAULT_MAX_AGE))
         self.problem_since: datetime | None = None
+        self.moved_notice_shown = False
         self.demo = self.conf.get(CONF_SOURCE) == SOURCE_DEMO
         self._demo_last: datetime | None = None
         self._demo_snap: dict[str, Any] | None = None
@@ -352,6 +353,7 @@ class SunFlowCoordinator(DataUpdateCoordinator[Snapshot]):
             self.energy[key] = sources.to_number((stored.get("energy") or {}).get(key))
         since = stored.get("problem_since")
         self.problem_since = dt_util.parse_datetime(since) if since else None
+        self.moved_notice_shown = bool(stored.get("moved_notice_shown"))
 
     @callback
     def async_start(self) -> None:
@@ -403,7 +405,12 @@ class SunFlowCoordinator(DataUpdateCoordinator[Snapshot]):
             "ledger": self.ledger.to_dict(),
             "energy": dict(self.energy),
             "problem_since": self.problem_since.isoformat() if self.problem_since else None,
+            "moved_notice_shown": self.moved_notice_shown,
         }
+
+    async def async_save(self) -> None:
+        """Write the Store right away instead of waiting for the delayed save."""
+        await self._store.async_save(self._data_to_save())
 
     @callback
     def _schedule_save(self) -> None:

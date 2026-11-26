@@ -543,6 +543,10 @@
     "source_unavailable": {
       "title": "SunFlow can't read some sensors",
       "description": "These sensors have been missing or unavailable for over an hour: {entities}\n\nCheck the integration they come from, or pick other sensors in [SunFlow's options]({options_url})."
+    },
+    "moved_to_daymill": {
+      "title": "SunFlow is now DayMill",
+      "description": "SunFlow is now DayMill. Same integration, new name. To move:\n\n1. In HACS, update to DayMill and restart.\n2. Add DayMill in Devices & services and pick **Import settings from SunFlow**.\n3. Check your dashboard, then delete SunFlow.\n4. Open the DayMill repair to take over your old entity IDs."
     }
   }
 }
