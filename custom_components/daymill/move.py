@@ -20,6 +20,7 @@ from pathlib import Path
 from typing import Any
 
 import voluptuous as vol
+from homeassistant.components.recorder import get_instance
 from homeassistant.components.repairs import RepairsFlow
 from homeassistant.config_entries import (
     SIGNAL_CONFIG_ENTRY_CHANGED,
@@ -228,6 +229,7 @@ def async_take_over(hass: HomeAssistant, entry: ConfigEntry) -> tuple[list[str],
     mapping: dict[str, dict[str, Any]] = entry.data.get(CONF_OLD_ENTITIES) or {}
     moved: list[str] = []
     skipped: list[str] = []
+    planned: list[tuple[str, str, dict[str, Any]]] = []
     for key, old in sorted(mapping.items()):
         old_id = old.get("entity_id")
         if not isinstance(old_id, str) or "." not in old_id:
@@ -243,6 +245,16 @@ def async_take_over(hass: HomeAssistant, entry: ConfigEntry) -> tuple[list[str],
         if not _free(hass, registry, old_id):
             skipped.append(old_id)
             continue
+        planned.append((current, old_id, old))
+
+    # The old SunFlow history lives under the old ids and should keep going
+    # there. The few hours DayMill recorded under its own ids would block the
+    # recorder's rename (and log an error per sensor), so drop them first. The
+    # recorder runs its jobs in order, so this lands before the renames.
+    if planned:
+        get_instance(hass).async_clear_statistics([current for current, _, _ in planned])
+
+    for current, old_id, old in planned:
         changes: dict[str, Any] = {"new_entity_id": old_id}
         for field in ("name", "icon", "area_id"):
             if old.get(field) is not None:

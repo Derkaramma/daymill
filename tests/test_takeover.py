@@ -168,3 +168,36 @@ async def test_take_over_waits_for_sunflow(hass: HomeAssistant) -> None:
     assert result["reason"] == "sunflow_still_there"
     assert entry.data[CONF_OLD_ENTITIES]
     assert er.async_get(hass).async_get("sensor.daymill_solar_power") is not None
+
+
+async def test_take_over_clears_daymill_statistics_first(hass: HomeAssistant) -> None:
+    """The recorder can't rename onto the old ids while DayMill's own short
+    series exists, so those are cleared, and only for ids being taken over."""
+    old, _entry = await _imported(hass)
+    await hass.config_entries.async_remove(old.entry_id)
+    await hass.async_block_till_done()
+
+    instance = move.get_instance(hass)
+    with patch.object(instance, "async_clear_statistics") as clear:
+        manager, result = await _fix(hass)
+        await manager.async_configure(result["flow_id"], {})
+        await hass.async_block_till_done()
+    clear.assert_called_once()
+    (ids,), _ = clear.call_args
+    assert "sensor.daymill_solar_power" in ids
+    assert all(i.split(".", 1)[1].startswith("daymill_") for i in ids)
+
+
+async def test_take_over_clears_nothing_when_all_taken(hass: HomeAssistant) -> None:
+    old, _entry = await _imported(hass)
+    await hass.config_entries.async_remove(old.entry_id)
+    await hass.async_block_till_done()
+    for state in [s.entity_id for s in hass.states.async_all() if s.entity_id.startswith("sensor.daymill_")]:
+        hass.states.async_set(state.replace("daymill_", "sunflow_", 1), "1")
+
+    instance = move.get_instance(hass)
+    with patch.object(instance, "async_clear_statistics") as clear:
+        manager, result = await _fix(hass)
+        await manager.async_configure(result["flow_id"], {})
+        await hass.async_block_till_done()
+    clear.assert_not_called()
