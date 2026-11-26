@@ -1,6 +1,7 @@
 """Serve the card bundle and keep its Lovelace resource up to date.
 
-- The bundle in ./frontend is served at /daymill/ once per HA run.
+- The bundle in ./frontend is served at /daymill/daymill-cards.js once per
+  HA run. Only that file, so the /daymill dashboard URL stays free.
 - Storage mode resources: add /daymill/daymill-cards.js?v=<version>,
   bump the ?v= on upgrades, never add a second copy, and remove it when the
   integration is deleted.
@@ -155,7 +156,9 @@ async def _async_register_static(hass: HomeAssistant) -> None:
     if not await hass.async_add_executor_job((FRONTEND_DIR / BUNDLE).is_file):
         _LOGGER.warning("Card bundle missing at %s; build it with `npm run build`", FRONTEND_DIR)
     await hass.http.async_register_static_paths(
-        [StaticPathConfig(URL_BASE, str(FRONTEND_DIR), cache_headers=True)]
+        # Serve just the file. A folder route at /daymill would also grab the
+        # DayMill dashboard's own URL and a page refresh there gets a 403.
+        [StaticPathConfig(f"{URL_BASE}/{BUNDLE}", str(FRONTEND_DIR / BUNDLE), cache_headers=True)]
     )
     data.static = True
 

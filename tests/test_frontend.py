@@ -77,6 +77,16 @@ async def test_storage_mode_adds_resource_and_serves_bundle(
     assert "max-age" in resp.headers.get("Cache-Control", "")
 
 
+async def test_dashboard_url_is_left_alone(hass: HomeAssistant, hass_client) -> None:
+    """Only the bundle file is ours. /daymill itself belongs to the dashboard."""
+    await _setup_lovelace(hass)
+    await _setup_entry(hass)
+    client = await hass_client()
+    for path in ("/daymill", "/daymill/", "/daymill/0", "/daymill/home"):
+        resp = await client.get(path)
+        assert resp.status == 404, path
+
+
 async def test_reload_does_not_duplicate(hass: HomeAssistant) -> None:
     await _setup_lovelace(hass)
     entry = await _setup_entry(hass)
