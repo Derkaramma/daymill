@@ -197,11 +197,13 @@ DayMill used to be called SunFlow. Same integration, same look, new name.
 Moving over takes a few minutes:
 
 1. Update SunFlow to 0.1.2 in HACS and restart. You'll see a "SunFlow is now
-   DayMill" notice. (If you skip this, that's fine.)
+   DayMill" notice. (If you skip this, that's fine, you'll just add DayMill
+   yourself in step 3.)
 2. In HACS, update again. The repo is now DayMill (0.2.0). Restart Home
    Assistant.
-3. Go to **Settings > Devices & services**. DayMill shows up there, or add it
-   yourself. Pick **Import settings from SunFlow**.
+3. Go to **Settings > Devices & services**. If you're on SunFlow 0.1.2,
+   DayMill shows up there as discovered. If not, click **Add integration**
+   and pick DayMill. Then pick **Import settings from SunFlow**.
 4. Open the new DayMill dashboard and check that your numbers, house picture
    and cars look right.
 5. Delete the SunFlow integration entry.

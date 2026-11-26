@@ -2,32 +2,21 @@
 
 from __future__ import annotations
 
-from homeassistant.config_entries import SOURCE_INTEGRATION_DISCOVERY, ConfigEntry
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryError
 from homeassistant.helpers import config_validation as cv
-from homeassistant.helpers import discovery_flow
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.storage import Store
-from homeassistant.helpers.typing import ConfigType
 
 from .const import DOMAIN, MONEY_KEYS, PLATFORMS, STORAGE_VERSION
 from .coordinator import DayMillConfigEntry, DayMillCoordinator
 from .frontend import async_remove_frontend, async_setup_frontend
-from .move import async_copy_store, async_delete_issues, async_setup_move, old_entries
+from .move import async_copy_store, async_delete_issues, async_setup_move
 from .repairs import async_setup_repairs
 from .tariff import TariffError
 
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
-
-
-async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
-    """Offer the SunFlow import when SunFlow is set up and DayMill isn't yet."""
-    if old_entries(hass) and not hass.config_entries.async_entries(DOMAIN):
-        discovery_flow.async_create_flow(
-            hass, DOMAIN, context={"source": SOURCE_INTEGRATION_DISCOVERY}, data={}
-        )
-    return True
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: DayMillConfigEntry) -> bool:

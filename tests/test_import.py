@@ -173,27 +173,40 @@ async def test_import_after_sunflow_is_gone(hass: HomeAssistant, no_setup) -> No
 
 
 async def test_discovery(hass: HomeAssistant, no_setup) -> None:
+    """SunFlow 0.1.2 starts this flow once it sees DayMill installed."""
     add_sunflow(hass)
-    assert await async_setup_component(hass, DOMAIN, {})
-    await hass.async_block_till_done()
-    flows = hass.config_entries.flow.async_progress_by_handler(DOMAIN)
-    assert len(flows) == 1
-    assert flows[0]["context"]["source"] == config_entries.SOURCE_INTEGRATION_DISCOVERY
-    assert flows[0]["step_id"] == "move"
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_INTEGRATION_DISCOVERY}, data={}
+    )
+    assert result["type"] is FlowResultType.MENU
+    assert result["step_id"] == "move"
 
 
-async def test_no_discovery_without_sunflow(hass: HomeAssistant, no_setup) -> None:
-    assert await async_setup_component(hass, DOMAIN, {})
-    await hass.async_block_till_done()
-    assert not hass.config_entries.flow.async_progress_by_handler(DOMAIN)
+async def test_discovery_without_sunflow_aborts(hass: HomeAssistant, no_setup) -> None:
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_INTEGRATION_DISCOVERY}, data={}
+    )
+    assert result["type"] is FlowResultType.ABORT
+    assert result["reason"] == "no_sunflow"
 
 
-async def test_no_discovery_once_set_up(hass: HomeAssistant, no_setup) -> None:
+async def test_discovery_once_set_up_aborts(hass: HomeAssistant, no_setup) -> None:
     add_sunflow(hass)
     MockConfigEntry(domain=DOMAIN, data=dict(BASE_CONFIG), unique_id=DOMAIN).add_to_hass(hass)
-    assert await async_setup_component(hass, DOMAIN, {})
-    await hass.async_block_till_done()
-    assert not hass.config_entries.flow.async_progress_by_handler(DOMAIN)
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_INTEGRATION_DISCOVERY}, data={}
+    )
+    assert result["type"] is FlowResultType.ABORT
+    assert result["reason"] == "single_instance_allowed"
+
+
+async def test_only_one_discovery_flow(hass: HomeAssistant, no_setup) -> None:
+    add_sunflow(hass)
+    for _ in range(2):
+        await hass.config_entries.flow.async_init(
+            DOMAIN, context={"source": config_entries.SOURCE_INTEGRATION_DISCOVERY}, data={}
+        )
+    assert len(hass.config_entries.flow.async_progress_by_handler(DOMAIN)) == 1
 
 
 # ---- the ledger ----

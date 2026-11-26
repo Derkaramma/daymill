@@ -908,7 +908,7 @@ class DayMillConfigFlow(_Steps, ConfigFlow, domain=DOMAIN):
     async def async_step_integration_discovery(
         self, discovery_info: dict[str, Any]
     ) -> ConfigFlowResult:
-        """Started by async_setup when SunFlow is set up and DayMill isn't."""
+        """Started by SunFlow 0.1.2 once it sees DayMill installed but not added."""
         await self.async_set_unique_id(DOMAIN)
         self._abort_if_unique_id_configured()
         if not old_entries(self.hass):
