@@ -9,7 +9,7 @@
 //   title: "..."                     # false hides the header
 
 import { DayMillCard, asButton, defineCard, h } from "../common/base.js";
-import { PLATFORM, PLATFORMS, attr, num, numAttr, state } from "../common/entities.js";
+import { PLATFORM, attr, num, numAttr, state } from "../common/entities.js";
 import { DASH, date, money, num as fmtNum, periodLabel, price, seasonLabel, t, time } from "../common/format.js";
 import { periodColor } from "../common/theme.js";
 import { duration, humanize, localDate, nemMode } from "../common/chart-helpers.js";
@@ -60,7 +60,7 @@ class RatesCard extends DayMillCard {
   get dayEntity() {
     if (this.config.billing_day_entity) return this.config.billing_day_entity;
     for (const e of Object.values(this.hass?.entities || {})) {
-      if (PLATFORMS.includes(e?.platform) && DAY_KEYS.includes(e.translation_key)) return e.entity_id;
+      if (e?.platform === PLATFORM && DAY_KEYS.includes(e.translation_key)) return e.entity_id;
     }
     return undefined;
   }

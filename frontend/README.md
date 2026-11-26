@@ -29,7 +29,6 @@ export NODE_PATH=/some/dir/node_modules
 | `npm run build` | Minified build into `custom_components/daymill/frontend/` |
 | `npm run watch` | Rebuild on every change (not minified) |
 | `node test/check.mjs` | Node-only checks: JS simulator vs `simulator.py`, entity lookup, formatting, websocket helpers |
-| `node test/check-aliases.mjs` | The old `sunflow-*` names still work, and both bundles can load together (needs a Chromium) |
 | `node test/shoot.mjs --card '<json>' --out card.png` | Render one card in headless Chromium and save a PNG |
 
 `test/check.mjs` runs the Python simulator to compare numbers, so it needs a
@@ -67,7 +66,7 @@ src/
   cards/              one file per card, plus the dashboard strategy
   common/
     base.js           DayMillCard base class and defineCard()
-    define.js         defines each element under its old sunflow-* name too
+    define.js         defines each custom element once
     dom.js            h()/s() element builders, sheet(), adopt(), asButton()
     entities.js       find DayMill entities, read states, unit conversion, data age
     format.js         money, kW, kWh, %, times, and the string table t()
@@ -108,16 +107,11 @@ class NowCard extends DayMillCard {
 defineCard("daymill-now-card", NowCard, { name: "DayMill now", description: "..." });
 ```
 
-`defineCard()` also registers `sunflow-now-card` as an alias, so dashboards
-from before the rename keep working. Only the DayMill name shows up in the
-card picker.
-
 How it works:
 
 - **Finding entities.** Cards never hardcode entity ids. `this.entities` maps
   each key in `static keys` to an entity id. It looks through `hass.entities`
-  for entries from the `daymill` platform with that `translation_key`
-  (or the old `sunflow_solar` one, when there are no DayMill entities yet).
+  for entries from the `daymill` platform with that `translation_key`.
   A user can override any key in the card config:
   `entities: {solar_power: sensor.other}`.
 - **When it renders.** `render()` runs when one of the watched states changes,

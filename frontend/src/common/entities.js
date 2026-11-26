@@ -1,8 +1,7 @@
 // Finding DayMill entities and reading them safely.
 //
 // Cards never hardcode entity ids. They look in the entity registry
-// (hass.entities) for entries of the daymill platform (or sunflow_solar, the
-// old name, until people move over) and match on
+// (hass.entities) for entries of the daymill platform and match on
 // translation_key, so renamed entities keep working. A card config can still
 // point any key at another entity:
 //
@@ -11,9 +10,6 @@
 //     cost_today: sensor.my_cost
 
 export const PLATFORM = "daymill";
-// The old SunFlow platform. Read only when no DayMill entities exist, so the
-// cards keep working on a SunFlow install that hasn't moved yet.
-export const PLATFORMS = [PLATFORM, "sunflow_solar"];
 
 // translation_key -> domain. Car keys repeat once per car.
 export const KEYS = {
@@ -71,9 +67,8 @@ export function daymillIndex(hass) {
   if (idx) return idx;
   idx = {};
   const entries = Object.values(reg);
-  const platform = PLATFORMS.find((p) => entries.some((e) => e?.platform === p && e.translation_key));
   for (const entry of entries) {
-    if (entry?.platform !== platform || !entry.translation_key) continue;
+    if (entry?.platform !== PLATFORM || !entry.translation_key) continue;
     (idx[entry.translation_key] ||= []).push(entry.entity_id);
   }
   for (const list of Object.values(idx)) list.sort();
@@ -140,12 +135,11 @@ export function daymillCars(hass) {
   return cars;
 }
 
-// Car name from the entity name "DayMill <car> charging at home", or the old
-// "SunFlow <car> charging at home" (English names only); otherwise the slug in
-// title case.
+// Car name from the entity name "DayMill <car> charging at home" (English
+// names only); otherwise the slug in title case.
 function carName(hass, car) {
   const fn = hass?.states?.[car.charging]?.attributes?.friendly_name;
-  const m = typeof fn === "string" && fn.match(/^(?:(?:DayMill|SunFlow)\s+)?(.+?)\s+charging at home$/i);
+  const m = typeof fn === "string" && fn.match(/^(?:DayMill\s+)?(.+?)\s+charging at home$/i);
   if (m) return m[1];
   if (!car.slug) return null;
   return car.slug.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());

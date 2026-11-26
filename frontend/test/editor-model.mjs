@@ -59,12 +59,6 @@ check("cars: found cars become config cars linked by slug", () => {
   assert.deepEqual(next.cars, [{ daymill: "a", name: "A" }, { daymill: "b", name: "B", flip: true, slot: { x: 0.1, y: 0.5, w: 0.2 } }]);
 });
 
-check("cars: old sunflow keys are saved as daymill", () => {
-  const cfg = { type: "x", cars: [{ sunflow: "a", name: "A" }, { daymill: "b" }, { name: "C" }] };
-  assert.deepEqual(M.renameCarKeys(cfg).cars, [{ name: "A", daymill: "a" }, { daymill: "b" }, { name: "C" }]);
-  assert.deepEqual(M.renameCarKeys({ type: "x" }), { type: "x" });
-});
-
 check("snap prefers targets, then lines up with neighbors", () => {
   assert.deepEqual(M.snap([103, 100], [[100, 100]], []), [100, 100]);
   assert.deepEqual(M.snap([203, 150], [[100, 100]], [[200, 50]]), [200, 150]);

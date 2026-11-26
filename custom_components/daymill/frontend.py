@@ -9,7 +9,6 @@
   repair issue that tells the user what to add.
 - async_create_dashboard() makes a "daymill" dashboard that uses the
   custom:daymill strategy. Nothing calls it on its own.
-- Once SunFlow (the old name) is gone, its resource goes too.
 """
 
 from __future__ import annotations
@@ -21,20 +20,19 @@ from typing import Any
 from urllib.parse import urlsplit
 
 from homeassistant.components.http import StaticPathConfig
-from homeassistant.config_entries import ConfigEntry, ConfigEntryState
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EVENT_COMPONENT_LOADED
 from homeassistant.core import Event, HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import issue_registry as ir
 from homeassistant.util.hass_dict import HassKey
 
-from .const import DOMAIN, OLD_DOMAIN, VERSION
+from .const import DOMAIN, VERSION
 
 _LOGGER = logging.getLogger(__name__)
 
 URL_BASE = f"/{DOMAIN}"
 BUNDLE = "daymill-cards.js"
-OLD_BUNDLE_PATH = f"/{OLD_DOMAIN}/sunflow-cards.js"
 FRONTEND_DIR = Path(__file__).parent / "frontend"
 ISSUE_YAML = "frontend_resource_yaml"
 
@@ -74,10 +72,6 @@ def _url_path(url: Any) -> str | None:
 
 def _is_ours(url: Any) -> bool:
     return _url_path(url) == f"{URL_BASE}/{BUNDLE}"
-
-
-def _is_old(url: Any) -> bool:
-    return _url_path(url) == OLD_BUNDLE_PATH
 
 
 def _data(hass: HomeAssistant) -> _FrontendData:
@@ -209,7 +203,6 @@ async def async_register_resource(hass: HomeAssistant) -> str | None:
 
     async with data.lock:
         await _async_ensure_loaded(resources)
-        await _async_remove_old(hass, resources)
         ours = [i for i in resources.async_items() if _is_ours(i.get("url"))]
         if not ours:
             await resources.async_create_item({"res_type": "module", "url": url})
@@ -223,22 +216,6 @@ async def async_register_resource(hass: HomeAssistant) -> str | None:
             _LOGGER.debug("Updated dashboard resource to %s", url)
             return "updated"
         return "updated" if extra else "present"
-
-
-async def _async_remove_old(hass: HomeAssistant, resources: Any) -> None:
-    """Drop SunFlow's resource once no SunFlow entry is loaded.
-
-    Two copies of the cards are harmless (the old element names are taken by
-    whichever loads first), but a resource that 404s after the old folder is
-    deleted isn't. If SunFlow is still running it adds its resource back.
-    """
-    if any(
-        e.state is ConfigEntryState.LOADED for e in hass.config_entries.async_entries(OLD_DOMAIN)
-    ):
-        return
-    for item in [i for i in resources.async_items() if _is_old(i.get("url"))]:
-        await resources.async_delete_item(item["id"])
-        _LOGGER.debug("Removed the old SunFlow resource %s", item.get("url"))
 
 
 # ---- dashboard ----
@@ -260,10 +237,8 @@ async def async_create_dashboard(
     hass: HomeAssistant,
     url_path: str = DASHBOARD_URL,
     title: str = DASHBOARD_TITLE,
-    config: dict[str, Any] | None = None,
 ) -> bool:
-    """Create a storage dashboard that runs the DayMill strategy, or uses
-    config when given (a dashboard copied over from SunFlow).
+    """Create a storage dashboard that runs the DayMill strategy.
 
     Returns False when a dashboard already uses url_path.
     """
@@ -284,5 +259,5 @@ async def async_create_dashboard(
             "require_admin": False,
         }
     )
-    await dashboards[url_path].async_save(config or {"strategy": dict(STRATEGY)})
+    await dashboards[url_path].async_save({"strategy": dict(STRATEGY)})
     return True

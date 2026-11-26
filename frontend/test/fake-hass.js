@@ -15,9 +15,6 @@ import {
 } from "../src/common/simulator.js";
 
 export const PLATFORM = "daymill";
-// opts.platform: "sunflow_solar" builds the same house as an old SunFlow
-// install (sunflow_* ids, "SunFlow ..." names).
-const NAMES = { daymill: ["daymill", "DayMill"], sunflow_solar: ["sunflow", "SunFlow"] };
 const DEVICE_ID = "daymill_device";
 
 // Example tariff. Not a real utility.
@@ -97,8 +94,8 @@ export function createFakeHass(opts = {}) {
   const carCount = Math.max(0, Math.min(2, opts.cars ?? 2));
   const ageMs = (opts.staleMinutes || 0) * 60_000;
   const health = opts.health || "OK";
-  const platform = opts.platform || PLATFORM;
-  const [prefix, brand] = NAMES[platform];
+  const platform = PLATFORM;
+  const [prefix, brand] = ["daymill", "DayMill"];
 
   const nowIso = new Date(now).toISOString();
   const srcIso = new Date(now - ageMs).toISOString();

@@ -202,31 +202,6 @@ async def test_diagnostics_when_not_loaded(hass: HomeAssistant) -> None:
     assert "sensor." not in json.dumps(diag)
 
 
-async def test_diagnostics_hide_the_sunflow_entity_map(hass: HomeAssistant) -> None:
-    """Right after an import the map's keys carry car names."""
-    entry = MockConfigEntry(
-        domain=DOMAIN,
-        data={
-            **CONFIG,
-            "sunflow_entities": {
-                "car_dads_model_y_charging_at_home": {
-                    "entity_id": "binary_sensor.sunflow_dads_model_y_charging_at_home",
-                    "name": "Dad's Model Y",
-                    "area_id": "garage",
-                    "labels": ["ev"],
-                },
-                "solar_power": {"entity_id": "sensor.sunflow_solar_power"},
-            },
-        },
-    )
-    entry.add_to_hass(hass)
-    diag = await async_get_config_entry_diagnostics(hass, entry)
-    assert diag["entry"]["data"]["sunflow_entities"] == 2
-    text = json.dumps(diag).lower()
-    for word in ("model_y", "model y", "garage", "sunflow_solar_power"):
-        assert word not in text
-
-
 def test_scrub_catches_values_under_any_key() -> None:
     out = scrub(
         {

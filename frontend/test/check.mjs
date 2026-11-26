@@ -111,29 +111,6 @@ await check("cars pair up by slug", () => {
   assert.ok(!E.isOn(hass, cars[1].charging));
 });
 
-await check("an old SunFlow install still works", () => {
-  const old = createFakeHass({ scenario: "car-charging", platform: "sunflow_solar" });
-  assert.equal(E.entityId(old, "solar_power"), "sensor.sunflow_solar_power");
-  assert.ok(E.hasDayMill(old));
-  const cars = E.daymillCars(old);
-  assert.equal(cars[0].charging, "binary_sensor.sunflow_car_car_1_charging_at_home");
-  assert.equal(cars[0].name, "Car 1");
-});
-
-await check("DayMill wins when both are there", () => {
-  const both = createFakeHass({ platform: "sunflow_solar" });
-  const ours = createFakeHass();
-  both.entities = { ...both.entities, ...ours.entities };
-  both.states = { ...both.states, ...ours.states };
-  assert.equal(E.entityId(both, "solar_power"), "sensor.daymill_solar_power");
-  assert.ok(E.entityIds(both, "car_charging_at_home").every((id) => id.includes(".daymill_")));
-});
-
-await check("house layout reads the old sunflow car key", () => {
-  const n = L.normalizeConfig({ cars: [{ sunflow: "car_1" }, { daymill: "car_2", sunflow: "x" }, {}] });
-  assert.deepEqual(n.cars.map((c) => c.daymill), ["car_1", "car_2", ""]);
-});
-
 await check("state readers and units", () => {
   const id = "sensor.daymill_solar_power";
   assert.equal(E.powerKw(hass, id), simulate("car-charging", "day").solar_kw);

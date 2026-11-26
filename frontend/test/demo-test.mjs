@@ -109,9 +109,6 @@ const settle = (page) => page.waitForTimeout(1900); // the day/night crossfade i
   l = await log();
   check(l.change.at(-1)?.scenario === "cloudy", "attribute change works");
 
-  check(JSON.stringify(l.oldReady) === JSON.stringify(l.ready) && JSON.stringify(l.oldChange) === JSON.stringify(l.change), "old sunflow-demo-* events match the new ones");
-  check(await page.evaluate(() => document.createElement("sunflow-demo") instanceof customElements.get("daymill-demo")), "<sunflow-demo> still works");
-
   const before = l.change.length;
   const r = await page.evaluate(() => {
     const el = document.getElementById("demo");

@@ -209,8 +209,7 @@ export class DayMillCard extends HTMLElement {
   }
 }
 
-// Define the element (and its old SunFlow name) once and list it in the card
-// picker. Only the DayMill name goes in the picker.
+// Define the element once and list it in the card picker.
 export function defineCard(tag, cls, info = {}) {
   defineElement(tag, cls);
   window.customCards = window.customCards || [];

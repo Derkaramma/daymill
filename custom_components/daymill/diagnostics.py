@@ -30,7 +30,6 @@ from .const import (
     CONF_GRID_POWER_FALLBACK,
     CONF_HOME_POWER,
     CONF_IMPORT_ENERGY,
-    CONF_OLD_ENTITIES,
     CONF_PANEL_LIST,
     CONF_PANELS,
     CONF_PTO_DATE,
@@ -213,15 +212,6 @@ def _snapshot(coordinator: Any) -> dict[str, Any] | None:
     }
 
 
-def _entry_data(entry: ConfigEntry) -> dict[str, Any]:
-    """entry.data, with the SunFlow entity map cut down to a count. Its keys
-    have car names in them, and redaction only looks at values."""
-    data = dict(entry.data)
-    if CONF_OLD_ENTITIES in data:
-        data[CONF_OLD_ENTITIES] = len(data[CONF_OLD_ENTITIES] or {})
-    return data
-
-
 async def async_get_config_entry_diagnostics(
     hass: HomeAssistant, entry: ConfigEntry
 ) -> dict[str, Any]:
@@ -235,7 +225,7 @@ async def async_get_config_entry_diagnostics(
         },
         "entry": {
             "title": entry.title,
-            "data": scrub(_entry_data(entry)),
+            "data": scrub(dict(entry.data)),
             "options": scrub(dict(entry.options)),
         },
         "layout": _layout_summary(conf),

@@ -7,14 +7,13 @@ from typing import Any
 from unittest.mock import patch
 
 import pytest
-from homeassistant.config_entries import ConfigEntryState
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import issue_registry as ir
 from homeassistant.setup import async_setup_component
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.daymill import frontend
-from custom_components.daymill.const import DOMAIN, OLD_DOMAIN, VERSION
+from custom_components.daymill.const import DOMAIN, VERSION
 
 URL = f"/daymill/daymill-cards.js?v={VERSION}"
 
@@ -105,28 +104,6 @@ async def test_keeps_other_resources(hass: HomeAssistant) -> None:
     await _setup_entry(hass)
     urls = sorted(r["url"] for r in _resources(hass))
     assert urls == sorted(["/local/other-card.js", URL])
-
-
-OLD_URL = "/sunflow_solar/sunflow-cards.js?v=0.1.1"
-
-
-async def test_drops_the_sunflow_resource(hass: HomeAssistant) -> None:
-    await _setup_lovelace(hass)
-    res = hass.data["lovelace"].resources
-    await res.async_create_item({"res_type": "module", "url": OLD_URL})
-    # set up but not running, as after its folder is deleted
-    MockConfigEntry(domain=OLD_DOMAIN, data={}).add_to_hass(hass)
-    await _setup_entry(hass)
-    assert [r["url"] for r in _resources(hass)] == [URL]
-
-
-async def test_keeps_the_sunflow_resource_while_it_runs(hass: HomeAssistant) -> None:
-    await _setup_lovelace(hass)
-    res = hass.data["lovelace"].resources
-    await res.async_create_item({"res_type": "module", "url": OLD_URL})
-    MockConfigEntry(domain=OLD_DOMAIN, data={}, state=ConfigEntryState.LOADED).add_to_hass(hass)
-    await _setup_entry(hass)
-    assert sorted(r["url"] for r in _resources(hass)) == sorted([OLD_URL, URL])
 
 
 async def test_version_bump_updates_url_and_drops_copies(hass: HomeAssistant) -> None:
@@ -243,5 +220,3 @@ def test_resource_url_matching() -> None:
     assert not frontend._is_ours("/local/daymill/daymill-cards.js")
     assert not frontend._is_ours("/daymill/other.js")
     assert not frontend._is_ours(None)
-    assert frontend._is_old(OLD_URL)
-    assert not frontend._is_old(URL)

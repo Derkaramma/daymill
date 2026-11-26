@@ -294,18 +294,6 @@ export class History {
   }
 }
 
-// Cars saved before the rename link to their entities with `sunflow: <slug>`.
-// The card still reads that, but anything the editor saves uses `daymill`.
-export function renameCarKeys(config) {
-  if (!Array.isArray(config?.cars)) return config;
-  const cars = config.cars.map((c) => {
-    if (!c || typeof c !== "object" || c.sunflow === undefined) return c;
-    const { sunflow, ...rest } = c;
-    return { ...rest, daymill: rest.daymill ?? sunflow };
-  });
-  return { ...config, cars };
-}
-
 // ---- import / export ----
 
 export function exportLayout(config) {

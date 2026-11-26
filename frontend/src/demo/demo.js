@@ -6,8 +6,6 @@
 //
 //   el.setScenario("car-charging")   el.setTime("night")
 //   events: daymill-demo-ready (once), daymill-demo-change {time, scenario}
-//   The old sunflow-demo-* names fire too, for one more release, so the
-//   website can switch over in its own time. <sunflow-demo> still works.
 //
 // Styles go through adoptedStyleSheets and the CSSOM only, so it runs under a
 // strict CSP. The only requests it makes are for its own pictures.
@@ -141,9 +139,7 @@ class DayMillDemo extends HTMLElement {
   }
 
   _emit(name, detail) {
-    for (const prefix of ["daymill", "sunflow"]) {
-      this.dispatchEvent(new CustomEvent(`${prefix}-demo-${name}`, { detail: { ...detail }, bubbles: true, composed: true }));
-    }
+    this.dispatchEvent(new CustomEvent(`daymill-demo-${name}`, { detail: { ...detail }, bubbles: true, composed: true }));
   }
 
   _reflect() {

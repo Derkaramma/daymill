@@ -57,7 +57,7 @@ class HouseCardEditor extends HTMLElement {
   // ---- HA editor API ----
 
   setConfig(config) {
-    const next = M.renameCarKeys({ type: "custom:daymill-house-card", ...M.clone(config || {}) });
+    const next = { type: "custom:daymill-house-card", ...M.clone(config || {}) };
     if (this._lastEmitted && M.same(M.clean(next), this._lastEmitted)) return;
     if (this._built && !M.same(next, this._config)) this._history.push(this._config);
     this._config = next;

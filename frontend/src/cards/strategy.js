@@ -144,6 +144,5 @@ if (typeof HTMLElement !== "undefined" && typeof customElements !== "undefined")
       return document.createElement("daymill-strategy-editor");
     }
   }
-  // the old name keeps `strategy: {type: custom:sunflow}` dashboards working
   defineElement("ll-strategy-dashboard-daymill", DayMillDashboardStrategy);
 }

@@ -189,8 +189,7 @@ function car(c, i, where) {
     cableStart: point(c.cable_start, `${where}.cable_start`),
     sag: nonNeg(c.cable_sag, 0),
     chip: carChip(c.chip, `${where}.chip`),
-    // `sunflow` is the old name of this key; configs from before still have it
-    daymill: (c.daymill ?? c.sunflow) ? String(c.daymill ?? c.sunflow) : "",
+    daymill: c.daymill ? String(c.daymill) : "",
     chargingStates: Array.isArray(c.charging_states) ? c.charging_states.map((s) => String(s).toLowerCase()) : null,
     showCable: c.show_cable !== false,
     chargerGlow: point(c.charger_glow, `${where}.charger_glow`),

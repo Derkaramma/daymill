@@ -7,8 +7,7 @@
 
 Both are checked at setup and every few minutes after, and cleared as soon as
 the cause goes away or the entry unloads. The YAML resource issue lives in
-frontend.py, and the ones about moving over from SunFlow in move.py (the
-entity id takeover is the one issue with a fix flow).
+frontend.py.
 """
 
 from __future__ import annotations
@@ -17,7 +16,6 @@ from collections.abc import Iterable, Mapping
 from datetime import date, datetime, timedelta
 from typing import Any
 
-from homeassistant.components.repairs import ConfirmRepairFlow, RepairsFlow
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
 from homeassistant.core import HomeAssistant, callback
@@ -40,7 +38,6 @@ from .const import (
     DOMAIN,
     SOURCE_DEMO,
 )
-from .move import ISSUE_TAKE_OVER, TakeOverFlow
 
 ISSUE_TARIFF = "tariff_out_of_date"
 ISSUE_SOURCES = "source_unavailable"
@@ -226,12 +223,3 @@ def async_setup_repairs(hass: HomeAssistant, entry: ConfigEntry) -> None:
     _check()
     entry.async_on_unload(async_track_time_interval(hass, _check, CHECK_INTERVAL))
     entry.async_on_unload(lambda: async_delete_issues(hass, entry.entry_id))
-
-
-async def async_create_fix_flow(
-    hass: HomeAssistant, issue_id: str, data: dict[str, Any] | None
-) -> RepairsFlow:
-    """Only the SunFlow entity id takeover can be fixed from Repairs."""
-    if issue_id == ISSUE_TAKE_OVER and data and isinstance(data.get("entry_id"), str):
-        return TakeOverFlow(data["entry_id"])
-    return ConfirmRepairFlow()
