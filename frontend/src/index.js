@@ -1,4 +1,4 @@
-// Entry point for sunflow-cards.js. Each card module defines its own element.
+// Entry point for daymill-cards.js. Each card module defines its own element.
 
 import "./cards/house-card.js";
 import "./cards/share-ring-card.js";
@@ -14,5 +14,5 @@ import "./cards/strategy.js";
 import "./editor/house-editor.js";
 import "./editor/strategy-editor.js";
 
-const version = typeof __SUNFLOW_VERSION__ === "string" ? __SUNFLOW_VERSION__ : "dev";
-console.info(`%c SunFlow cards %c ${version} `, "color:#000;background:#ffb020;font-weight:700", "color:#ffb020");
+const version = typeof __DAYMILL_VERSION__ === "string" ? __DAYMILL_VERSION__ : "dev";
+console.info(`%c DayMill cards %c ${version} `, "color:#000;background:#ffb020;font-weight:700", "color:#ffb020");

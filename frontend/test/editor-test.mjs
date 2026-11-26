@@ -47,7 +47,7 @@ function findChromium() {
 }
 
 const bundle = async (entry) =>
-  (await esbuild.build({ entryPoints: [entry], bundle: true, format: "esm", write: false, target: "es2022", define: { __SUNFLOW_VERSION__: '"test"' }, logLevel: "silent" })).outputFiles[0].text;
+  (await esbuild.build({ entryPoints: [entry], bundle: true, format: "esm", write: false, target: "es2022", define: { __DAYMILL_VERSION__: '"test"' }, logLevel: "silent" })).outputFiles[0].text;
 
 const HTML = `<!doctype html><html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="harness.css">
 <script type="module" src="harness.js"></script><script type="module" src="cards.js"></script><script type="module" src="editor-page.js"></script>
@@ -105,7 +105,7 @@ async function open(width = 600, opts = {}) {
   return page;
 }
 
-const E = "sunflow-house-card-editor";
+const E = "daymill-house-card-editor";
 const events = (page) => page.evaluate(() => window.editorHarness.events.map((c) => JSON.parse(JSON.stringify(c))));
 const last = async (page) => (await events(page)).at(-1);
 const center = async (loc) => {
@@ -146,7 +146,7 @@ try {
     ok(ev.length === 1, "one config-changed per drag", ev.length);
     const p = ev[0]?.layout?.panel;
     ok(p && p.x > 0.25 && p.x < 0.32 && p.y > 0.49, "panel moved right and down", ev[0]);
-    ok(ev[0]?.type === "custom:sunflow-house-card", "event config keeps the card type");
+    ok(ev[0]?.type === "custom:daymill-house-card", "event config keeps the card type");
 
     const size = await center(page.locator(`${E} [data-id="panel-size"]`));
     await drag(page, size, [size[0] + 20, size[1] + 40]);
@@ -189,7 +189,7 @@ try {
 
     // the preview card is in edit mode and can't take focus
     const pv = await page.evaluate(() => {
-      const card = window.editorHarness.el.shadowRoot.querySelector("sunflow-house-card");
+      const card = window.editorHarness.el.shadowRoot.querySelector("daymill-house-card");
       return { edit: card.editMode, inert: card.inert, scene: card.shadowRoot.querySelector(".scene")?.classList.contains("editing") };
     });
     ok(pv.edit && pv.inert && pv.scene, "preview card is in edit mode and inert", pv);
@@ -251,12 +251,12 @@ try {
     await settle(page);
     ev = await last(page);
     ok(ev.layout.lines.solar.length === 2 && ev.layout.lines.solar[1].length === 2, "second click finishes the new solar line", ev.layout.lines.solar);
-    const flows = await page.evaluate(() => window.editorHarness.el.shadowRoot.querySelector("sunflow-house-card").shadowRoot.querySelectorAll('[data-flow^="solar"]').length);
+    const flows = await page.evaluate(() => window.editorHarness.el.shadowRoot.querySelector("daymill-house-card").shadowRoot.querySelectorAll('[data-flow^="solar"]').length);
     ok(flows === 2, "preview draws both solar lines", flows);
     await page.locator(`${E} [data-k="round"]`).check();
     await settle(page);
     ok((await last(page)).layout.round_corners === true, "round corners toggle");
-    const d = await page.evaluate(() => window.editorHarness.el.shadowRoot.querySelector("sunflow-house-card").shadowRoot.querySelector('[data-flow="grid"] .track').getAttribute("d"));
+    const d = await page.evaluate(() => window.editorHarness.el.shadowRoot.querySelector("daymill-house-card").shadowRoot.querySelector('[data-flow="grid"] .track').getAttribute("d"));
     ok(/Q/.test(d), "preview rounds the corners", d);
     // HA sends the config back: tab and history survive
     const tabNow = await page.locator(`${E} #tab-lines`).getAttribute("aria-selected");
@@ -275,7 +275,7 @@ try {
     await drag(page, c, [c[0] - 80, c[1] + 10]);
     await settle(page);
     let ev = await last(page);
-    ok(Array.isArray(ev.cars) && ev.cars.length === 2 && ev.cars[0].sunflow && ev.cars[0].slot.x < 0.5, "dragging a found car saves the cars, linked by slug", ev.cars);
+    ok(Array.isArray(ev.cars) && ev.cars.length === 2 && ev.cars[0].daymill && ev.cars[0].slot.x < 0.5, "dragging a found car saves the cars, linked by slug", ev.cars);
     const sz = await center(page.locator(`${E} [data-id="car-size|0"]`));
     await drag(page, sz, [sz[0] + 30, sz[1]]);
     await settle(page);
@@ -423,7 +423,7 @@ try {
     const page = await open(900);
     await tab(page, "battery");
     await shot(page, "battery-900");
-    const pvBatt = await page.evaluate(() => !!window.editorHarness.el.shadowRoot.querySelector("sunflow-house-card").shadowRoot.querySelector(".battery"));
+    const pvBatt = await page.evaluate(() => !!window.editorHarness.el.shadowRoot.querySelector("daymill-house-card").shadowRoot.querySelector(".battery"));
     ok(pvBatt, "battery is shown in the preview on the battery tab");
     const b = await center(page.locator(`${E} [data-id="battery-move"]`));
     await drag(page, [b[0] + 7, b[1] - 12], [b[0] + 37, b[1] - 12]);
@@ -439,11 +439,11 @@ try {
     const page = await open(900);
     await page.locator(`${E} .scen button`, { hasText: "Night" }).click();
     await page.waitForTimeout(150);
-    const night = await page.evaluate(() => window.editorHarness.el.shadowRoot.querySelector("sunflow-house-card").shadowRoot.querySelector(".scene").classList.contains("is-night"));
+    const night = await page.evaluate(() => window.editorHarness.el.shadowRoot.querySelector("daymill-house-card").shadowRoot.querySelector(".scene").classList.contains("is-night"));
     ok(night, "Night button switches the preview to night");
     await page.locator(`${E} .scen button`, { hasText: "Car charging" }).click();
     await page.waitForTimeout(150);
-    const charging = await page.evaluate(() => window.editorHarness.el.shadowRoot.querySelector("sunflow-house-card").shadowRoot.querySelector('[data-flow="car0"]').classList.contains("on"));
+    const charging = await page.evaluate(() => window.editorHarness.el.shadowRoot.querySelector("daymill-house-card").shadowRoot.querySelector('[data-flow="car0"]').classList.contains("on"));
     ok(charging, "Car charging scenario lights up the cable");
     await settle(page);
     ok((await events(page)).length === 0, "scenarios don't change the config");
@@ -458,8 +458,8 @@ try {
 
     await tab(page, "backup");
     const json = JSON.parse(await page.locator(`${E} textarea`).inputValue());
-    ok(json.sunflow_layout === 1 && json.colors?.solar === "#ff0000", "export JSON has the layout", json);
-    const imported = { sunflow_layout: 1, layout: { panel: { x: 0.5, y: 0.5, w: 0.02, h: 0.08, skew: 10 } }, image_aspect: "16/9" };
+    ok(json.daymill_layout === 1 && json.colors?.solar === "#ff0000", "export JSON has the layout", json);
+    const imported = { daymill_layout: 1, layout: { panel: { x: 0.5, y: 0.5, w: 0.02, h: 0.08, skew: 10 } }, image_aspect: "16/9" };
     await page.locator(`${E} textarea`).fill(JSON.stringify(imported));
     await page.locator(`${E} [data-k="apply"]`).click();
     await settle(page);
@@ -473,11 +473,11 @@ try {
     await page.locator(`${E} [data-k="apply"]`).click();
     await page.waitForTimeout(100);
     ok(await page.locator(`${E} .msg.err`).count() === 1, "broken layout is refused");
-    await page.locator(`${E} input[type="file"]`).first().setInputFiles({ name: "layout.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify({ sunflow_layout: 1, layout: { chips: { solar: { x: 0.1, y: 0.1 } } } })) });
+    await page.locator(`${E} input[type="file"]`).first().setInputFiles({ name: "layout.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify({ daymill_layout: 1, layout: { chips: { solar: { x: 0.1, y: 0.1 } } } })) });
     await settle(page);
     ok((await last(page)).layout.chips.solar.x === 0.1, "layout file can be loaded");
     const [download] = await Promise.all([page.waitForEvent("download"), page.locator(`${E} [data-k="download"]`).click()]);
-    ok(download.suggestedFilename() === "sunflow-layout.json", "download gives a layout file");
+    ok(download.suggestedFilename() === "daymill-layout.json", "download gives a layout file");
     await shot(page, "backup-900");
     await page.close();
   }

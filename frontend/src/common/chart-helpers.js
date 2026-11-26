@@ -31,7 +31,7 @@ addStrings("en", {
   "billing_cycle_since": "Cycle started {date} · day {days}",
   "base_charges": "Daily charges",
   "base_charges_detail": "{days} days",
-  "base_charges_before": "{days} days, {n} before SunFlow started",
+  "base_charges_before": "{days} days, {n} before DayMill started",
   "nbc_charges": "Non-bypassable charges",
   "adder_charges": "Other per-kWh charges",
   "energy_charges": "Energy charges",
@@ -192,7 +192,7 @@ export function knownTrackingStart(hass, config = {}) {
   return localDate(config.tracking_start) || fromAttributes(hass, config.entities);
 }
 
-// When SunFlow started counting: a config value, an attribute on the totals
+// When DayMill started counting: a config value, an attribute on the totals
 // or bill sensor, else the first long-term statistics row of the produced
 // energy sensor. Resolves to a Date or undefined.
 export async function trackingStart(hass, config = {}) {

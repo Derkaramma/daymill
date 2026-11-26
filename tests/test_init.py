@@ -11,7 +11,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.util import dt as dt_util
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.sunflow_solar.const import DOMAIN
+from custom_components.daymill.const import DOMAIN
 
 
 @pytest.fixture(autouse=True)
@@ -66,7 +66,7 @@ async def setup_entry(
     if seed:
         seed_sources(hass)
     entry = MockConfigEntry(
-        domain=DOMAIN, title="SunFlow Solar", data=config or dict(BASE_CONFIG), unique_id=DOMAIN
+        domain=DOMAIN, title="DayMill", data=config or dict(BASE_CONFIG), unique_id=DOMAIN
     )
     entry.add_to_hass(hass)
     assert await hass.config_entries.async_setup(entry.entry_id)
@@ -77,8 +77,8 @@ async def setup_entry(
 async def test_setup_and_unload(hass: HomeAssistant) -> None:
     entry = await setup_entry(hass)
     assert entry.state is ConfigEntryState.LOADED
-    assert hass.states.get("sensor.sunflow_solar_power").state == "3000"
-    assert hass.states.get("sensor.sunflow_tou_period") is not None
+    assert hass.states.get("sensor.daymill_solar_power").state == "3000"
+    assert hass.states.get("sensor.daymill_tou_period") is not None
 
     assert await hass.config_entries.async_unload(entry.entry_id)
     await hass.async_block_till_done()
@@ -102,20 +102,20 @@ async def test_ledger_survives_reload(hass: HomeAssistant, freezer) -> None:
     entry = await setup_entry(hass)
     set_energy(hass, 1000.0, 510.0, 200.0)
     await hass.async_block_till_done()
-    charge = float(hass.states.get("sensor.sunflow_import_energy_charge").state)
+    charge = float(hass.states.get("sensor.daymill_import_energy_charge").state)
     assert charge == round(10 * 0.23909, 5)
 
     assert await hass.config_entries.async_reload(entry.entry_id)
     await hass.async_block_till_done()
-    assert float(hass.states.get("sensor.sunflow_import_energy_charge").state) == charge
+    assert float(hass.states.get("sensor.daymill_import_energy_charge").state) == charge
 
     # the baseline came back too: only the new 2 kWh are priced
     set_energy(hass, 1000.0, 512.0, 200.0)
     await hass.async_block_till_done()
-    assert float(hass.states.get("sensor.sunflow_import_energy_charge").state) == round(
+    assert float(hass.states.get("sensor.daymill_import_energy_charge").state) == round(
         12 * 0.23909, 5
     )
-    assert float(hass.states.get("sensor.sunflow_energy_imported").state) == 512.0
+    assert float(hass.states.get("sensor.daymill_energy_imported").state) == 512.0
 
 
 async def test_store_written_on_unload(hass: HomeAssistant, hass_storage) -> None:
@@ -139,9 +139,19 @@ async def test_cycle_day_change_keeps_cycle(hass: HomeAssistant, freezer) -> Non
     hass.config_entries.async_update_entry(entry, options={**BASE_CONFIG, "cycle_day": 15})
     assert await hass.config_entries.async_reload(entry.entry_id)
     await hass.async_block_till_done()
-    attrs = hass.states.get("sensor.sunflow_bill_estimate").attributes
+    attrs = hass.states.get("sensor.daymill_bill_estimate").attributes
     assert attrs["cycle_start"] == "2026-01-15"
     assert attrs["import_kwh"] == 5.0
+
+
+async def test_remove_entry_deletes_store(hass: HomeAssistant, hass_storage) -> None:
+    entry = await setup_entry(hass)
+    assert await hass.config_entries.async_unload(entry.entry_id)
+    await hass.async_block_till_done()
+    assert f"{DOMAIN}.{entry.entry_id}" in hass_storage
+    await hass.config_entries.async_remove(entry.entry_id)
+    await hass.async_block_till_done()
+    assert f"{DOMAIN}.{entry.entry_id}" not in hass_storage
 
 
 async def test_nem3_settings_reach_the_ledger(hass: HomeAssistant, freezer) -> None:
@@ -151,7 +161,7 @@ async def test_nem3_settings_reach_the_ledger(hass: HomeAssistant, freezer) -> N
     ledger = entry.runtime_data.ledger
     assert ledger.lock_in_end.isoformat() == "2033-05-01"
     assert ledger.acc_plus_rate_at(dt_util.utcnow()) == 0.032
-    note = hass.states.get("sensor.sunflow_bill_estimate").attributes["beta_note"]
+    note = hass.states.get("sensor.daymill_bill_estimate").attributes["beta_note"]
     assert "one table for every calendar year" not in note
     assert "Average Retail Export" not in note
 

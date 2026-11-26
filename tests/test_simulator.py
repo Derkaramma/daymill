@@ -2,7 +2,7 @@
 
 import pytest
 
-from custom_components.sunflow_solar import simulator as sim
+from custom_components.daymill import simulator as sim
 
 
 @pytest.mark.parametrize("scenario", sim.SCENARIOS)

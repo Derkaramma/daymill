@@ -1,8 +1,8 @@
-// sunflow-panels-card: every panel at a glance. Power columns for all panels,
+// daymill-panels-card: every panel at a glance. Power columns for all panels,
 // one block per roof face (tiles with power and today's kWh), lifetime kWh per
 // panel, the health check and an optional list of gateway diagnostics.
 //
-// type: custom:sunflow-panels-card
+// type: custom:daymill-panels-card
 // groups: [...]            # optional, see common/panel-groups.js
 // diagnostics: [sensor.gateway_uptime, {entity: sensor.x, name: CPU, divider: true}]
 // show_chart / show_groups / show_lifetime / show_health / show_diagnostics: true
@@ -10,7 +10,7 @@
 //
 // Hidden when there are no panels and no diagnostics.
 
-import { SunFlowCard, defineCard, h, setStyle, asButton } from "../common/base.js";
+import { DayMillCard, defineCard, h, setStyle, asButton } from "../common/base.js";
 import { attr, isOn, powerKw, energyKwh, stateObj, isAvailable, toNumber, unit } from "../common/entities.js";
 import { kw, kwh, num, numFmt, pct, time, t, DASH } from "../common/format.js";
 import { fetchStatistics, startOfDay } from "../common/ws.js";
@@ -228,13 +228,13 @@ function compactKwh(hass, v) {
   return num(hass, v, 0, v < 10 ? 1 : 0);
 }
 
-class SunFlowPanelsCard extends SunFlowCard {
+class DayMillPanelsCard extends DayMillCard {
   static styles = [css];
   static keys = ["panel_health", "solar_problem"];
   static grid = { columns: 12, min_columns: 6, rows: "auto" };
   static cardSize = 8;
   // Works from card config alone (groups / diagnostics), so no "not found" hint.
-  static requiresSunflow = false;
+  static requiresDayMill = false;
 
   static getStubConfig() {
     return {};
@@ -336,7 +336,7 @@ class SunFlowPanelsCard extends SunFlowCard {
         if (this.isConnected && this._built && this.hass) this.keepFocus(() => this._paint());
       })
       .catch((err) => {
-        console.warn("sunflow-panels-card: no statistics,", err?.message || err);
+        console.warn("daymill-panels-card: no statistics,", err?.message || err);
         this._todayAt = 0;
       });
   }
@@ -685,10 +685,10 @@ class SunFlowPanelsCard extends SunFlowCard {
   }
 }
 
-defineCard("sunflow-panels-card", SunFlowPanelsCard, {
-  name: "SunFlow panels",
+defineCard("daymill-panels-card", DayMillPanelsCard, {
+  name: "DayMill panels",
   description: "Power, today's and lifetime energy for every panel, grouped by roof face, with the health check and gateway diagnostics.",
-  documentationURL: "https://github.com/Derkaramma/sunflow-solar",
+  documentationURL: "https://github.com/Derkaramma/daymill",
 });
 
-export { SunFlowPanelsCard };
+export { DayMillPanelsCard };

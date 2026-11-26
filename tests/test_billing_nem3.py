@@ -19,9 +19,9 @@ from zoneinfo import ZoneInfo
 import pytest
 import yaml
 
-from custom_components.sunflow_solar.billing import Ledger, nbt_options
-from custom_components.sunflow_solar.tariff import TariffEngine, load_preset
-from custom_components.sunflow_solar.tariff.loader import TARIFF_DIR
+from custom_components.daymill.billing import Ledger, nbt_options
+from custom_components.daymill.tariff import TariffEngine, load_preset
+from custom_components.daymill.tariff.loader import TARIFF_DIR
 
 TZ = ZoneInfo("America/Los_Angeles")
 

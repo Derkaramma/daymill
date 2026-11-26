@@ -7,15 +7,15 @@ from datetime import date, time
 import pytest
 import yaml
 
-from custom_components.sunflow_solar.billing import nbt_options
-from custom_components.sunflow_solar.tariff import (
+from custom_components.daymill.billing import nbt_options
+from custom_components.daymill.tariff import (
     TariffEngine,
     list_presets,
     load_export_table,
     load_tariff,
     validate,
 )
-from custom_components.sunflow_solar.tariff.loader import PRESET_DIR, TARIFF_DIR
+from custom_components.daymill.tariff.loader import PRESET_DIR, TARIFF_DIR
 
 PRESET_FILES = sorted(PRESET_DIR.glob("*.yaml"))
 NBT_FILES = sorted((TARIFF_DIR / "nbt").glob("*.yaml"))

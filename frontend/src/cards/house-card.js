@@ -1,13 +1,13 @@
-// sunflow-house-card: a picture of the house with glowing power flows, the
+// daymill-house-card: a picture of the house with glowing power flows, the
 // meter panel as the junction, EV cables, and live chips.
 //
 // With no picture configured it draws a plain built-in house, so the card
 // works out of the box. Layout options are described in house/layout.js.
 //
-// type: custom:sunflow-house-card
+// type: custom:daymill-house-card
 // image_day / image_night      night is optional; the day picture is darkened
 // image_aspect                 e.g. "16/10"; default: the picture's own size
-// entities: {solar_power: ...} override any SunFlow entity
+// entities: {solar_power: ...} override any DayMill entity
 // sun_entity: sun.sun
 // stale_minutes: 15
 // night_dim: 0.5               car picture brightness at night
@@ -17,10 +17,10 @@
 // animation: {enabled: true, speed_scale: 1}      or animation: false
 // colors: {solar: "#ffb020", ...}
 // layout: {...}                round_corners: true rounds the line corners
-// cars: [...]                  default: the cars SunFlow knows about
+// cars: [...]                  default: the cars DayMill knows about
 
-import { SunFlowCard, defineCard, h, s, asButton, setStyle } from "../common/base.js";
-import { attr, isOn, num, powerKw, state, sunflowCars } from "../common/entities.js";
+import { DayMillCard, defineCard, h, s, asButton, setStyle } from "../common/base.js";
+import { attr, isOn, num, powerKw, state, daymillCars } from "../common/entities.js";
 import { kw, kwh, money, periodLabel, price, seasonLabel, t } from "../common/format.js";
 import { cssVar } from "../common/theme.js";
 import { CAR_BOX_RATIO, DEFS, HANDLE, batterySvg, carSvg, chargerSvg, panelSvg, sceneSvg } from "./house/art.js";
@@ -83,7 +83,7 @@ function svgInto(parent, markup) {
   parent.append(...g.childNodes);
 }
 
-// What SunFlow's setup knows about a car beyond charging and power.
+// What DayMill's setup knows about a car beyond charging and power.
 function extras(k) {
   const out = {};
   if (k.image) out.image = k.image;
@@ -91,7 +91,7 @@ function extras(k) {
   return out;
 }
 
-class SunFlowHouseCard extends SunFlowCard {
+class DayMillHouseCard extends DayMillCard {
   static styles = [houseStyles];
   static keys = [
     "solar_power",
@@ -113,7 +113,7 @@ class SunFlowHouseCard extends SunFlowCard {
   }
 
   static getConfigElement() {
-    return document.createElement("sunflow-house-card-editor");
+    return document.createElement("daymill-house-card-editor");
   }
 
   validateConfig(config) {
@@ -123,19 +123,19 @@ class SunFlowHouseCard extends SunFlowCard {
 
   // ---- cars ----
 
-  // Car list: from the config, or the cars SunFlow knows about. A config car
-  // with `sunflow: <slug>` picks up SunFlow's charging entities. Cars found
+  // Car list: from the config, or the cars DayMill knows about. A config car
+  // with `daymill: <slug>` picks up DayMill's charging entities. Cars found
   // on their own take turns facing left and right, so each gets a garage
   // wall for its charger.
   _cars() {
     const n = this._n;
-    const known = sunflowCars(this.hass);
+    const known = daymillCars(this.hass);
     if (!n.cars) {
       return known.map((k, i) => ({ ...n.autoCar({ ...extras(k), name: k.name, charging_entity: k.charging, power_entity: k.power, flip: i % 2 === 1 }, i), found: true }));
     }
     return n.cars.map((c) => {
-      if (!c.sunflow) return c;
-      const k = known.find((x) => x.slug === c.sunflow);
+      if (!c.daymill) return c;
+      const k = known.find((x) => x.slug === c.daymill);
       if (!k) return c;
       // without its own presence sensor it behaves like a car found on its own
       const more = extras(k);
@@ -166,7 +166,7 @@ class SunFlowHouseCard extends SunFlowCard {
   // ---- editor hooks ----
 
   // The visual editor draws its handles over the scene. It sets editMode,
-  // listens for "sunflow-rendered" and reads these.
+  // listens for "daymill-rendered" and reads these.
   set editMode(on) {
     this._editMode = !!on;
     this.$scene?.classList.toggle("editing", this._editMode);
@@ -764,7 +764,7 @@ class SunFlowHouseCard extends SunFlowCard {
     this.$warn.hidden = !stale;
     this.$warn.textContent = stale ? t("data_old", { minutes: Math.round(this.dataAge() / 60) }) : "";
     this._spreadCarChips();
-    if (this._editMode) this.dispatchEvent(new CustomEvent("sunflow-rendered"));
+    if (this._editMode) this.dispatchEvent(new CustomEvent("daymill-rendered"));
   }
 
   // Car chips sit under their cars and can run into each other on a narrow
@@ -927,7 +927,7 @@ class SunFlowHouseCard extends SunFlowCard {
   }
 }
 
-defineCard("sunflow-house-card", SunFlowHouseCard, {
-  name: "SunFlow house",
+defineCard("daymill-house-card", DayMillHouseCard, {
+  name: "DayMill house",
   description: "Your house with live solar, grid, home, battery and EV flows.",
 });

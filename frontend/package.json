@@ -1,9 +1,9 @@
 {
-  "name": "sunflow-cards",
+  "name": "daymill-cards",
   "version": "0.1.2",
   "private": true,
   "type": "module",
-  "description": "Lovelace cards for SunFlow Solar",
+  "description": "Lovelace cards for DayMill",
   "license": "MIT",
   "scripts": {
     "build": "node scripts/build.mjs",

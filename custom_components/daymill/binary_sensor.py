@@ -1,4 +1,4 @@
-"""SunFlow Solar binary sensors."""
+"""DayMill binary sensors."""
 
 from __future__ import annotations
 
@@ -11,12 +11,12 @@ from homeassistant.components.binary_sensor import (
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
-from .coordinator import Car, SunFlowConfigEntry, SunFlowCoordinator, SunFlowEntity
+from .coordinator import Car, DayMillConfigEntry, DayMillCoordinator, DayMillEntity
 
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: SunFlowConfigEntry,
+    entry: DayMillConfigEntry,
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     coordinator = entry.runtime_data
@@ -27,13 +27,13 @@ async def async_setup_entry(
     async_add_entities(entities)
 
 
-class SolarProblemSensor(SunFlowEntity, BinarySensorEntity):
+class SolarProblemSensor(DayMillEntity, BinarySensorEntity):
     """On once health findings have lasted 30 minutes."""
 
     _attr_device_class = BinarySensorDeviceClass.PROBLEM
     _attr_translation_key = "solar_problem"
 
-    def __init__(self, coordinator: SunFlowCoordinator) -> None:
+    def __init__(self, coordinator: DayMillCoordinator) -> None:
         super().__init__(coordinator, "solar_problem", "binary_sensor")
 
     @property
@@ -49,13 +49,13 @@ class SolarProblemSensor(SunFlowEntity, BinarySensorEntity):
         }
 
 
-class CarChargingSensor(SunFlowEntity, BinarySensorEntity):
+class CarChargingSensor(DayMillEntity, BinarySensorEntity):
     """Car is charging and at home."""
 
     _attr_device_class = BinarySensorDeviceClass.BATTERY_CHARGING
     _attr_translation_key = "car_charging_at_home"
 
-    def __init__(self, coordinator: SunFlowCoordinator, car: Car) -> None:
+    def __init__(self, coordinator: DayMillCoordinator, car: Car) -> None:
         super().__init__(coordinator, f"car_{car.slug}_charging_at_home", "binary_sensor")
         self._car = car
         self._attr_translation_placeholders = {"car": car.name}

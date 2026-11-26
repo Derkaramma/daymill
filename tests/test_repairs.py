@@ -12,8 +12,8 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers import issue_registry as ir
 from pytest_homeassistant_custom_component.common import MockConfigEntry, async_fire_time_changed
 
-from custom_components.sunflow_solar.const import DOMAIN
-from custom_components.sunflow_solar.repairs import (
+from custom_components.daymill.const import DOMAIN
+from custom_components.daymill.repairs import (
     ISSUE_SOURCES,
     ISSUE_TARIFF,
     add_months,
@@ -139,7 +139,7 @@ async def test_tariff_issue_after_13_months(hass: HomeAssistant, freezer) -> Non
     assert placeholders["date"] == entry.runtime_data.engine.tariff.effective_date.isoformat()
     assert placeholders["tariff"] == entry.runtime_data.engine.tariff.name
     assert entry.entry_id in placeholders["options_url"]
-    assert placeholders["options_url"].startswith("/config/integrations/integration/sunflow_solar")
+    assert placeholders["options_url"].startswith("/config/integrations/integration/daymill")
 
     # unloading clears it
     assert await hass.config_entries.async_unload(entry.entry_id)

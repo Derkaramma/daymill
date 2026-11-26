@@ -1,18 +1,18 @@
-// sunflow-power-chart-card: solar, home and grid power over the last hours.
+// daymill-power-chart-card: solar, home and grid power over the last hours.
 //
-//   type: custom:sunflow-power-chart-card
+//   type: custom:daymill-power-chart-card
 //   hours: 24            # window
 //   average: 10          # minutes per averaged point, 0 for raw
 //   height: 180
 //   legend: true
 //   title: "..."         # false hides the header
 
-import { SunFlowCard, defineCard, h } from "../common/base.js";
+import { DayMillCard, defineCard, h } from "../common/base.js";
 import { t } from "../common/format.js";
 import { chartStyles } from "./chart/style.js";
 import { HistoryView, powerDefs } from "./chart/history.js";
 
-class PowerChartCard extends SunFlowCard {
+class PowerChartCard extends DayMillCard {
   static styles = [chartStyles];
   static keys = ["solar_power", "home_power", "grid_power"];
   static cardSize = 4;
@@ -48,7 +48,7 @@ class PowerChartCard extends SunFlowCard {
   }
 }
 
-defineCard("sunflow-power-chart-card", PowerChartCard, {
-  name: "SunFlow power chart",
+defineCard("daymill-power-chart-card", PowerChartCard, {
+  name: "DayMill power chart",
   description: "Solar, home and grid power over the last 24 hours.",
 });

@@ -4,7 +4,7 @@ These tests render the reference package's Jinja inside a real hass, at a few
 hundred moments and over a synthetic meter series, and compare the results
 with TariffEngine and Ledger.
 
-The template text is not part of this repo. Set SUNFLOW_REFERENCE_TEMPLATES to
+The template text is not part of this repo. Set DAYMILL_REFERENCE_TEMPLATES to
 a YAML file holding it; without it every test here is skipped. Shape:
 
     entities:        role -> template entity config as written in the package
@@ -35,11 +35,11 @@ import yaml
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.template import Template
 
-from custom_components.sunflow_solar.billing import Ledger
-from custom_components.sunflow_solar.sources import clamp_total
-from custom_components.sunflow_solar.tariff import TariffEngine, load_preset
+from custom_components.daymill.billing import Ledger
+from custom_components.daymill.sources import clamp_total
+from custom_components.daymill.tariff import TariffEngine, load_preset
 
-FIXTURE_ENV = "SUNFLOW_REFERENCE_TEMPLATES"
+FIXTURE_ENV = "DAYMILL_REFERENCE_TEMPLATES"
 PRESET = "sce_tou_d_prime"
 TZ = ZoneInfo("America/Los_Angeles")
 

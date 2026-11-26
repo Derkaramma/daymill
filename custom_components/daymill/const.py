@@ -1,15 +1,14 @@
-"""Constants for SunFlow Solar."""
+"""Constants for DayMill."""
 
 from __future__ import annotations
 
 from datetime import timedelta
 from typing import Final
 
-DOMAIN: Final = "sunflow_solar"
+DOMAIN: Final = "daymill"
 VERSION: Final = "0.1.2"
-NAME: Final = "SunFlow Solar"
-# Short device name: entity names already say "Solar" where it matters.
-DEVICE_NAME: Final = "SunFlow"
+NAME: Final = "DayMill"
+DEVICE_NAME: Final = "DayMill"
 
 PLATFORMS: Final = ["binary_sensor", "sensor"]
 

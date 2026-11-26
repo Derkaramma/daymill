@@ -6,7 +6,7 @@ import { sheet } from "../common/dom.js";
 export const hostSheet = sheet(`
 :host { display: block; position: relative; width: 100%; aspect-ratio: 16 / 10; contain: content; }
 .wrap { position: absolute; inset: 0; display: flex; align-items: center; }
-sunflow-house-card { display: block; width: 100%; }
+daymill-house-card { display: block; width: 100%; }
 `);
 
 export const cardSheet = sheet(`

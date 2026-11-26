@@ -1,13 +1,13 @@
-// sunflow-totals-card: energy and money for today, 7 days, 30 days, this
+// daymill-totals-card: energy and money for today, 7 days, 30 days, this
 // month and this year, from the totals sensor (recorder statistics).
 //
-//   type: custom:sunflow-totals-card
+//   type: custom:daymill-totals-card
 //   windows: [today, d7, d30, month, year]
 //   tracking_start: 2026-01-01   # optional; normally found automatically
 //   notes: true
 //   title: "..."                  # false hides the header
 
-import { SunFlowCard, defineCard, h } from "../common/base.js";
+import { DayMillCard, defineCard, h } from "../common/base.js";
 import { numAttr, toNumber } from "../common/entities.js";
 import { DASH, date, money, num as fmtNum, pct, price, t } from "../common/format.js";
 import { dayLabel, knownTrackingStart, trackingStart } from "../common/chart-helpers.js";
@@ -17,7 +17,7 @@ import { table } from "./chart/table.js";
 const WINDOWS = ["today", "d7", "d30", "month", "year"];
 const DAY = 86_400_000;
 
-class TotalsCard extends SunFlowCard {
+class TotalsCard extends DayMillCard {
   static styles = [chartStyles];
   static keys = ["totals", "import_rate", "energy_produced"];
   static cardSize = 7;
@@ -141,7 +141,7 @@ class TotalsCard extends SunFlowCard {
   }
 }
 
-defineCard("sunflow-totals-card", TotalsCard, {
-  name: "SunFlow totals",
+defineCard("daymill-totals-card", TotalsCard, {
+  name: "DayMill totals",
   description: "Energy and money for today, 7 days, 30 days, this month and this year.",
 });

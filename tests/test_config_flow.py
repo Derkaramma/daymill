@@ -15,9 +15,9 @@ from homeassistant.data_entry_flow import FlowResultType, InvalidData
 from homeassistant.exceptions import HomeAssistantError
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.sunflow_solar.config_flow import energy_guide
-from custom_components.sunflow_solar.const import DOMAIN
-from custom_components.sunflow_solar.tariff import TariffError, list_presets
+from custom_components.daymill.config_flow import energy_guide
+from custom_components.daymill.const import DOMAIN
+from custom_components.daymill.tariff import TariffError, list_presets
 
 from .test_detection import add_pvs, add_tesla, add_wall_connector
 
@@ -69,14 +69,14 @@ def auto_enable_custom_integrations(recorder_mock, enable_custom_integrations):
 
 @pytest.fixture(autouse=True)
 def no_setup():
-    with patch("custom_components.sunflow_solar.async_setup_entry", return_value=True) as mock:
+    with patch("custom_components.daymill.async_setup_entry", return_value=True) as mock:
         yield mock
 
 
 @pytest.fixture
 def dashboard():
     with patch(
-        "custom_components.sunflow_solar.config_flow.async_create_dashboard",
+        "custom_components.daymill.config_flow.async_create_dashboard",
         AsyncMock(return_value=True),
     ) as mock:
         yield mock
@@ -202,7 +202,7 @@ async def test_demo_flow(hass: HomeAssistant, dashboard: AsyncMock) -> None:
     assert "demo data" in res["description_placeholders"]["guide"]
     res = await flow.send({"create_dashboard": True})
     assert res["type"] is FlowResultType.CREATE_ENTRY
-    assert res["title"] == "SunFlow Solar"
+    assert res["title"] == "DayMill"
     assert res["data"] == {
         "source": "demo",
         "system": "demo",
@@ -226,7 +226,7 @@ async def test_custom_flow(hass: HomeAssistant, dashboard: AsyncMock) -> None:
     res = await flow.send({**RATES, "track_cost": False})
     assert res["step_id"] == "finish"
     guide = res["description_placeholders"]["guide"]
-    assert "sensor.sunflow_energy_produced" in guide
+    assert "sensor.daymill_energy_produced" in guide
     assert "import_cost" not in guide  # cost tracking is off
     res = await flow.send({"create_dashboard": False})
     assert res["type"] is FlowResultType.CREATE_ENTRY
@@ -341,7 +341,7 @@ async def test_pvs_full_flow(hass: HomeAssistant, dashboard: AsyncMock) -> None:
     assert res["step_id"] == "nem3"
     res = await flow.send({"pto_date": "2026-03-10", "acc_plus_class": "residential"})
     assert res["step_id"] == "finish"
-    assert "sensor.sunflow_import_cost" in res["description_placeholders"]["guide"]
+    assert "sensor.daymill_import_cost" in res["description_placeholders"]["guide"]
     assert "Home battery" in res["description_placeholders"]["guide"]
     res = await flow.send({"create_dashboard": True})
     assert res["type"] is FlowResultType.CREATE_ENTRY
@@ -567,7 +567,7 @@ async def test_rates_tariff_error(hass: HomeAssistant) -> None:
     await flow.start()
     await flow.menu("demo")
     with patch(
-        "custom_components.sunflow_solar.config_flow.build_engine",
+        "custom_components.daymill.config_flow.build_engine",
         side_effect=TariffError("bad"),
     ):
         res = await flow.send({**RATES, "nem": "nem3"})
@@ -595,7 +595,7 @@ async def test_dashboard_failure_still_creates_entry(hass: HomeAssistant) -> Non
     await flow.menu("demo")
     await flow.send(RATES)
     with patch(
-        "custom_components.sunflow_solar.config_flow.async_create_dashboard",
+        "custom_components.daymill.config_flow.async_create_dashboard",
         AsyncMock(side_effect=HomeAssistantError("no lovelace")),
     ):
         res = await flow.send({"create_dashboard": True})
@@ -617,7 +617,7 @@ async def test_options_menu(hass: HomeAssistant) -> None:
     res = await flow.start(entry)
     assert res["type"] is FlowResultType.MENU
     assert res["menu_options"] == ["sources", "panels", "battery", "cars", "rates", "dashboard"]
-    assert "sensor.sunflow_energy_exported" in res["description_placeholders"]["guide"]
+    assert "sensor.daymill_energy_exported" in res["description_placeholders"]["guide"]
 
 
 async def test_options_sources_keeps_the_rest(hass: HomeAssistant) -> None:
@@ -799,7 +799,7 @@ async def test_options_dashboard(hass: HomeAssistant, returns: AsyncMock, reason
     await flow.start(entry)
     res = await flow.menu("dashboard")
     assert res["step_id"] == "dashboard"
-    with patch("custom_components.sunflow_solar.config_flow.async_create_dashboard", returns):
+    with patch("custom_components.daymill.config_flow.async_create_dashboard", returns):
         res = await flow.send({})
     assert res["type"] is FlowResultType.ABORT
     assert res["reason"] == reason

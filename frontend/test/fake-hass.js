@@ -14,8 +14,11 @@ import {
   simulate,
 } from "../src/common/simulator.js";
 
-export const PLATFORM = "sunflow_solar";
-const DEVICE_ID = "sunflow_device";
+export const PLATFORM = "daymill";
+// opts.platform: "sunflow_solar" builds the same house as an old SunFlow
+// install (sunflow_* ids, "SunFlow ..." names).
+const NAMES = { daymill: ["daymill", "DayMill"], sunflow_solar: ["sunflow", "SunFlow"] };
+const DEVICE_ID = "daymill_device";
 
 // Example tariff. Not a real utility.
 const ADDERS = { fixed_recovery: 0.002, program_charge: 0.002 };
@@ -78,10 +81,10 @@ function at(now, h, m = 0, addDays = 0) {
  *   currency ("USD"), language ("en")
  *   staleMinutes (age of the source data, default 0)
  *   battery (bool; default on for battery scenarios)
- *   cars (number of SunFlow cars, 0-2, default 2)
+ *   cars (number of DayMill cars, 0-2, default 2)
  *   health ("OK" or a findings string)
  *   problem (bool)
- *   decoys (bool, default true): add non-SunFlow look-alike entities
+ *   decoys (bool, default true): add non-DayMill look-alike entities
  */
 export function createFakeHass(opts = {}) {
   const scenario = opts.scenario || "normal";
@@ -94,6 +97,8 @@ export function createFakeHass(opts = {}) {
   const carCount = Math.max(0, Math.min(2, opts.cars ?? 2));
   const ageMs = (opts.staleMinutes || 0) * 60_000;
   const health = opts.health || "OK";
+  const platform = opts.platform || PLATFORM;
+  const [prefix, brand] = NAMES[platform];
 
   const nowIso = new Date(now).toISOString();
   const srcIso = new Date(now - ageMs).toISOString();
@@ -114,14 +119,14 @@ export function createFakeHass(opts = {}) {
     if (reg) entities[entityId] = { entity_id: entityId, ...reg };
   };
 
-  // A SunFlow entity: registry entry with platform + translation_key.
+  // A DayMill entity: registry entry with platform + translation_key.
   const sf = (domain, key, state, attrs = {}, extra = {}) => {
-    const objectId = extra.objectId || `sunflow_${key}`;
+    const objectId = extra.objectId || `${prefix}_${key}`;
     const id = `${domain}.${objectId}`;
-    add(id, state, { friendly_name: `SunFlow ${extra.name || key.replace(/_/g, " ")}`, ...attrs }, {
+    add(id, state, { friendly_name: `${brand} ${extra.name || key.replace(/_/g, " ")}`, ...attrs }, {
       updated: extra.updated,
       reg: {
-        platform: PLATFORM,
+        platform,
         translation_key: extra.translationKey || key,
         device_id: DEVICE_ID,
         has_entity_name: true,
@@ -347,7 +352,7 @@ export function createFakeHass(opts = {}) {
     sf("sensor", "battery_discharge_power", w(Math.max(sim.battery_kw, 0)), W, { updated: srcIso });
   }
 
-  // cars: SunFlow's own two entities, plus the car's own integration
+  // cars: DayMill's own two entities, plus the car's own integration
   // entities that a house card config would point at.
   sim.cars.slice(0, carCount).forEach((car, i) => {
     const slug = slugify(car.name);
@@ -380,14 +385,14 @@ export function createFakeHass(opts = {}) {
     add("sensor.grid_power", -99999, { ...W, friendly_name: "Other grid power" }, { reg: { ...reg, translation_key: "grid_power" } });
   }
 
-  const ids = (key) => Object.values(entities).filter((e) => e.platform === PLATFORM && e.translation_key === key).map((e) => e.entity_id);
+  const ids = (key) => Object.values(entities).filter((e) => e.platform === platform && e.translation_key === key).map((e) => e.entity_id);
   const calls = [];
 
   const hass = {
     states,
     entities,
     devices: {
-      [DEVICE_ID]: { id: DEVICE_ID, name: "SunFlow", manufacturer: "SunFlow Solar", model: "Simulator", area_id: null, labels: [] },
+      [DEVICE_ID]: { id: DEVICE_ID, name: "DayMill", manufacturer: "DayMill", model: "Simulator", area_id: null, labels: [] },
     },
     areas: {},
     floors: {},
@@ -398,7 +403,7 @@ export function createFakeHass(opts = {}) {
       country: "US",
       language,
       version: "2026.10.0",
-      components: ["sunflow_solar", "history", "recorder", "sun"],
+      components: ["daymill", "history", "recorder", "sun"],
     },
     language,
     selectedLanguage: language,

@@ -1,9 +1,4 @@
-# SunFlow Solar
-
-> **SunFlow is now DayMill.** Same integration, same look, new name. This is
-> the last SunFlow release. See
-> [Moving from SunFlow](https://github.com/Derkaramma/daymill#moving-from-sunflow)
-> for the steps.
+# DayMill
 
 **Take your power back.**
 
@@ -62,11 +57,11 @@ anywhere.
 | ![Panels](docs/images/panels.png) | ![House card editor](docs/images/editor.png) |
 
 The house in the screenshots is a made-up demo house, not mine. You can play
-with a live demo at **[sunflow.keocodes.com](https://sunflow.keocodes.com)**.
+with a live demo at **[daymill.keocodes.com](https://daymill.keocodes.com)**.
 
 ## Before you install
 
-SunFlow doesn't talk to your solar directly. It reads what your solar
+DayMill doesn't talk to your solar directly. It reads what your solar
 integration already puts in Home Assistant, so get that working first.
 
 - **SunPower PVS5 / PVS6:** install
@@ -84,26 +79,26 @@ Needs Home Assistant 2026.8 or newer.
 
 ### Option 1: HACS / Marketplace (recommended, gets updates)
 
-[![Open your Home Assistant instance and open this repository](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=Derkaramma&repository=sunflow-solar&category=integration)
+[![Open your Home Assistant instance and open this repository](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=Derkaramma&repository=daymill&category=integration)
 
 1. Click the button above. On Home Assistant 2026.11 or newer it opens the
    Marketplace. On older versions, use
-   [this link](https://my.home-assistant.io/redirect/hacs_repository/?owner=Derkaramma&repository=sunflow-solar&category=integration)
-   instead, or add `https://github.com/Derkaramma/sunflow-solar` as a custom
+   [this link](https://my.home-assistant.io/redirect/hacs_repository/?owner=Derkaramma&repository=daymill&category=integration)
+   instead, or add `https://github.com/Derkaramma/daymill` as a custom
    repository (type: Integration) in HACS by hand.
-2. Press **Install** on **SunFlow Solar** (in HACS it's called **Download**). Restart if it asks.
+2. Press **Install** on **DayMill** (in HACS it's called **Download**). Restart if it asks.
 3. Start the setup:
-   [![Start SunFlow setup](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=sunflow_solar)
+   [![Start DayMill setup](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=daymill)
 
 ### Option 2: Manual
 
 1. Download the latest zip from
-   [Releases](https://github.com/Derkaramma/sunflow-solar/releases).
-2. Copy the `custom_components/sunflow_solar` folder into your
+   [Releases](https://github.com/Derkaramma/daymill/releases).
+2. Copy the `custom_components/daymill` folder into your
    `/config/custom_components/` folder.
 3. Restart Home Assistant.
 4. Go to **Settings > Devices & services > Add integration** and pick
-   **SunFlow Solar** (or use the setup button above).
+   **DayMill** (or use the setup button above).
 
 To update, do the same thing with the new zip.
 
@@ -119,14 +114,14 @@ The setup walks you through it one step at a time:
 1. **Your solar.** It looks for a supported system and fills things in. If it
    can't, you pick the sensors yourself.
 2. **Power and energy.** Solar, grid (and which direction is "importing"),
-   and home use if you have it. If you don't, SunFlow works it out.
+   and home use if you have it. If you don't, DayMill works it out.
 3. **Panels** (optional). Group your panels by roof so the health check
    compares panels that get the same sun.
 4. **Battery** (beta, optional).
 5. **Cars** (optional). Add as many as you have.
 6. **Rates.** Pick your utility plan and net metering version, your billing
    day, and any fixed daily charge. Or turn cost tracking off.
-7. **Done.** It creates the sensors, can build the SunFlow dashboard for you,
+7. **Done.** It creates the sensors, can build the DayMill dashboard for you,
    and tells you exactly what to pick in the Energy dashboard.
 
 You can change any of it later under **Configure**.
@@ -151,7 +146,7 @@ the most. If something's off with your setup, open an issue and I'll look.
 
 ## Cars
 
-SunFlow reads your car from its own integration. Some that work:
+DayMill reads your car from its own integration. Some that work:
 
 - **Tesla:** Tesla Fleet, Teslemetry or Tessie (all built in)
 - **Rivian:** [home-assistant-rivian](https://github.com/bretterer/home-assistant-rivian)
@@ -168,14 +163,14 @@ For each car you pick whether it's charging. If you have them, you can also
 pick where it is, charging power, battery level, whether it's plugged in, and
 the charge limit.
 
-**Tip:** SunFlow only needs to read from your car. Most car integrations also
+**Tip:** DayMill only needs to read from your car. Most car integrations also
 add buttons to unlock doors, open the trunk and so on. If you don't use those,
 disable them in the car's integration so nothing can poke your car by
 accident.
 
 ## Rates and net metering
 
-Pick your plan and SunFlow prices every kWh by time of use, adds the fixed
+Pick your plan and DayMill prices every kWh by time of use, adds the fixed
 charges, and keeps a running bill estimate.
 
 - **Included:** SCE TOU-D-PRIME and TOU-D-4-9PM, PG&E E-TOU-C, SDG&E
@@ -188,14 +183,14 @@ charges, and keeps a running bill estimate.
   old, Home Assistant reminds you to check for updates.
 
 **These are estimates.** The rate tables aren't official, utilities change
-prices, and your real bill has stuff SunFlow can't see. It should land close,
+prices, and your real bill has stuff DayMill can't see. It should land close,
 but trust your bill over the dashboard.
 
 Not on your plan? Open an issue with a link to your utility's rate sheet.
 
 ## Privacy
 
-- Everything runs inside your Home Assistant. SunFlow doesn't call out to any
+- Everything runs inside your Home Assistant. DayMill doesn't call out to any
   server, and there's no account.
 - Your house picture is uploaded to your own Home Assistant and stays there.
   Anyone with the picture's link can open it, so don't post that link.
@@ -222,7 +217,7 @@ They won't match to the penny. If they're way off, double-check your rate
 plan, billing day and daily charge under Configure, then open an issue.
 
 **Can I use my own cards instead of the dashboard?**
-Yes. Every card works on its own, and you can take control of the SunFlow
+Yes. Every card works on its own, and you can take control of the DayMill
 dashboard and change whatever you want.
 
 **Is this from SunPower or SunStrong?**
@@ -231,9 +226,9 @@ utility or car company.
 
 ## Support
 
-Bugs and ideas: [GitHub issues](https://github.com/Derkaramma/sunflow-solar/issues).
+Bugs and ideas: [GitHub issues](https://github.com/Derkaramma/daymill/issues).
 
-SunFlow is free and will stay free. If it saved you a subscription and you
+DayMill is free and will stay free. If it saved you a subscription and you
 want to say thanks, you can
 [buy me a coffee](https://buymeacoffee.com/keocodes).
 

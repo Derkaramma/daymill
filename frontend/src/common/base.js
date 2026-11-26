@@ -5,7 +5,8 @@
 import { adopt, h, replace } from "./dom.js";
 import { baseStyles, applyColors } from "./theme.js";
 import { setLanguage, t } from "./format.js";
-import { dataAge, hasSunflow, resolve, stateObj } from "./entities.js";
+import { defineElement } from "./define.js";
+import { dataAge, hasDayMill, resolve, stateObj } from "./entities.js";
 
 export { sheet, adopt, h, s, replace, setStyle, asButton } from "./dom.js";
 
@@ -13,13 +14,13 @@ export const TICK_MS = 60_000;
 const MOTION_QUERY = "(prefers-reduced-motion: reduce)";
 const FOCUSABLE = '[tabindex="0"], button, a[href], input, select';
 
-export class SunFlowCard extends HTMLElement {
+export class DayMillCard extends HTMLElement {
   // Subclasses override these.
   static styles = []; // CSSStyleSheet or CSS text, adopted after the base sheet
   static keys = []; // translation keys this card reads (see entities.js KEYS)
   static grid = { columns: 12, min_columns: 6, rows: "auto" };
   static cardSize = 3;
-  static requiresSunflow = true; // show a hint when no SunFlow entities exist
+  static requiresDayMill = true; // show a hint when no DayMill entities exist
 
   constructor() {
     super();
@@ -190,7 +191,7 @@ export class SunFlowCard extends HTMLElement {
     this._sig = sig;
     try {
       if (!this._built) {
-        if (this.constructor.requiresSunflow && !hasSunflow(this._hass) && !this._config.entities) {
+        if (this.constructor.requiresDayMill && !hasDayMill(this._hass) && !this._config.entities) {
           this.showMessage(t("not_found"));
           this._sig = undefined; // try again on the next hass update
           return;
@@ -208,9 +209,10 @@ export class SunFlowCard extends HTMLElement {
   }
 }
 
-// Define the element once and list it in the card picker.
+// Define the element (and its old SunFlow name) once and list it in the card
+// picker. Only the DayMill name goes in the picker.
 export function defineCard(tag, cls, info = {}) {
-  if (!customElements.get(tag)) customElements.define(tag, cls);
+  defineElement(tag, cls);
   window.customCards = window.customCards || [];
   if (!window.customCards.some((c) => c.type === tag)) {
     window.customCards.push({ type: tag, preview: true, ...info });

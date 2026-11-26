@@ -47,7 +47,7 @@ await check("simulate() matches simulator.py", () => {
   const python = process.env.PYTHON || "python3";
   const code = `
 import json, sys
-from custom_components.sunflow_solar.simulator import SCENARIOS, TIMES, simulate
+from custom_components.daymill.simulator import SCENARIOS, TIMES, simulate
 ts = json.loads(sys.argv[1])
 out = {f"{s}|{d}|{t}": simulate(s, d, t) for s in SCENARIOS for d in TIMES for t in ts}
 print(json.dumps({"scenarios": list(SCENARIOS), "times": list(TIMES), "out": out}))
@@ -77,19 +77,19 @@ print(json.dumps({"scenarios": list(SCENARIOS), "times": list(TIMES), "out": out
 const hass = createFakeHass({ scenario: "car-charging", time: "day", battery: true });
 
 await check("registry lookup by translation_key ignores other platforms", () => {
-  assert.equal(E.entityId(hass, "solar_power"), "sensor.sunflow_solar_power");
-  assert.equal(E.entityId(hass, "grid_power"), "sensor.sunflow_grid_power");
+  assert.equal(E.entityId(hass, "solar_power"), "sensor.daymill_solar_power");
+  assert.equal(E.entityId(hass, "grid_power"), "sensor.daymill_grid_power");
   assert.equal(E.entityId(hass, "nope"), undefined);
   assert.equal(E.entityId(hass, "solar_power", { solar_power: "sensor.other" }), "sensor.other");
-  assert.ok(E.hasSunflow(hass));
-  assert.ok(!E.hasSunflow({ entities: {}, states: {} }));
+  assert.ok(E.hasDayMill(hass));
+  assert.ok(!E.hasDayMill({ entities: {}, states: {} }));
   const r = E.resolve(hass, ["solar_power", "battery_soc", "missing"]);
   assert.deepEqual(Object.keys(r), ["solar_power", "battery_soc"]);
 });
 
 await check("lookup survives renamed entity ids", () => {
   const h = createFakeHass();
-  const old = "sensor.sunflow_cost_today";
+  const old = "sensor.daymill_cost_today";
   const renamed = "sensor.my_daily_cost";
   h.states[renamed] = { ...h.states[old], entity_id: renamed };
   h.entities[renamed] = { ...h.entities[old], entity_id: renamed };
@@ -99,20 +99,43 @@ await check("lookup survives renamed entity ids", () => {
 });
 
 await check("cars pair up by slug", () => {
-  const cars = E.sunflowCars(hass);
+  const cars = E.daymillCars(hass);
   assert.equal(cars.length, 2);
   assert.deepEqual(cars[0], {
     slug: "car_1",
-    charging: "binary_sensor.sunflow_car_car_1_charging_at_home",
-    power: "sensor.sunflow_car_car_1_home_charging_power",
+    charging: "binary_sensor.daymill_car_car_1_charging_at_home",
+    power: "sensor.daymill_car_car_1_home_charging_power",
     name: "Car 1",
   });
   assert.ok(E.isOn(hass, cars[0].charging));
   assert.ok(!E.isOn(hass, cars[1].charging));
 });
 
+await check("an old SunFlow install still works", () => {
+  const old = createFakeHass({ scenario: "car-charging", platform: "sunflow_solar" });
+  assert.equal(E.entityId(old, "solar_power"), "sensor.sunflow_solar_power");
+  assert.ok(E.hasDayMill(old));
+  const cars = E.daymillCars(old);
+  assert.equal(cars[0].charging, "binary_sensor.sunflow_car_car_1_charging_at_home");
+  assert.equal(cars[0].name, "Car 1");
+});
+
+await check("DayMill wins when both are there", () => {
+  const both = createFakeHass({ platform: "sunflow_solar" });
+  const ours = createFakeHass();
+  both.entities = { ...both.entities, ...ours.entities };
+  both.states = { ...both.states, ...ours.states };
+  assert.equal(E.entityId(both, "solar_power"), "sensor.daymill_solar_power");
+  assert.ok(E.entityIds(both, "car_charging_at_home").every((id) => id.includes(".daymill_")));
+});
+
+await check("house layout reads the old sunflow car key", () => {
+  const n = L.normalizeConfig({ cars: [{ sunflow: "car_1" }, { daymill: "car_2", sunflow: "x" }, {}] });
+  assert.deepEqual(n.cars.map((c) => c.daymill), ["car_1", "car_2", ""]);
+});
+
 await check("state readers and units", () => {
-  const id = "sensor.sunflow_solar_power";
+  const id = "sensor.daymill_solar_power";
   assert.equal(E.powerKw(hass, id), simulate("car-charging", "day").solar_kw);
   assert.equal(E.toKw(1500, "W"), 1.5);
   assert.equal(E.toKw(2, "MW"), 2000);
@@ -121,16 +144,16 @@ await check("state readers and units", () => {
   const h = createFakeHass();
   h.states[id] = { ...h.states[id], state: "unavailable" };
   assert.equal(E.powerKw(h, id), undefined);
-  assert.equal(E.attr(hass, "sensor.sunflow_tou_period", "season"), "summer");
-  assert.equal(E.numAttr(hass, "sensor.sunflow_totals", "produced_today"), simulate("car-charging", "day").produced_today);
+  assert.equal(E.attr(hass, "sensor.daymill_tou_period", "season"), "summer");
+  assert.equal(E.numAttr(hass, "sensor.daymill_totals", "produced_today"), simulate("car-charging", "day").produced_today);
 });
 
 await check("data age and staleness inputs", () => {
   const h = createFakeHass({ staleMinutes: 20 });
-  const age = E.dataAge(h, undefined, ["sensor.sunflow_solar_power"], h._now);
+  const age = E.dataAge(h, undefined, ["sensor.daymill_solar_power"], h._now);
   assert.ok(Math.abs(age - 1200) < 1, `age ${age}`);
   const fresh = createFakeHass();
-  assert.ok(E.dataAge(fresh, undefined, ["sensor.sunflow_solar_power"], fresh._now) < 10);
+  assert.ok(E.dataAge(fresh, undefined, ["sensor.daymill_solar_power"], fresh._now) < 10);
 });
 
 // ---- format ----
@@ -165,7 +188,7 @@ await check("path start points", () => {
   assert.deepEqual(L.scalePath("M0.1,0.2 L0.3,0.4 M0.9,0.9", 100, 100).start, [10, 20]);
 });
 
-await check("cars SunFlow finds on its own", () => {
+await check("cars DayMill finds on its own", () => {
   const n = L.normalizeConfig({});
   const car = L.placeCar(n.autoCar({ name: "A", flip: true }, 1), 1.6);
   assert.ok(car.flip);
@@ -202,34 +225,34 @@ await check("string table", () => {
 await check("history fetch, cache and series", async () => {
   WS.clearCache();
   const start = WS.hoursAgo(24, hass._now);
-  const ids = ["sensor.sunflow_solar_power", "sensor.sunflow_home_power"];
+  const ids = ["sensor.daymill_solar_power", "sensor.daymill_home_power"];
   const a = await WS.fetchHistory(hass, { entityIds: ids, start });
   const b = await WS.fetchHistory(hass, { entityIds: ids, start });
   assert.equal(a, b, "second call should come from the cache");
   assert.equal(hass._calls.filter((c) => c.type === "history/history_during_period").length, 1);
-  const solar = WS.toSeries(a["sensor.sunflow_solar_power"], (w) => w / 1000);
+  const solar = WS.toSeries(a["sensor.daymill_solar_power"], (w) => w / 1000);
   assert.ok(solar.length > 50, `points ${solar.length}`);
   assert.ok(Math.max(...solar.map((p) => p.v)) > 3);
 });
 
 await check("statistics fetch by day and hour", async () => {
-  const ids = ["sensor.sunflow_energy_produced", "sensor.sunflow_energy_imported"];
+  const ids = ["sensor.daymill_energy_produced", "sensor.daymill_energy_imported"];
   const day = await WS.fetchStatistics(hass, { statisticIds: ids, start: WS.startOfDay(new Date(hass._now), 6), period: "day" });
-  assert.equal(day["sensor.sunflow_energy_produced"].length, 7);
-  assert.ok(WS.statTotal(day["sensor.sunflow_energy_produced"]) > 50);
+  assert.equal(day["sensor.daymill_energy_produced"].length, 7);
+  assert.ok(WS.statTotal(day["sensor.daymill_energy_produced"]) > 50);
   const month = await WS.fetchStatistics(hass, { statisticIds: ids, start: WS.startOfDay(new Date(hass._now), 90), period: "month", types: ["change", "sum"] });
-  assert.ok(month["sensor.sunflow_energy_imported"].length >= 3);
-  assert.ok("sum" in month["sensor.sunflow_energy_imported"][0]);
+  assert.ok(month["sensor.daymill_energy_imported"].length >= 3);
+  assert.ok("sum" in month["sensor.daymill_energy_imported"][0]);
   const hour = await WS.fetchStatistics(hass, { statisticIds: ids, start: WS.hoursAgo(24, hass._now, 60), end: hass._now, period: "hour" });
-  assert.ok(hour["sensor.sunflow_energy_produced"].length >= 23);
+  assert.ok(hour["sensor.daymill_energy_produced"].length >= 23);
 });
 
 await check("history stream subscription", async () => {
   const got = await new Promise((resolve) => {
     // a full day, so the series has daytime changes whatever time the test runs
-    WS.subscribeHistory(hass, { entityIds: ["sensor.sunflow_grid_power"], start: WS.hoursAgo(24, hass._now) }, resolve);
+    WS.subscribeHistory(hass, { entityIds: ["sensor.daymill_grid_power"], start: WS.hoursAgo(24, hass._now) }, resolve);
   });
-  assert.ok(got["sensor.sunflow_grid_power"].length > 5);
+  assert.ok(got["sensor.daymill_grid_power"].length > 5);
 });
 
 if (failed) {

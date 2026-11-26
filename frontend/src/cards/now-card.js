@@ -1,6 +1,6 @@
-// sunflow-now-card: the "right now" summary.
+// daymill-now-card: the "right now" summary.
 //
-//   type: custom:sunflow-now-card
+//   type: custom:daymill-now-card
 //   title: Right now          optional; false hides the header
 //   rates_path: /my-dash/rates      tap targets; without a path a tap opens
 //   problem_path: /my-dash/panels   the entity's more-info dialog
@@ -14,7 +14,7 @@
 // while the solar problem sensor is on, chips for panel health, % solar now
 // and the data source, and the bill so far for this cycle.
 
-import { SunFlowCard, defineCard, h } from "../common/base.js";
+import { DayMillCard, defineCard, h } from "../common/base.js";
 import { attr, isOn, num, state, toNumber } from "../common/entities.js";
 import { date, money, periodLabel, price, seasonLabel, time } from "../common/format.js";
 import { periodColor } from "../common/theme.js";
@@ -115,7 +115,7 @@ const css = `
 .bill .amt { font-size: 1.25em; font-weight: 650; font-variant-numeric: tabular-nums; color: var(--sf-text); white-space: nowrap; }
 `;
 
-class NowCard extends SunFlowCard {
+class NowCard extends DayMillCard {
   static styles = [tileStyles, css];
   static keys = [
     "import_rate",
@@ -313,7 +313,7 @@ class NowCard extends SunFlowCard {
   }
 }
 
-defineCard("sunflow-now-card", NowCard, {
-  name: "SunFlow right now",
+defineCard("daymill-now-card", NowCard, {
+  name: "DayMill right now",
   description: "Current price and TOU period, next change, problem alert, panel and data chips, and the bill so far.",
 });

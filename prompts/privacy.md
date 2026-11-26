@@ -20,10 +20,10 @@ of it.
 - Android: most gallery apps have a "remove location" option when sharing.
 - Mac: in Preview, **Tools > Show Inspector**, then the GPS tab, **Remove Location Info**.
 
-## What SunFlow does with your pictures
+## What DayMill does with your pictures
 
 Nothing leaves your house. The pictures you add in the card editor get
-uploaded to your own Home Assistant and stay there. SunFlow doesn't send
+uploaded to your own Home Assistant and stay there. DayMill doesn't send
 anything anywhere, and the website doesn't store anything.
 
 One thing to know: a picture uploaded to Home Assistant (or put in

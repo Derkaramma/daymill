@@ -18,7 +18,7 @@
 // cars: [{name, image, slot: {x, y, w}, flip, port: [x, y],
 //         image: a picture URL, or builtin / builtin:suv / builtin:truck
 //         cable: line, cable_start: [x, y], cable_sag (extra drop, 0-1 of car height),
-//         chip: {x, y, align, show}, sunflow: <slug>,
+//         chip: {x, y, align, show}, daymill: <slug>,
 //         presence_entity, charging_entity, power_entity, battery_entity,
 //         plugged_entity, limit_entity, charging_states: [...],
 //         cable_behind: [car index, ...]   cars that hide the cable where they stand in front of it
@@ -71,7 +71,7 @@ const isNum = (v) => typeof v === "number" && Number.isFinite(v);
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 
 function fail(msg) {
-  throw new Error(`sunflow-house-card: ${msg}`);
+  throw new Error(`daymill-house-card: ${msg}`);
 }
 
 function point(v, where) {
@@ -189,7 +189,8 @@ function car(c, i, where) {
     cableStart: point(c.cable_start, `${where}.cable_start`),
     sag: nonNeg(c.cable_sag, 0),
     chip: carChip(c.chip, `${where}.chip`),
-    sunflow: c.sunflow ? String(c.sunflow) : "",
+    // `sunflow` is the old name of this key; configs from before still have it
+    daymill: (c.daymill ?? c.sunflow) ? String(c.daymill ?? c.sunflow) : "",
     chargingStates: Array.isArray(c.charging_states) ? c.charging_states.map((s) => String(s).toLowerCase()) : null,
     showCable: c.show_cable !== false,
     chargerGlow: point(c.charger_glow, `${where}.charger_glow`),

@@ -56,7 +56,13 @@ check("clean removes empty objects", () => {
 check("cars: found cars become config cars linked by slug", () => {
   const known = [{ slug: "a", name: "A" }, { slug: "b", name: "B" }];
   const next = M.setCar({}, known, 1, { slot: { x: 0.1, y: 0.5, w: 0.2 } });
-  assert.deepEqual(next.cars, [{ sunflow: "a", name: "A" }, { sunflow: "b", name: "B", flip: true, slot: { x: 0.1, y: 0.5, w: 0.2 } }]);
+  assert.deepEqual(next.cars, [{ daymill: "a", name: "A" }, { daymill: "b", name: "B", flip: true, slot: { x: 0.1, y: 0.5, w: 0.2 } }]);
+});
+
+check("cars: old sunflow keys are saved as daymill", () => {
+  const cfg = { type: "x", cars: [{ sunflow: "a", name: "A" }, { daymill: "b" }, { name: "C" }] };
+  assert.deepEqual(M.renameCarKeys(cfg).cars, [{ name: "A", daymill: "a" }, { daymill: "b" }, { name: "C" }]);
+  assert.deepEqual(M.renameCarKeys({ type: "x" }), { type: "x" });
 });
 
 check("snap prefers targets, then lines up with neighbors", () => {
@@ -82,11 +88,11 @@ check("history undo and redo", () => {
 });
 
 check("export and import layouts", () => {
-  const cfg = { type: "custom:sunflow-house-card", layout: { panel: { x: 0.1, y: 0.2, w: 0.02, h: 0.08, skew: 0 } }, entities: { solar_power: "sensor.x" } };
+  const cfg = { type: "custom:daymill-house-card", layout: { panel: { x: 0.1, y: 0.2, w: 0.02, h: 0.08, skew: 0 } }, entities: { solar_power: "sensor.x" } };
   const out = M.exportLayout(cfg);
   assert.equal(out.entities, undefined);
-  assert.equal(out.sunflow_layout, 1);
-  const back = M.importLayout({ type: "custom:sunflow-house-card", entities: { solar_power: "sensor.y" } }, JSON.stringify(out));
+  assert.equal(out.daymill_layout, 1);
+  const back = M.importLayout({ type: "custom:daymill-house-card", entities: { solar_power: "sensor.y" } }, JSON.stringify(out));
   assert.equal(back.layout.panel.x, 0.1);
   assert.equal(back.entities.solar_power, "sensor.y");
   assert.throws(() => M.importLayout({}, "{x"), /bad_json/);

@@ -1,14 +1,14 @@
 {
-  "domain": "sunflow_solar",
-  "name": "SunFlow Solar",
+  "domain": "daymill",
+  "name": "DayMill",
   "after_dependencies": ["http", "lovelace"],
   "codeowners": ["@Derkaramma"],
   "config_flow": true,
   "dependencies": ["recorder"],
-  "documentation": "https://github.com/Derkaramma/sunflow-solar",
+  "documentation": "https://github.com/Derkaramma/daymill",
   "integration_type": "service",
   "iot_class": "calculated",
-  "issue_tracker": "https://github.com/Derkaramma/sunflow-solar/issues",
+  "issue_tracker": "https://github.com/Derkaramma/daymill/issues",
   "requirements": [],
   "single_config_entry": true,
   "version": "0.1.2"

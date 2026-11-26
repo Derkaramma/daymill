@@ -1,6 +1,6 @@
-// sunflow-share-ring-card: how much of the home's energy came from solar.
+// daymill-share-ring-card: how much of the home's energy came from solar.
 //
-//   type: custom:sunflow-share-ring-card
+//   type: custom:daymill-share-ring-card
 //   periods: [today, d7, d30]     tabs; month and year also work. First is the default.
 //   entities: {totals: sensor.x}  optional override (totals_entity also works)
 //
@@ -9,7 +9,7 @@
 //   share      = solar used / used
 //   grid used  = used - solar used
 
-import { SunFlowCard, defineCard, h, s } from "../common/base.js";
+import { DayMillCard, defineCard, h, s } from "../common/base.js";
 import { attr, toNumber } from "../common/entities.js";
 import { kwh, pct } from "../common/format.js";
 import { cssVar } from "../common/theme.js";
@@ -96,7 +96,7 @@ ha-card { padding: 14px 16px 16px; }
 .note:empty { display: none; }
 `;
 
-class ShareRingCard extends SunFlowCard {
+class ShareRingCard extends DayMillCard {
   static styles = [tileStyles, css];
   static keys = ["totals"];
   static cardSize = 4;
@@ -224,7 +224,7 @@ class ShareRingCard extends SunFlowCard {
   }
 }
 
-defineCard("sunflow-share-ring-card", ShareRingCard, {
-  name: "SunFlow solar share",
+defineCard("daymill-share-ring-card", ShareRingCard, {
+  name: "DayMill solar share",
   description: "Ring showing how much of the home's energy came from solar, for today, 7 days or 30 days.",
 });

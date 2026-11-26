@@ -14,7 +14,7 @@ from pytest_homeassistant_custom_component.components.recorder.common import (
     async_wait_recording_done,
 )
 
-from custom_components.sunflow_solar.totals import (
+from custom_components.daymill.totals import (
     async_fetch_totals,
     self_sufficiency_today,
     window_starts,
@@ -96,14 +96,14 @@ async def test_totals_sensor(hass: HomeAssistant) -> None:
     coordinator = entry.runtime_data
     await coordinator.async_refresh_totals()
     await hass.async_block_till_done()
-    state = hass.states.get("sensor.sunflow_totals")
+    state = hass.states.get("sensor.daymill_totals")
     assert state.state == "0.0"
     for key in ("produced_today", "net_cost_month", "adders_year", "savings_d30"):
         assert key in state.attributes
     ids = coordinator.statistic_ids()
-    assert ids["produced"] == "sensor.sunflow_energy_produced"
-    assert ids["nbc"] == "sensor.sunflow_nbc_charges"
-    assert hass.states.get("sensor.sunflow_self_sufficiency_today").state == "0"
+    assert ids["produced"] == "sensor.daymill_energy_produced"
+    assert ids["nbc"] == "sensor.daymill_nbc_charges"
+    assert hass.states.get("sensor.daymill_self_sufficiency_today").state == "0"
 
 
 def test_window_starts_in_tariff_zone() -> None:

@@ -9,7 +9,7 @@ const STRINGS = {
     // generic
     "unavailable": "Unavailable",
     "no_data": "No data yet",
-    "not_found": "SunFlow entities not found. Is the integration set up?",
+    "not_found": "DayMill entities not found. Is the integration set up?",
     "missing_entity": "Entity not found: {entity}",
     "data_old": "Data {minutes} min old",
     "live": "Live data",

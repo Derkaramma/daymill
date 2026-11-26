@@ -39,7 +39,7 @@ extras:
   # an example, not a published rate: never flag it as out of date
   no_expiry: true
   plan_detail: >-
-    Example only: $0.30/kWh and $0.50/day. SunFlow can't take your own flat price yet, so treat
+    Example only: $0.30/kWh and $0.50/day. DayMill can't take your own flat price yet, so treat
     the cost numbers as a rough guide.
   definitions: >-
     One price for every kWh, any hour. Net exports are credited at the same price under NEM 1.0

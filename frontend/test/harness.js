@@ -1,6 +1,6 @@
 // Page script for harness.html: a stub ha-card, the fake hass and a render
 // function that shoot.mjs (or the console) calls:
-//   harness.render({card: {type: "custom:sunflow-test-card"}, hass: {scenario: "normal"}, width: 500})
+//   harness.render({card: {type: "custom:daymill-test-card"}, hass: {scenario: "normal"}, width: 500})
 // hass takes createFakeHass options, plus `panels` for made-up panel entities.
 
 import { createFakeHass } from "./fake-hass.js";

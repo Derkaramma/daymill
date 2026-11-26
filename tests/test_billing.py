@@ -10,7 +10,7 @@ from zoneinfo import ZoneInfo
 
 import pytest
 
-from custom_components.sunflow_solar.billing import (
+from custom_components.daymill.billing import (
     Ledger,
     clamp_cycle_day,
     cycle_start_for,

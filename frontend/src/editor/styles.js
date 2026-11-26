@@ -16,7 +16,7 @@ export const editorStyles = `
 
 /* preview with handles */
 .pv { position: relative; touch-action: none; user-select: none; -webkit-user-select: none; }
-.pv sunflow-house-card { display: block; }
+.pv daymill-house-card { display: block; }
 .edov { position: absolute; left: 0; top: 0; width: 0; height: 0; touch-action: none; overflow: visible; }
 .edov.add { cursor: crosshair; }
 .edov svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }

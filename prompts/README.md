@@ -5,7 +5,7 @@ feeding a few photos of my house into ChatGPT and asking for a clean
 "architectural render" of it, then a night version, then cutouts of our cars.
 These are the exact prompts I used, with blanks for yours.
 
-You don't need any of this to use SunFlow. With no picture, the card draws a
+You don't need any of this to use DayMill. With no picture, the card draws a
 simple built-in house. This is the fun part you can do whenever.
 
 ## What you need
@@ -63,7 +63,7 @@ You can also copy the files into `/config/www/sunflow/` and point the card at
 them yourself:
 
 ```yaml
-type: custom:sunflow-house-card
+type: custom:daymill-house-card
 image_day: /local/sunflow/house-day.jpg
 image_night: /local/sunflow/house-night.jpg
 ```

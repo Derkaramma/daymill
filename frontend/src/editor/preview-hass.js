@@ -33,7 +33,7 @@ const ROLE_DOMAIN = {
 export function previewCars(cars) {
   return cars.map((c, i) => {
     const out = { ...c };
-    for (const r of ROLES) if (!out[r]) out[r] = `${ROLE_DOMAIN[r]}.sunflow_preview_car${i + 1}_${r.replace("_entity", "")}`;
+    for (const r of ROLES) if (!out[r]) out[r] = `${ROLE_DOMAIN[r]}.daymill_preview_car${i + 1}_${r.replace("_entity", "")}`;
     return out;
   });
 }
@@ -65,7 +65,7 @@ export function previewHass(hass, { scenario = "normal", time = "day", overrides
     if (key.startsWith("battery") && !want) continue;
     let id = entityId(hass, key, overrides);
     if (!id) {
-      id = `sensor.sunflow_preview_${key}`;
+      id = `sensor.daymill_preview_${key}`;
       entities[id] = { entity_id: id, platform: PLATFORM, translation_key: key, labels: [] };
     }
     ids[key] = id;

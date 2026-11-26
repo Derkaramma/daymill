@@ -1,13 +1,13 @@
-// sunflow-billing-card: this billing cycle so far, and grid kWh per TOU
+// daymill-billing-card: this billing cycle so far, and grid kWh per TOU
 // period with the current period marked. Reads the bill estimate sensor.
 //
-//   type: custom:sunflow-billing-card
+//   type: custom:daymill-billing-card
 //   periods: true            # false hides the per-period table
 //   show_all_periods: false  # also list periods with no kWh this cycle
 //   notes: true              # cycle note and tracking start under the tables
 //   title: "..."             # false hides the header
 
-import { SunFlowCard, asButton, defineCard, h } from "../common/base.js";
+import { DayMillCard, asButton, defineCard, h } from "../common/base.js";
 import { attr, num, state } from "../common/entities.js";
 import { DASH, date, money, num as fmtNum, periodLabel, price, seasonLabel, t } from "../common/format.js";
 import { periodColor } from "../common/theme.js";
@@ -17,7 +17,7 @@ import { dotLabel, section, table } from "./chart/table.js";
 
 const isNum = (v) => typeof v === "number" && Number.isFinite(v);
 
-class BillingCard extends SunFlowCard {
+class BillingCard extends DayMillCard {
   static styles = [chartStyles];
   static keys = ["bill_estimate", "tou_period", "import_rate", "totals", "energy_produced"];
   static cardSize = 7;
@@ -197,7 +197,7 @@ class BillingCard extends SunFlowCard {
   }
 }
 
-defineCard("sunflow-billing-card", BillingCard, {
-  name: "SunFlow billing cycle",
+defineCard("daymill-billing-card", BillingCard, {
+  name: "DayMill billing cycle",
   description: "Bill so far this cycle, and grid kWh per time-of-use period.",
 });

@@ -2,15 +2,15 @@
   "config": {
     "step": {
       "user": {
-        "title": "Welcome to SunFlow",
-        "description": "Found: {found}. Pick your system and SunFlow fills in the sensors for you.",
+        "title": "Welcome to DayMill",
+        "description": "Found: {found}. Pick your system and DayMill fills in the sensors for you.",
         "data": {
           "system": "Solar system"
         }
       },
       "no_solar": {
-        "title": "Welcome to SunFlow",
-        "description": "SunFlow didn't find any solar in Home Assistant yet.\n\n**SunPower:** install [pvs-hass]({pvs_url}). The password is the last 5 characters of your PVS serial number. Turn on live data and keep polling at 15 seconds or more.\n\n**Other brands:** add [your solar integration]({integrations_url}) first.\n\nThen come back here, or try SunFlow with demo data.",
+        "title": "Welcome to DayMill",
+        "description": "DayMill didn't find any solar in Home Assistant yet.\n\n**SunPower:** install [pvs-hass]({pvs_url}). The password is the last 5 characters of your PVS serial number. Turn on live data and keep polling at 15 seconds or more.\n\n**Other brands:** add [your solar integration]({integrations_url}) first.\n\nThen come back here, or try DayMill with demo data.",
         "menu_options": {
           "user": "Check again",
           "custom": "I'll pick the sensors myself",
@@ -38,16 +38,16 @@
           "grid_power": "Net power to or from the grid.",
           "grid_power_fallback": "Optional. A slower meter used when the one above stops updating.",
           "grid_positive_is_import": "Turn off if your grid sensor goes positive when you send power out.",
-          "home_power": "Optional. Without it, SunFlow works it out from solar and grid.",
+          "home_power": "Optional. Without it, DayMill works it out from solar and grid.",
           "solar_energy": "A counter that only goes up.",
           "import_energy": "A counter that only goes up.",
           "export_energy": "A counter that only goes up.",
-          "max_age": "How long a sensor can go without updating before SunFlow uses its backup."
+          "max_age": "How long a sensor can go without updating before DayMill uses its backup."
         }
       },
       "panels": {
         "title": "Panels (optional)",
-        "description": "Found {count} panels. Group them into roof faces so SunFlow can compare panels that face the same way and spot one that's falling behind. Set roof faces to 0 to skip.",
+        "description": "Found {count} panels. Group them into roof faces so DayMill can compare panels that face the same way and spot one that's falling behind. Set roof faces to 0 to skip.",
         "data": {
           "roof_faces": "Roof faces",
           "gateway_uptime": "Gateway status sensor",
@@ -55,7 +55,7 @@
         },
         "data_description": {
           "roof_faces": "How many groups of panels point in different directions.",
-          "gateway_uptime": "Optional. SunFlow flags the gateway as offline when this goes unavailable.",
+          "gateway_uptime": "Optional. DayMill flags the gateway as offline when this goes unavailable.",
           "gateway_diagnostics": "Optional. Extra gateway sensors to show on the panels page."
         }
       },
@@ -99,7 +99,7 @@
       },
       "car_add": {
         "title": "Add a car",
-        "description": "Pick a car or charger SunFlow found. Its sensors get filled in for you.",
+        "description": "Pick a car or charger DayMill found. Its sensors get filled in for you.",
         "data": {
           "car": "Car"
         }
@@ -118,7 +118,7 @@
       },
       "car": {
         "title": "Car details",
-        "description": "Pick the sensors for this car. Only **Charging** is needed. The others show up on the cards when you pick them.\n\n**Keep it read-only.** SunFlow only reads your car. These entities can change things on it, so if you don't use them, open each one and turn off **Enabled**:\n{controls}",
+        "description": "Pick the sensors for this car. Only **Charging** is needed. The others show up on the cards when you pick them.\n\n**Keep it read-only.** DayMill only reads your car. These entities can change things on it, so if you don't use them, open each one and turn off **Enabled**:\n{controls}",
         "data": {
           "name": "Name",
           "image": "Picture",
@@ -173,12 +173,12 @@
       },
       "finish": {
         "title": "All set",
-        "description": "SunFlow is ready to go.\n\n**Energy dashboard:** in [Settings > Dashboards > Energy]({energy_url}), pick these:\n\n{guide}",
+        "description": "DayMill is ready to go.\n\n**Energy dashboard:** in [Settings > Dashboards > Energy]({energy_url}), pick these:\n\n{guide}",
         "data": {
-          "create_dashboard": "Create the SunFlow dashboard"
+          "create_dashboard": "Create the DayMill dashboard"
         },
         "data_description": {
-          "create_dashboard": "Adds a SunFlow dashboard to the sidebar. You can delete it any time."
+          "create_dashboard": "Adds a DayMill dashboard to the sidebar. You can delete it any time."
         }
       }
     },
@@ -194,14 +194,14 @@
       "name_taken": "Another car already has this name."
     },
     "abort": {
-      "already_configured": "SunFlow Solar is already set up.",
-      "single_instance_allowed": "SunFlow Solar is already set up."
+      "already_configured": "DayMill is already set up.",
+      "single_instance_allowed": "DayMill is already set up."
     }
   },
   "options": {
     "step": {
       "init": {
-        "title": "SunFlow options",
+        "title": "DayMill options",
         "description": "What do you want to change?\n\n**Energy dashboard:** in [Settings > Dashboards > Energy]({energy_url}), pick these:\n\n{guide}",
         "menu_options": {
           "sources": "Power and energy sensors",
@@ -209,7 +209,7 @@
           "battery": "Home battery (beta)",
           "cars": "Cars",
           "rates": "Utility rates",
-          "dashboard": "SunFlow dashboard"
+          "dashboard": "DayMill dashboard"
         }
       },
       "sources": {
@@ -233,16 +233,16 @@
           "grid_power": "Net power to or from the grid.",
           "grid_power_fallback": "Optional. A slower meter used when the one above stops updating.",
           "grid_positive_is_import": "Turn off if your grid sensor goes positive when you send power out.",
-          "home_power": "Optional. Without it, SunFlow works it out from solar and grid.",
+          "home_power": "Optional. Without it, DayMill works it out from solar and grid.",
           "solar_energy": "A counter that only goes up.",
           "import_energy": "A counter that only goes up.",
           "export_energy": "A counter that only goes up.",
-          "max_age": "How long a sensor can go without updating before SunFlow uses its backup."
+          "max_age": "How long a sensor can go without updating before DayMill uses its backup."
         }
       },
       "panels": {
         "title": "Panels (optional)",
-        "description": "Found {count} panels. Group them into roof faces so SunFlow can compare panels that face the same way and spot one that's falling behind. Set roof faces to 0 to skip.",
+        "description": "Found {count} panels. Group them into roof faces so DayMill can compare panels that face the same way and spot one that's falling behind. Set roof faces to 0 to skip.",
         "data": {
           "roof_faces": "Roof faces",
           "gateway_uptime": "Gateway status sensor",
@@ -250,7 +250,7 @@
         },
         "data_description": {
           "roof_faces": "How many groups of panels point in different directions.",
-          "gateway_uptime": "Optional. SunFlow flags the gateway as offline when this goes unavailable.",
+          "gateway_uptime": "Optional. DayMill flags the gateway as offline when this goes unavailable.",
           "gateway_diagnostics": "Optional. Extra gateway sensors to show on the panels page."
         }
       },
@@ -294,7 +294,7 @@
       },
       "car_add": {
         "title": "Add a car",
-        "description": "Pick a car or charger SunFlow found. Its sensors get filled in for you.",
+        "description": "Pick a car or charger DayMill found. Its sensors get filled in for you.",
         "data": {
           "car": "Car"
         }
@@ -313,7 +313,7 @@
       },
       "car": {
         "title": "Car details",
-        "description": "Pick the sensors for this car. Only **Charging** is needed. The others show up on the cards when you pick them.\n\n**Keep it read-only.** SunFlow only reads your car. These entities can change things on it, so if you don't use them, open each one and turn off **Enabled**:\n{controls}",
+        "description": "Pick the sensors for this car. Only **Charging** is needed. The others show up on the cards when you pick them.\n\n**Keep it read-only.** DayMill only reads your car. These entities can change things on it, so if you don't use them, open each one and turn off **Enabled**:\n{controls}",
         "data": {
           "name": "Name",
           "image": "Picture",
@@ -367,8 +367,8 @@
         }
       },
       "dashboard": {
-        "title": "SunFlow dashboard",
-        "description": "Add the SunFlow dashboard to the sidebar. If you deleted it, this brings it back."
+        "title": "DayMill dashboard",
+        "description": "Add the DayMill dashboard to the sidebar. If you deleted it, this brings it back."
       }
     },
     "error": {
@@ -383,8 +383,8 @@
       "name_taken": "Another car already has this name."
     },
     "abort": {
-      "dashboard_created": "The SunFlow dashboard is in your sidebar.",
-      "dashboard_exists": "You already have a SunFlow dashboard.",
+      "dashboard_created": "The DayMill dashboard is in your sidebar.",
+      "dashboard_exists": "You already have a DayMill dashboard.",
       "dashboard_failed": "The dashboard couldn't be created. Check the logs for details."
     }
   },
@@ -533,20 +533,16 @@
   },
   "issues": {
     "frontend_resource_yaml": {
-      "title": "Add the SunFlow cards to your dashboard resources",
-      "description": "Your dashboard resources are managed in YAML, so SunFlow can't add its cards for you. Add this to the `resources` list in your Lovelace YAML and restart Home Assistant:\n\n```yaml\n- url: {url}\n  type: module\n```"
+      "title": "Add the DayMill cards to your dashboard resources",
+      "description": "Your dashboard resources are managed in YAML, so DayMill can't add its cards for you. Add this to the `resources` list in your Lovelace YAML and restart Home Assistant:\n\n```yaml\n- url: {url}\n  type: module\n```"
     },
     "tariff_out_of_date": {
       "title": "Your rate plan may be out of date",
-      "description": "The {tariff} prices in SunFlow are from {date}, over a year ago. Your utility has probably changed them since, so cost numbers may be off. Check for a SunFlow update, or pick another plan in [SunFlow's options]({options_url})."
+      "description": "The {tariff} prices in DayMill are from {date}, over a year ago. Your utility has probably changed them since, so cost numbers may be off. Check for a DayMill update, or pick another plan in [DayMill's options]({options_url})."
     },
     "source_unavailable": {
-      "title": "SunFlow can't read some sensors",
-      "description": "These sensors have been missing or unavailable for over an hour: {entities}\n\nCheck the integration they come from, or pick other sensors in [SunFlow's options]({options_url})."
-    },
-    "moved_to_daymill": {
-      "title": "SunFlow is now DayMill",
-      "description": "SunFlow is now DayMill. Same integration, new name. To move:\n\n1. In HACS, update to DayMill and restart.\n2. Add DayMill in Devices & services and pick **Import settings from SunFlow**.\n3. Check your dashboard, then delete SunFlow.\n4. Open the DayMill repair to take over your old entity IDs."
+      "title": "DayMill can't read some sensors",
+      "description": "These sensors have been missing or unavailable for over an hour: {entities}\n\nCheck the integration they come from, or pick other sensors in [DayMill's options]({options_url})."
     }
   }
 }

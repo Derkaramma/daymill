@@ -93,7 +93,7 @@ export class HistoryView {
       for (const d of defs) this.raw[d.id] = toSeries(rows?.[d.id], (v) => (d.map ? d.map(v, this.hass) : v)) ?? [];
       this.failed = false;
     } catch (err) {
-      console.warn("SunFlow: history fetch failed", err);
+      console.warn("DayMill: history fetch failed", err);
       this.failed = true;
       this.fetchedAt = Date.now() - REFETCH_MS + 60_000; // retry in a minute
     } finally {
@@ -223,7 +223,7 @@ export class StatsView {
       this.result = res || {};
       this.start = start;
     } catch (err) {
-      console.warn("SunFlow: statistics fetch failed", err);
+      console.warn("DayMill: statistics fetch failed", err);
       if (key === this.key) this.key = undefined; // retry on the next render
     } finally {
       this.loading = false;

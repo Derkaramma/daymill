@@ -1,4 +1,4 @@
-"""Diagnostics download for a SunFlow config entry.
+"""Diagnostics download for a DayMill config entry.
 
 People attach this to bug reports, so anything that points at their house
 is redacted: entity ids, car names and devices, serials, the PTO date and

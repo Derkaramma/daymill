@@ -1,4 +1,4 @@
-"""Glue between Home Assistant states and the pure SunFlow modules.
+"""Glue between Home Assistant states and the pure DayMill modules.
 
 Tracks the configured source entities, works out power with the freshness
 fallback, feeds lifetime energy into the billing ledger, runs the hourly
@@ -114,7 +114,7 @@ _ENERGY_SOURCES = {
     "exported": CONF_EXPORT_ENERGY,
 }
 
-type SunFlowConfigEntry = ConfigEntry[SunFlowCoordinator]
+type DayMillConfigEntry = ConfigEntry[DayMillCoordinator]
 
 
 def entry_config(entry: ConfigEntry) -> dict[str, Any]:
@@ -251,12 +251,12 @@ def _value(state: State | None) -> str | None:
     return state.state if state else None
 
 
-class SunFlowCoordinator(DataUpdateCoordinator[Snapshot]):
+class DayMillCoordinator(DataUpdateCoordinator[Snapshot]):
     """Owns the tariff engine, the ledger and the live snapshot."""
 
-    config_entry: SunFlowConfigEntry
+    config_entry: DayMillConfigEntry
 
-    def __init__(self, hass: HomeAssistant, entry: SunFlowConfigEntry) -> None:
+    def __init__(self, hass: HomeAssistant, entry: DayMillConfigEntry) -> None:
         super().__init__(hass, _LOGGER, config_entry=entry, name=DOMAIN, update_interval=None)
         self.conf = entry_config(entry)
         self.engine: TariffEngine
@@ -266,7 +266,6 @@ class SunFlowCoordinator(DataUpdateCoordinator[Snapshot]):
         self.cars = cars_from_config(self.conf)
         self.max_age = float(self.conf.get(CONF_MAX_AGE, DEFAULT_MAX_AGE))
         self.problem_since: datetime | None = None
-        self.moved_notice_shown = False
         self.demo = self.conf.get(CONF_SOURCE) == SOURCE_DEMO
         self._demo_last: datetime | None = None
         self._demo_snap: dict[str, Any] | None = None
@@ -353,7 +352,6 @@ class SunFlowCoordinator(DataUpdateCoordinator[Snapshot]):
             self.energy[key] = sources.to_number((stored.get("energy") or {}).get(key))
         since = stored.get("problem_since")
         self.problem_since = dt_util.parse_datetime(since) if since else None
-        self.moved_notice_shown = bool(stored.get("moved_notice_shown"))
 
     @callback
     def async_start(self) -> None:
@@ -405,12 +403,7 @@ class SunFlowCoordinator(DataUpdateCoordinator[Snapshot]):
             "ledger": self.ledger.to_dict(),
             "energy": dict(self.energy),
             "problem_since": self.problem_since.isoformat() if self.problem_since else None,
-            "moved_notice_shown": self.moved_notice_shown,
         }
-
-    async def async_save(self) -> None:
-        """Write the Store right away instead of waiting for the delayed save."""
-        await self._store.async_save(self._data_to_save())
 
     @callback
     def _schedule_save(self) -> None:
@@ -430,7 +423,7 @@ class SunFlowCoordinator(DataUpdateCoordinator[Snapshot]):
             self._energy_dirty = True
         if not self._refresh_pending:
             self._refresh_pending = True
-            self.hass.async_create_task(self._flush(), "sunflow_solar refresh", eager_start=False)
+            self.hass.async_create_task(self._flush(), "daymill refresh", eager_start=False)
 
     async def _flush(self) -> None:
         self._refresh_pending = False
@@ -706,8 +699,8 @@ class SunFlowCoordinator(DataUpdateCoordinator[Snapshot]):
         self.async_update_listeners()
 
 
-class SunFlowEntity(CoordinatorEntity[SunFlowCoordinator]):
-    """Every entity hangs off one "SunFlow" service device.
+class DayMillEntity(CoordinatorEntity[DayMillCoordinator]):
+    """Every entity hangs off one "DayMill" service device.
 
     The entity_id below is only a suggestion and the user can rename it.
     Cards and templates should find entities through the registry (unique_id
@@ -716,12 +709,12 @@ class SunFlowEntity(CoordinatorEntity[SunFlowCoordinator]):
 
     _attr_has_entity_name = True
 
-    def __init__(self, coordinator: SunFlowCoordinator, key: str, platform: str) -> None:
+    def __init__(self, coordinator: DayMillCoordinator, key: str, platform: str) -> None:
         super().__init__(coordinator)
         entry_id = coordinator.config_entry.entry_id
         self._key = key
         self._attr_unique_id = f"{entry_id}_{key}"
-        self.entity_id = f"{platform}.sunflow_{key}"
+        self.entity_id = f"{platform}.daymill_{key}"
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, entry_id)},
             name=DEVICE_NAME,

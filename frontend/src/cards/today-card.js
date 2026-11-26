@@ -1,6 +1,6 @@
-// sunflow-today-card: today's energy and money as 2x2 tiles.
+// daymill-today-card: today's energy and money as 2x2 tiles.
 //
-//   type: custom:sunflow-today-card
+//   type: custom:daymill-today-card
 //   show: both            energy, money or both
 //   headers: true         false hides the section headers
 //   entities: {...}       optional overrides by translation key
@@ -9,7 +9,7 @@
 // Money: net cost including the daily charge, saved by solar, home use from
 // solar, and non-bypassable charges plus adders.
 
-import { SunFlowCard, defineCard, h } from "../common/base.js";
+import { DayMillCard, defineCard, h } from "../common/base.js";
 import { attr, num, numAttr, toNumber } from "../common/entities.js";
 import { money, num as fmtNum, pct } from "../common/format.js";
 import { cssVar } from "../common/theme.js";
@@ -24,7 +24,7 @@ const css = `
 
 const v = (key) => `var(${cssVar(key)})`;
 
-class TodayCard extends SunFlowCard {
+class TodayCard extends DayMillCard {
   static styles = [tileStyles, css];
   static keys = [
     "totals",
@@ -154,7 +154,7 @@ class TodayCard extends SunFlowCard {
   }
 }
 
-defineCard("sunflow-today-card", TodayCard, {
-  name: "SunFlow today",
+defineCard("daymill-today-card", TodayCard, {
+  name: "DayMill today",
   description: "Today's energy (produced, used, imported, exported) and money (net cost, savings, solar share, fixed charges) as tiles.",
 });

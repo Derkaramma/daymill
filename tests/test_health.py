@@ -2,7 +2,7 @@
 
 from datetime import UTC, datetime, timedelta
 
-from custom_components.sunflow_solar import health as h
+from custom_components.daymill import health as h
 
 NOW = datetime(2026, 6, 15, 12, 0, tzinfo=UTC)
 RECENT = NOW - timedelta(minutes=1)

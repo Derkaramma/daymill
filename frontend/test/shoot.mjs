@@ -1,6 +1,6 @@
 // Render one card with the fake hass in headless Chromium and save a PNG.
 //
-//   node test/shoot.mjs --card '{"type":"custom:sunflow-test-card"}' --out /tmp/card.png
+//   node test/shoot.mjs --card '{"type":"custom:daymill-test-card"}' --out /tmp/card.png
 //
 // Options:
 //   --card <json>        card config (or --card-file <path.json>)
@@ -11,7 +11,7 @@
 //   --width <px>         card width (default 500)
 //   --light              light theme
 //   --scale <n>          device scale factor (default 2)
-//   --bundle             load the built sunflow-cards.js instead of src/
+//   --bundle             load the built daymill-cards.js instead of src/
 //   --assets <dir>       serve a folder at /assets/ (images for the card)
 //   --strict             exit 1 on page errors or CSP violations
 //   --eval <js>          run an expression after rendering (window.harness.el
@@ -103,7 +103,7 @@ async function bundle(entry) {
     format: "esm",
     write: false,
     target: "es2022",
-    define: { __SUNFLOW_VERSION__: '"harness"' },
+    define: { __DAYMILL_VERSION__: '"harness"' },
     logLevel: "silent",
   });
   return result.outputFiles[0].text;
@@ -114,7 +114,7 @@ const TYPES = { ".html": "text/html", ".css": "text/css", ".js": "text/javascrip
 async function main() {
   const opt = args(process.argv.slice(2));
   if (!opt.out || opt.out === true) throw new Error("--out <path.png> is required");
-  let card = opt["card-file"] ? JSON.parse(readFileSync(opt["card-file"], "utf8")) : opt.card ? JSON.parse(opt.card) : { type: "custom:sunflow-test-card" };
+  let card = opt["card-file"] ? JSON.parse(readFileSync(opt["card-file"], "utf8")) : opt.card ? JSON.parse(opt.card) : { type: "custom:daymill-test-card" };
   if (typeof card !== "object") throw new Error("--card must be a JSON object");
   const hass = { ...(opt.hass ? JSON.parse(opt.hass) : {}) };
   if (opt.scenario) hass.scenario = opt.scenario;
@@ -123,7 +123,7 @@ async function main() {
 
   const harnessJs = await bundle(join(here, "harness.js"));
   const cardsJs = opt.bundle
-    ? readFileSync(join(root, "..", "custom_components", "sunflow_solar", "frontend", "sunflow-cards.js"), "utf8")
+    ? readFileSync(join(root, "..", "custom_components", "daymill", "frontend", "daymill-cards.js"), "utf8")
     : await bundle(join(root, "src", "index.js"));
   const files = {
     "/harness.html": readFileSync(join(here, "harness.html"), "utf8"),

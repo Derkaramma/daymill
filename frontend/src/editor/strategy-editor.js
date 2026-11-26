@@ -1,15 +1,16 @@
-// sunflow-strategy-editor: what HA shows under "Edit dashboard" for the
-// SunFlow dashboard. It wraps the house card editor and saves the house
+// daymill-strategy-editor: what HA shows under "Edit dashboard" for the
+// DayMill dashboard. It wraps the house card editor and saves the house
 // card's settings under `house:` in the strategy config, so a photo and
 // layout stay without taking control of the dashboard.
 
+import { defineElement } from "../common/define.js";
 import { adopt, h } from "../common/dom.js";
 import { baseStyles } from "../common/theme.js";
 import { setLanguage, t } from "../common/format.js";
 import "./house-editor.js";
 import "./strings.js";
 
-const CARD = "custom:sunflow-house-card";
+const CARD = "custom:daymill-house-card";
 
 const styles = `
   :host { display: block; }
@@ -22,7 +23,7 @@ class StrategyEditor extends HTMLElement {
     this.attachShadow({ mode: "open" });
     adopt(this.shadowRoot, baseStyles, styles);
     this._config = {};
-    this.$editor = document.createElement("sunflow-house-card-editor");
+    this.$editor = document.createElement("daymill-house-card-editor");
     this.$editor.addEventListener("config-changed", (e) => this._changed(e));
     this.$note = h("p", { class: "note" });
     this.shadowRoot.append(this.$note, this.$editor);
@@ -58,4 +59,4 @@ class StrategyEditor extends HTMLElement {
   }
 }
 
-if (!customElements.get("sunflow-strategy-editor")) customElements.define("sunflow-strategy-editor", StrategyEditor);
+defineElement("daymill-strategy-editor", StrategyEditor);

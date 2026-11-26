@@ -1,4 +1,4 @@
-// Page script for the editor tests: renders sunflow-house-card-editor with
+// Page script for the editor tests: renders daymill-house-card-editor with
 // the fake hass, records config-changed events and feeds each config back
 // the way HA's card editor dialog does.
 //
@@ -18,14 +18,14 @@ function fakeFetch(path, init = {}) {
   return fetch("/upload-sink", { method: "POST", body: file, headers: { "content-type": file.type } });
 }
 
-async function render({ config = { type: "custom:sunflow-house-card" }, hass = {}, width = 600 } = {}) {
-  await customElements.whenDefined("sunflow-house-card-editor");
+async function render({ config = { type: "custom:daymill-house-card" }, hass = {}, width = 600 } = {}) {
+  await customElements.whenDefined("daymill-house-card-editor");
   const stage = document.getElementById("stage");
   stage.replaceChildren();
   const slot = document.createElement("div");
   slot.className = "slot";
   slot.style.width = `${width}px`;
-  const el = document.createElement("sunflow-house-card-editor");
+  const el = document.createElement("daymill-house-card-editor");
   el.addEventListener("config-changed", (e) => {
     events.push(e.detail.config);
     // HA hands the new config straight back to the editor

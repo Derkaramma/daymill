@@ -47,5 +47,5 @@ Once the real one is in the picture, open the card editor, drag the drawn
 panel (or battery) right on top of it so the lines start in the right spot,
 and turn off "show" for the drawn one.
 
-Battery support in SunFlow is still beta. I don't have one, so tell me if
+Battery support in DayMill is still beta. I don't have one, so tell me if
 something looks wrong.

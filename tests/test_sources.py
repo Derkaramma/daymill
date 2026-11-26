@@ -2,7 +2,7 @@
 
 import pytest
 
-from custom_components.sunflow_solar import sources as s
+from custom_components.daymill import sources as s
 
 
 @pytest.mark.parametrize(

@@ -1,6 +1,6 @@
-// sunflow-history-card: history charts with a chart picker.
+// daymill-history-card: history charts with a chart picker.
 //
-//   type: custom:sunflow-history-card
+//   type: custom:daymill-history-card
 //   chart: money_per_day      # one chart, no picker
 //   charts: [power_24h, price_24h, money_per_day, energy_per_day, energy_per_month]
 //   days: 7                   # per-day charts: 7 or 30 (any 2-60 works)
@@ -10,7 +10,7 @@
 //   legend: true
 //   title: "..."              # false hides the header
 
-import { SunFlowCard, asButton, defineCard, h } from "../common/base.js";
+import { DayMillCard, asButton, defineCard, h } from "../common/base.js";
 import { t } from "../common/format.js";
 import { chartStyles } from "./chart/style.js";
 import { HistoryView, StatsView, color, powerDefs, priceDefs } from "./chart/history.js";
@@ -23,7 +23,7 @@ const css = `
 .bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: space-between; }
 `;
 
-class HistoryCard extends SunFlowCard {
+class HistoryCard extends DayMillCard {
   static styles = [chartStyles, css];
   static keys = [
     "solar_power",
@@ -150,7 +150,7 @@ class HistoryCard extends SunFlowCard {
   }
 }
 
-defineCard("sunflow-history-card", HistoryCard, {
-  name: "SunFlow history",
+defineCard("daymill-history-card", HistoryCard, {
+  name: "DayMill history",
   description: "Power and price over 24 hours, money and energy per day, energy per month.",
 });

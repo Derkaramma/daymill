@@ -1,14 +1,15 @@
-// sunflow-house-card-editor: the visual editor for sunflow-house-card.
+// daymill-house-card-editor: the visual editor for daymill-house-card.
 //
 // A live preview of the real card sits on top with handles drawn over it.
 // Below it: scenario buttons (simulated data, never written to HA) and one
 // tab per part of the layout. Every change is kept in an undo history and
 // sent to HA as a "config-changed" event, debounced.
 
+import { defineElement } from "../common/define.js";
 import { adopt, h, s, setStyle } from "../common/dom.js";
 import { baseStyles, COLORS } from "../common/theme.js";
 import { setLanguage, t } from "../common/format.js";
-import { sunflowCars } from "../common/entities.js";
+import { daymillCars } from "../common/entities.js";
 import { SCENARIOS } from "../common/simulator.js";
 import { aspectOf, builtinCar } from "../cards/house/layout.js";
 import "../cards/house-card.js";
@@ -38,7 +39,7 @@ class HouseCardEditor extends HTMLElement {
     super();
     this.attachShadow({ mode: "open" });
     adopt(this.shadowRoot, baseStyles, editorStyles);
-    this._config = { type: "custom:sunflow-house-card" };
+    this._config = { type: "custom:daymill-house-card" };
     this._tab = "photo";
     this._scenario = "normal";
     this._time = "day";
@@ -56,7 +57,7 @@ class HouseCardEditor extends HTMLElement {
   // ---- HA editor API ----
 
   setConfig(config) {
-    const next = { type: "custom:sunflow-house-card", ...M.clone(config || {}) };
+    const next = M.renameCarKeys({ type: "custom:daymill-house-card", ...M.clone(config || {}) });
     if (this._lastEmitted && M.same(M.clean(next), this._lastEmitted)) return;
     if (this._built && !M.same(next, this._config)) this._history.push(this._config);
     this._config = next;
@@ -151,7 +152,7 @@ class HouseCardEditor extends HTMLElement {
   // ---- derived data ----
 
   get _known() {
-    return sunflowCars(this._hass);
+    return daymillCars(this._hass);
   }
 
   get _cars() {
@@ -195,10 +196,10 @@ class HouseCardEditor extends HTMLElement {
 
   _build() {
     this._built = true;
-    this.$card = document.createElement("sunflow-house-card");
+    this.$card = document.createElement("daymill-house-card");
     this.$card.editMode = true;
     this.$card.inert = true;
-    this.$card.addEventListener("sunflow-rendered", () => this._queueOverlay());
+    this.$card.addEventListener("daymill-rendered", () => this._queueOverlay());
     this.$svg = s("svg", { "aria-label": t("ed_preview") });
     this.$ov = h("div", { class: "edov" }, this.$svg);
     this.$ov.addEventListener("pointerdown", (e) => this._down(e));
@@ -931,7 +932,7 @@ class HouseCardEditor extends HTMLElement {
     this._renderBody();
     try {
       const out = await reencode(file, { kind, maxWidth: kind === "cutout" ? 1600 : 2400 });
-      const url = await upload(this._hass, out.blob, kind === "cutout" ? "sunflow-car.png" : "sunflow-house.jpg");
+      const url = await upload(this._hass, out.blob, kind === "cutout" ? "daymill-car.png" : "daymill-house.jpg");
       this._sizes[url] = { width: out.width, height: out.height };
       if (kind === "cutout") this._alpha[url] = out.alpha;
       this._msgs[slot] = null;
@@ -1352,7 +1353,7 @@ class HouseCardEditor extends HTMLElement {
         { class: "row" },
         this._button(t("ed_download"), () => {
           const url = URL.createObjectURL(new Blob([json + "\n"], { type: "application/json" }));
-          const a = h("a", { href: url, download: "sunflow-layout.json" });
+          const a = h("a", { href: url, download: "daymill-layout.json" });
           this.shadowRoot.append(a);
           a.click();
           a.remove();
@@ -1376,4 +1377,4 @@ class HouseCardEditor extends HTMLElement {
   }
 }
 
-if (!customElements.get("sunflow-house-card-editor")) customElements.define("sunflow-house-card-editor", HouseCardEditor);
+defineElement("daymill-house-card-editor", HouseCardEditor);

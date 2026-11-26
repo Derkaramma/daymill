@@ -12,10 +12,10 @@ from homeassistant.helpers import issue_registry as ir
 from homeassistant.setup import async_setup_component
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.sunflow_solar import frontend
-from custom_components.sunflow_solar.const import DOMAIN, VERSION
+from custom_components.daymill import frontend
+from custom_components.daymill.const import DOMAIN, VERSION
 
-URL = f"/sunflow_solar/sunflow-cards.js?v={VERSION}"
+URL = f"/daymill/daymill-cards.js?v={VERSION}"
 
 CONFIG: dict[str, Any] = {
     "tariff": "sce_tou_d_prime",
@@ -43,7 +43,7 @@ async def _setup_lovelace(hass: HomeAssistant, conf: dict[str, Any] | None = Non
 
 
 async def _setup_entry(hass: HomeAssistant) -> MockConfigEntry:
-    entry = MockConfigEntry(domain=DOMAIN, data=CONFIG, title="SunFlow Solar")
+    entry = MockConfigEntry(domain=DOMAIN, data=CONFIG, title="DayMill")
     entry.add_to_hass(hass)
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
@@ -55,7 +55,7 @@ def _resources(hass: HomeAssistant) -> list[dict[str, Any]]:
 
 
 def _ours(hass: HomeAssistant) -> list[dict[str, Any]]:
-    return [r for r in _resources(hass) if r["url"].startswith("/sunflow_solar/")]
+    return [r for r in _resources(hass) if r["url"].startswith("/daymill/")]
 
 
 async def test_storage_mode_adds_resource_and_serves_bundle(
@@ -99,10 +99,8 @@ async def test_keeps_other_resources(hass: HomeAssistant) -> None:
 async def test_version_bump_updates_url_and_drops_copies(hass: HomeAssistant) -> None:
     await _setup_lovelace(hass)
     res = hass.data["lovelace"].resources
-    await res.async_create_item(
-        {"res_type": "module", "url": "/sunflow_solar/sunflow-cards.js?v=0.0.1"}
-    )
-    await res.async_create_item({"res_type": "js", "url": "/sunflow_solar/sunflow-cards.js"})
+    await res.async_create_item({"res_type": "module", "url": "/daymill/daymill-cards.js?v=0.0.1"})
+    await res.async_create_item({"res_type": "js", "url": "/daymill/daymill-cards.js"})
     await _setup_entry(hass)
 
     ours = _ours(hass)
@@ -112,7 +110,7 @@ async def test_version_bump_updates_url_and_drops_copies(hass: HomeAssistant) ->
 
     with patch.object(frontend, "VERSION", "9.9.9"):
         assert await frontend.async_register_resource(hass) == "updated"
-    assert [r["url"] for r in _ours(hass)] == ["/sunflow_solar/sunflow-cards.js?v=9.9.9"]
+    assert [r["url"] for r in _ours(hass)] == ["/daymill/daymill-cards.js?v=9.9.9"]
     with patch.object(frontend, "VERSION", "9.9.9"):
         assert await frontend.async_register_resource(hass) == "present"
 
@@ -128,7 +126,7 @@ async def test_lovelace_loading_later(hass: HomeAssistant) -> None:
 async def test_yaml_mode_raises_issue_and_logs_once(
     hass: HomeAssistant, caplog: pytest.LogCaptureFixture
 ) -> None:
-    caplog.set_level(logging.INFO, logger="custom_components.sunflow_solar.frontend")
+    caplog.set_level(logging.INFO, logger="custom_components.daymill.frontend")
     await _setup_lovelace(
         hass, {"resource_mode": "yaml", "resources": [{"url": "/local/x.js", "type": "module"}]}
     )
@@ -151,7 +149,7 @@ async def test_yaml_mode_with_resource_present(hass: HomeAssistant) -> None:
         hass,
         {
             "resource_mode": "yaml",
-            "resources": [{"url": "/sunflow_solar/sunflow-cards.js", "type": "module"}],
+            "resources": [{"url": "/daymill/daymill-cards.js", "type": "module"}],
         },
     )
     await _setup_entry(hass)
@@ -198,17 +196,17 @@ async def test_create_dashboard(hass: HomeAssistant) -> None:
     await hass.async_block_till_done()
 
     ll = hass.data["lovelace"]
-    assert "sunflow" in ll.dashboards
-    assert await ll.dashboards["sunflow"].async_load(False) == {
-        "strategy": {"type": "custom:sunflow"}
+    assert "daymill" in ll.dashboards
+    assert await ll.dashboards["daymill"].async_load(False) == {
+        "strategy": {"type": "custom:daymill"}
     }
-    assert ll.dashboards["sunflow"].config["title"] == "SunFlow"
+    assert ll.dashboards["daymill"].config["title"] == "DayMill"
     assert await frontend.async_create_dashboard(hass) is False
 
 
 def test_resource_url_matching() -> None:
-    assert frontend._is_ours("/sunflow_solar/sunflow-cards.js?v=1")
-    assert frontend._is_ours("/sunflow_solar/sunflow-cards.js")
-    assert not frontend._is_ours("/local/sunflow_solar/sunflow-cards.js")
-    assert not frontend._is_ours("/sunflow_solar/other.js")
+    assert frontend._is_ours("/daymill/daymill-cards.js?v=1")
+    assert frontend._is_ours("/daymill/daymill-cards.js")
+    assert not frontend._is_ours("/local/daymill/daymill-cards.js")
+    assert not frontend._is_ours("/daymill/other.js")
     assert not frontend._is_ours(None)

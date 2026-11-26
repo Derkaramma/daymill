@@ -15,8 +15,8 @@ const esbuild = require("esbuild");
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "..");
-const integration = join(root, "..", "custom_components", "sunflow_solar");
-const outfile = join(integration, "frontend", "sunflow-cards.js");
+const integration = join(root, "..", "custom_components", "daymill");
+const outfile = join(integration, "frontend", "daymill-cards.js");
 const { version } = JSON.parse(readFileSync(join(integration, "manifest.json"), "utf8"));
 const watch = process.argv.includes("--watch");
 
@@ -30,7 +30,7 @@ const options = {
   sourcemap: false,
   legalComments: "none",
   charset: "utf8",
-  define: { __SUNFLOW_VERSION__: JSON.stringify(version) },
+  define: { __DAYMILL_VERSION__: JSON.stringify(version) },
   logLevel: "warning",
 };
 

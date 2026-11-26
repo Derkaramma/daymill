@@ -9,7 +9,7 @@ from zoneinfo import ZoneInfo
 import pytest
 import yaml
 
-from custom_components.sunflow_solar.tariff import (
+from custom_components.daymill.tariff import (
     TariffEngine,
     TariffError,
     list_presets,
@@ -19,7 +19,7 @@ from custom_components.sunflow_solar.tariff import (
     parse_export_table,
     validate,
 )
-from custom_components.sunflow_solar.tariff.loader import PRESET_DIR, TARIFF_DIR
+from custom_components.daymill.tariff.loader import PRESET_DIR, TARIFF_DIR
 
 LA = ZoneInfo("America/Los_Angeles")
 

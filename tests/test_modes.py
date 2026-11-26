@@ -11,11 +11,11 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
 from pytest_homeassistant_custom_component.common import MockConfigEntry, async_fire_time_changed
 
-from custom_components.sunflow_solar.billing import Ledger
-from custom_components.sunflow_solar.const import DOMAIN, MONEY_KEYS
-from custom_components.sunflow_solar.coordinator import build_engine, build_nbt
-from custom_components.sunflow_solar.repairs import ISSUE_TARIFF, issue_id
-from custom_components.sunflow_solar.sensor import SunFlowSensor
+from custom_components.daymill.billing import Ledger
+from custom_components.daymill.const import DOMAIN, MONEY_KEYS
+from custom_components.daymill.coordinator import build_engine, build_nbt
+from custom_components.daymill.repairs import ISSUE_TARIFF, issue_id
+from custom_components.daymill.sensor import DayMillSensor
 
 from .test_init import BASE_CONFIG, seed_sources
 
@@ -44,7 +44,7 @@ async def _setup(hass: HomeAssistant, data: dict[str, Any]) -> MockConfigEntry:
 
 
 def _state(hass: HomeAssistant, key: str, domain: str = "sensor"):
-    return hass.states.get(f"{domain}.sunflow_{key}")
+    return hass.states.get(f"{domain}.daymill_{key}")
 
 
 # ---- demo data ----
@@ -133,7 +133,7 @@ async def test_renamed_car_leaves_no_leftovers(hass: HomeAssistant) -> None:
 
 
 def test_status_summary_not_recorded() -> None:
-    assert "summary" in SunFlowSensor._unrecorded_attributes
+    assert "summary" in DayMillSensor._unrecorded_attributes
 
 
 async def test_data_age_in_whole_minutes(hass: HomeAssistant, freezer) -> None:

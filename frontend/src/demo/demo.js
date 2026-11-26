@@ -1,16 +1,19 @@
-// <sunflow-demo>: the house card on a sample house, fed by the simulator.
+// <daymill-demo>: the house card on a sample house, fed by the simulator.
 // This is the live demo on the website. Nothing here talks to Home Assistant;
 // the numbers come from the same simulator the editor preview uses.
 //
-//   <sunflow-demo time="day|night" scenario="normal"></sunflow-demo>
+//   <daymill-demo time="day|night" scenario="normal"></daymill-demo>
 //
 //   el.setScenario("car-charging")   el.setTime("night")
-//   events: sunflow-demo-ready (once), sunflow-demo-change {time, scenario}
+//   events: daymill-demo-ready (once), daymill-demo-change {time, scenario}
+//   The old sunflow-demo-* names fire too, for one more release, so the
+//   website can switch over in its own time. <sunflow-demo> still works.
 //
 // Styles go through adoptedStyleSheets and the CSSOM only, so it runs under a
 // strict CSP. The only requests it makes are for its own pictures.
 
 import "../cards/house-card.js";
+import { defineElement } from "../common/define.js";
 import { adopt, h } from "../common/dom.js";
 import { SCENARIOS, TIMES } from "../common/simulator.js";
 import { previewCars, previewHass } from "../editor/preview-hass.js";
@@ -35,7 +38,7 @@ const CAR_IMG = {
 const CARS = previewCars(DEMO_CARS.map((c) => ({ ...c, image: CAR_IMG[c.image] || c.image })));
 
 const CONFIG = {
-  type: "custom:sunflow-house-card",
+  type: "custom:daymill-house-card",
   image_day: IMG.day,
   image_night: IMG.night,
   image_aspect: "16/10",
@@ -65,7 +68,7 @@ function preload(url) {
   });
 }
 
-class SunFlowDemo extends HTMLElement {
+class DayMillDemo extends HTMLElement {
   static observedAttributes = ["time", "scenario"];
 
   constructor() {
@@ -133,8 +136,14 @@ class SunFlowDemo extends HTMLElement {
     this._reflect();
     if (!changed) return false;
     this._push();
-    this.dispatchEvent(new CustomEvent("sunflow-demo-change", { detail: { time: t, scenario: sc }, bubbles: true, composed: true }));
+    this._emit("change", { time: t, scenario: sc });
     return true;
+  }
+
+  _emit(name, detail) {
+    for (const prefix of ["daymill", "sunflow"]) {
+      this.dispatchEvent(new CustomEvent(`${prefix}-demo-${name}`, { detail: { ...detail }, bubbles: true, composed: true }));
+    }
   }
 
   _reflect() {
@@ -145,7 +154,7 @@ class SunFlowDemo extends HTMLElement {
   }
 
   _build() {
-    const card = document.createElement("sunflow-house-card");
+    const card = document.createElement("daymill-house-card");
     card.setConfig(CONFIG);
     // the light look goes on top of the card's own sheets
     card.shadowRoot.adoptedStyleSheets = [...card.shadowRoot.adoptedStyleSheets, cardSheet];
@@ -156,7 +165,7 @@ class SunFlowDemo extends HTMLElement {
         if (this._ready) return;
         this._ready = true;
         this._reflect();
-        this.dispatchEvent(new CustomEvent("sunflow-demo-ready", { detail: { time: this._time, scenario: this._scenario }, bubbles: true, composed: true }));
+        this._emit("ready", { time: this._time, scenario: this._scenario });
       });
     });
   }
@@ -174,4 +183,4 @@ function valid(list, value) {
   return list.includes(v) ? v : "";
 }
 
-if (!customElements.get("sunflow-demo")) customElements.define("sunflow-demo", SunFlowDemo);
+defineElement("daymill-demo", DayMillDemo);

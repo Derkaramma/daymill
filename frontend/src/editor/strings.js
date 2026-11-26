@@ -83,8 +83,8 @@ addStrings("en", {
   ed_empty_line: "No points yet. Click the picture to start this line.",
   ed_point: "{line} point {n}",
 
-  ed_no_cars: "No cars yet. Add your car in the SunFlow integration to show its charging, or add one here.",
-  ed_found_cars: "These cars come from SunFlow. Changes here only affect this card.",
+  ed_no_cars: "No cars yet. Add your car in the DayMill integration to show its charging, or add one here.",
+  ed_found_cars: "These cars come from DayMill. Changes here only affect this card.",
   ed_add_car: "Add car",
   ed_remove_car: "Remove car",
   ed_car_n: "Car {n}",
@@ -123,7 +123,7 @@ addStrings("en", {
   ed_batt_day: "Day",
   ed_batt_night: "Night (optional)",
   ed_battery_picture_note: "A cutout of your battery with a see-through background, drawn in the battery box instead of the built-in one. It glows while the battery charges or discharges. Drag its corner to fit it to your wall.",
-  ed_battery_note: "The battery and its line show up when SunFlow has a battery. Battery support is in beta.",
+  ed_battery_note: "The battery and its line show up when DayMill has a battery. Battery support is in beta.",
   ed_battery_line: "Battery line",
 
   ed_chip_solar: "Solar",

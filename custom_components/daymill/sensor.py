@@ -1,4 +1,4 @@
-"""SunFlow Solar sensors."""
+"""DayMill sensors."""
 
 from __future__ import annotations
 
@@ -36,11 +36,11 @@ from .const import (
     CONF_PANELS,
     MONEY_KEYS,
 )
-from .coordinator import Car, SunFlowConfigEntry, SunFlowCoordinator, SunFlowEntity
+from .coordinator import Car, DayMillConfigEntry, DayMillCoordinator, DayMillEntity
 from .totals import self_sufficiency_today
 
-type ValueFn = Callable[[SunFlowCoordinator, datetime], Any]
-type AttrsFn = Callable[[SunFlowCoordinator, datetime], dict[str, Any] | None]
+type ValueFn = Callable[[DayMillCoordinator, datetime], Any]
+type AttrsFn = Callable[[DayMillCoordinator, datetime], dict[str, Any] | None]
 
 PERIOD_ICONS = {
     "on_peak": "mdi:clock-alert",
@@ -61,7 +61,7 @@ NEM_TEXT = {
 
 
 @dataclass(frozen=True, kw_only=True)
-class SunFlowSensorDescription(SensorEntityDescription):
+class DayMillSensorDescription(SensorEntityDescription):
     value_fn: ValueFn
     attrs_fn: AttrsFn | None = None
     icon_fn: Callable[[Any], str | None] | None = None
@@ -79,33 +79,33 @@ def _source(reading: sources.Reading | None) -> dict[str, Any] | None:
     return {"source": reading.source} if reading else None
 
 
-def _grid_split(c: SunFlowCoordinator, fn: Callable[[float], float]) -> int | None:
+def _grid_split(c: DayMillCoordinator, fn: Callable[[float], float]) -> int | None:
     grid = c.data.grid
     return sources.kw_to_w(fn(grid.kw)) if grid else None
 
 
-def _self_sufficiency(c: SunFlowCoordinator, _now: datetime) -> int | None:
+def _self_sufficiency(c: DayMillCoordinator, _now: datetime) -> int | None:
     solar, home = c.data.solar, c.data.home
     if solar is None or home is None:
         return None
     return sources.self_sufficiency(solar.kw, home.kw)
 
 
-def _status(c: SunFlowCoordinator, _now: datetime) -> str | None:
+def _status(c: DayMillCoordinator, _now: datetime) -> str | None:
     solar, grid = c.data.solar, c.data.grid
     if solar is None or grid is None:
         return None
     return sources.status(solar.kw, grid.kw)
 
 
-def _status_attrs(c: SunFlowCoordinator, _now: datetime) -> dict[str, Any] | None:
+def _status_attrs(c: DayMillCoordinator, _now: datetime) -> dict[str, Any] | None:
     solar, grid, home = c.data.solar, c.data.grid, c.data.home
     if solar is None or grid is None:
         return None
     return {"summary": sources.status_summary(solar.kw, grid.kw, home.kw if home else 0.0)}
 
 
-def _cost_rate(c: SunFlowCoordinator, now: datetime) -> float | None:
+def _cost_rate(c: DayMillCoordinator, now: datetime) -> float | None:
     grid = c.data.grid
     if grid is None:
         return None
@@ -113,7 +113,7 @@ def _cost_rate(c: SunFlowCoordinator, now: datetime) -> float | None:
     return round(grid.kw * rate, 4)
 
 
-def _cost_rate_attrs(c: SunFlowCoordinator, now: datetime) -> dict[str, Any] | None:
+def _cost_rate_attrs(c: DayMillCoordinator, now: datetime) -> dict[str, Any] | None:
     cost = _cost_rate(c, now)
     if cost is None:
         return None
@@ -126,7 +126,7 @@ def _cost_rate_attrs(c: SunFlowCoordinator, now: datetime) -> dict[str, Any] | N
     return {"text": text}
 
 
-def _export_rate_attrs(c: SunFlowCoordinator, _now: datetime) -> dict[str, Any]:
+def _export_rate_attrs(c: DayMillCoordinator, _now: datetime) -> dict[str, Any]:
     version, rule = NEM_TEXT.get(c.engine.nem, (c.engine.nem, ""))
     return {
         "nem_version": version,
@@ -135,7 +135,7 @@ def _export_rate_attrs(c: SunFlowCoordinator, _now: datetime) -> dict[str, Any]:
     }
 
 
-def _bill(c: SunFlowCoordinator, now: datetime) -> dict[str, Any]:
+def _bill(c: DayMillCoordinator, now: datetime) -> dict[str, Any]:
     return c.ledger.bill_estimate(now)
 
 
@@ -143,14 +143,14 @@ def _total(key: str) -> ValueFn:
     return lambda c, _now: c.ledger.totals[key]
 
 
-def _totals_attrs(c: SunFlowCoordinator, _now: datetime) -> dict[str, Any] | None:
+def _totals_attrs(c: DayMillCoordinator, _now: datetime) -> dict[str, Any] | None:
     if c.totals is None:
         return None
     start = c.ledger.tracking_start
     return {**c.totals, "tracking_start": start.isoformat() if start else None}
 
 
-def _totals_value(c: SunFlowCoordinator, _now: datetime) -> float | None:
+def _totals_value(c: DayMillCoordinator, _now: datetime) -> float | None:
     return c.totals.get("produced_today") if c.totals is not None else None
 
 
@@ -159,7 +159,7 @@ _GROUP_EXTRAS = ("facing", "note", "color")
 _PANEL_EXTRAS = ("energy", "today", "short")
 
 
-def _panel_attrs(c: SunFlowCoordinator, _now: datetime) -> dict[str, Any]:
+def _panel_attrs(c: DayMillCoordinator, _now: datetime) -> dict[str, Any]:
     """Panel groups and gateway diagnostics, so the panels card needs no config."""
     groups = []
     for idx, face in enumerate(c.conf.get(CONF_PANELS) or []):
@@ -188,7 +188,7 @@ def _health_icon(value: Any) -> str:
 
 
 def _battery_split(index: int) -> ValueFn:
-    def fn(c: SunFlowCoordinator, _now: datetime) -> int | None:
+    def fn(c: DayMillCoordinator, _now: datetime) -> int | None:
         kw = c.data.battery_kw
         return sources.kw_to_w(sources.battery_split(kw)[index]) if kw is not None else None
 
@@ -212,48 +212,48 @@ _RATE = {
     "suggested_display_precision": 5,
 }
 
-POWER_SENSORS: tuple[SunFlowSensorDescription, ...] = (
-    SunFlowSensorDescription(
+POWER_SENSORS: tuple[DayMillSensorDescription, ...] = (
+    DayMillSensorDescription(
         key="solar_power",
         icon="mdi:solar-power-variant",
         value_fn=lambda c, _n: _w(c.data.solar),
         attrs_fn=lambda c, _n: _source(c.data.solar),
         **_POWER,
     ),
-    SunFlowSensorDescription(
+    DayMillSensorDescription(
         key="grid_power",
         icon="mdi:transmission-tower",
         value_fn=lambda c, _n: _w(c.data.grid),
         attrs_fn=lambda c, _n: _source(c.data.grid),
         **_POWER,
     ),
-    SunFlowSensorDescription(
+    DayMillSensorDescription(
         key="home_power",
         icon="mdi:home-lightning-bolt",
         value_fn=lambda c, _n: _w(c.data.home),
         attrs_fn=lambda c, _n: _source(c.data.home),
         **_POWER,
     ),
-    SunFlowSensorDescription(
+    DayMillSensorDescription(
         key="grid_import_power",
         icon="mdi:transmission-tower-import",
         value_fn=lambda c, _n: _grid_split(c, sources.grid_import_kw),
         **_POWER,
     ),
-    SunFlowSensorDescription(
+    DayMillSensorDescription(
         key="grid_export_power",
         icon="mdi:transmission-tower-export",
         value_fn=lambda c, _n: _grid_split(c, sources.grid_export_kw),
         **_POWER,
     ),
-    SunFlowSensorDescription(
+    DayMillSensorDescription(
         key="self_sufficiency",
         icon="mdi:home-percent",
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=_self_sufficiency,
     ),
-    SunFlowSensorDescription(
+    DayMillSensorDescription(
         key="status",
         value_fn=_status,
         attrs_fn=_status_attrs,
@@ -261,34 +261,34 @@ POWER_SENSORS: tuple[SunFlowSensorDescription, ...] = (
     ),
 )
 
-TOU_SENSORS: tuple[SunFlowSensorDescription, ...] = (
-    SunFlowSensorDescription(
+TOU_SENSORS: tuple[DayMillSensorDescription, ...] = (
+    DayMillSensorDescription(
         key="tou_period",
         value_fn=lambda c, n: c.engine.period_at(n).period,
         attrs_fn=lambda c, n: c.engine.period_attributes(n),
         icon_fn=lambda v: PERIOD_ICONS.get(v, "mdi:clock-outline"),
     ),
-    SunFlowSensorDescription(
+    DayMillSensorDescription(
         key="tou_holiday",
         icon="mdi:calendar-star",
         value_fn=lambda c, n: c.engine.period_at(n).holiday or "none",
         attrs_fn=lambda c, n: {"dates": c.engine.holiday_dates(n)},
     ),
-    SunFlowSensorDescription(
+    DayMillSensorDescription(
         key="import_rate",
         icon="mdi:cash-plus",
         value_fn=lambda c, n: c.engine.import_price(n),
         attrs_fn=lambda c, n: c.engine.rate_attributes(n),
         **_RATE,
     ),
-    SunFlowSensorDescription(
+    DayMillSensorDescription(
         key="export_rate",
         icon="mdi:cash-minus",
         value_fn=lambda c, n: c.engine.export_price(n),
         attrs_fn=_export_rate_attrs,
         **_RATE,
     ),
-    SunFlowSensorDescription(
+    DayMillSensorDescription(
         key="cost_rate",
         icon="mdi:cash-clock",
         state_class=SensorStateClass.MEASUREMENT,
@@ -299,22 +299,22 @@ TOU_SENSORS: tuple[SunFlowSensorDescription, ...] = (
     ),
 )
 
-MONEY_SENSORS: tuple[SunFlowSensorDescription, ...] = (
-    SunFlowSensorDescription(
+MONEY_SENSORS: tuple[DayMillSensorDescription, ...] = (
+    DayMillSensorDescription(
         key="import_energy_charge",
         icon="mdi:cash-plus",
         value_fn=_total("import_energy_charge"),
         attrs_fn=lambda c, _n: {"last_import": c.ledger.to_dict()["last_import"]},
         **_MONEY,
     ),
-    SunFlowSensorDescription(
+    DayMillSensorDescription(
         key="export_credit",
         icon="mdi:cash-minus",
         value_fn=_total("export_credit"),
         attrs_fn=lambda c, _n: {"last_export": c.ledger.to_dict()["last_export"]},
         **_MONEY,
     ),
-    SunFlowSensorDescription(
+    DayMillSensorDescription(
         key="nbc_charges",
         icon="mdi:cash-lock",
         value_fn=_total("nbc"),
@@ -324,20 +324,20 @@ MONEY_SENSORS: tuple[SunFlowSensorDescription, ...] = (
         },
         **_MONEY,
     ),
-    SunFlowSensorDescription(
+    DayMillSensorDescription(
         key="adder_charges",
         icon="mdi:cash-lock",
         value_fn=_total("adders"),
         attrs_fn=lambda c, _n: {"adders": c.ledger.adder_totals},
         **_MONEY,
     ),
-    SunFlowSensorDescription(
+    DayMillSensorDescription(
         key="import_cost",
         icon="mdi:cash-plus",
         value_fn=_total("import_cost"),
         **_MONEY,
     ),
-    SunFlowSensorDescription(
+    DayMillSensorDescription(
         key="net_cost",
         icon="mdi:cash-multiple",
         value_fn=_total("net_cost"),
@@ -349,7 +349,7 @@ MONEY_SENSORS: tuple[SunFlowSensorDescription, ...] = (
         },
         **_MONEY,
     ),
-    SunFlowSensorDescription(
+    DayMillSensorDescription(
         key="solar_savings",
         icon="mdi:piggy-bank",
         value_fn=_total("savings"),
@@ -357,8 +357,8 @@ MONEY_SENSORS: tuple[SunFlowSensorDescription, ...] = (
     ),
 )
 
-DAILY_SENSORS: tuple[SunFlowSensorDescription, ...] = (
-    SunFlowSensorDescription(
+DAILY_SENSORS: tuple[DayMillSensorDescription, ...] = (
+    DayMillSensorDescription(
         key="cost_today",
         icon="mdi:cash-clock",
         device_class=SensorDeviceClass.MONETARY,
@@ -367,14 +367,14 @@ DAILY_SENSORS: tuple[SunFlowSensorDescription, ...] = (
         value_fn=lambda c, n: c.ledger.cost_today(n),
         attrs_fn=lambda c, n: c.ledger.today(n),
     ),
-    SunFlowSensorDescription(
+    DayMillSensorDescription(
         key="self_sufficiency_today",
         icon="mdi:home-percent-outline",
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda c, _n: self_sufficiency_today(c.totals) if c.totals else None,
     ),
-    SunFlowSensorDescription(
+    DayMillSensorDescription(
         key="bill_estimate",
         icon="mdi:receipt-text-clock",
         device_class=SensorDeviceClass.MONETARY,
@@ -383,14 +383,14 @@ DAILY_SENSORS: tuple[SunFlowSensorDescription, ...] = (
         value_fn=lambda c, n: _bill(c, n)["state"],
         attrs_fn=lambda c, n: _bill(c, n)["attributes"],
     ),
-    SunFlowSensorDescription(
+    DayMillSensorDescription(
         key="totals",
         icon="mdi:sigma",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         value_fn=_totals_value,
         attrs_fn=_totals_attrs,
     ),
-    SunFlowSensorDescription(
+    DayMillSensorDescription(
         key="data_age",
         icon="mdi:timer-sand",
         native_unit_of_measurement=UnitOfTime.SECONDS,
@@ -405,8 +405,8 @@ DAILY_SENSORS: tuple[SunFlowSensorDescription, ...] = (
     ),
 )
 
-HEALTH_SENSORS: tuple[SunFlowSensorDescription, ...] = (
-    SunFlowSensorDescription(
+HEALTH_SENSORS: tuple[DayMillSensorDescription, ...] = (
+    DayMillSensorDescription(
         key="panel_health",
         value_fn=lambda c, _n: c.data.health,
         attrs_fn=_panel_attrs,
@@ -414,15 +414,15 @@ HEALTH_SENSORS: tuple[SunFlowSensorDescription, ...] = (
     ),
 )
 
-BATTERY_SENSORS: tuple[SunFlowSensorDescription, ...] = (
-    SunFlowSensorDescription(
+BATTERY_SENSORS: tuple[DayMillSensorDescription, ...] = (
+    DayMillSensorDescription(
         key="battery_soc",
         native_unit_of_measurement=PERCENTAGE,
         device_class=SensorDeviceClass.BATTERY,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda c, _n: c.data.battery_soc,
     ),
-    SunFlowSensorDescription(
+    DayMillSensorDescription(
         key="battery_power",
         icon="mdi:battery-charging",
         value_fn=lambda c, _n: (
@@ -430,13 +430,13 @@ BATTERY_SENSORS: tuple[SunFlowSensorDescription, ...] = (
         ),
         **_POWER,
     ),
-    SunFlowSensorDescription(
+    DayMillSensorDescription(
         key="battery_charge_power",
         icon="mdi:battery-arrow-up",
         value_fn=_battery_split(0),
         **_POWER,
     ),
-    SunFlowSensorDescription(
+    DayMillSensorDescription(
         key="battery_discharge_power",
         icon="mdi:battery-arrow-down",
         value_fn=_battery_split(1),
@@ -454,7 +454,7 @@ ENERGY_SENSORS: tuple[SensorEntityDescription, ...] = (
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: SunFlowConfigEntry,
+    entry: DayMillConfigEntry,
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     coordinator = entry.runtime_data
@@ -466,21 +466,21 @@ async def async_setup_entry(
     if coordinator.has_battery:
         descriptions.extend(BATTERY_SENSORS)
 
-    entities: list[SensorEntity] = [SunFlowSensor(coordinator, d) for d in descriptions]
-    entities.extend(SunFlowEnergySensor(coordinator, d) for d in ENERGY_SENSORS)
-    entities.extend(SunFlowCarPowerSensor(coordinator, car) for car in coordinator.cars)
+    entities: list[SensorEntity] = [DayMillSensor(coordinator, d) for d in descriptions]
+    entities.extend(DayMillEnergySensor(coordinator, d) for d in ENERGY_SENSORS)
+    entities.extend(DayMillCarPowerSensor(coordinator, car) for car in coordinator.cars)
     async_add_entities(entities)
 
 
-class SunFlowSensor(SunFlowEntity, SensorEntity):
+class DayMillSensor(DayMillEntity, SensorEntity):
     """A sensor whose value comes from the coordinator."""
 
-    entity_description: SunFlowSensorDescription
+    entity_description: DayMillSensorDescription
     # the status summary repeats live kW numbers: no need to keep each one
     _unrecorded_attributes = frozenset({"summary"})
 
     def __init__(
-        self, coordinator: SunFlowCoordinator, description: SunFlowSensorDescription
+        self, coordinator: DayMillCoordinator, description: DayMillSensorDescription
     ) -> None:
         super().__init__(coordinator, description.key, "sensor")
         self.entity_description = description
@@ -512,7 +512,7 @@ class SunFlowSensor(SunFlowEntity, SensorEntity):
         return super().icon
 
 
-class SunFlowEnergySensor(SunFlowEntity, RestoreSensor):
+class DayMillEnergySensor(DayMillEntity, RestoreSensor):
     """Lifetime kWh that never goes down (clamped in the coordinator)."""
 
     _attr_native_unit_of_measurement = UnitOfEnergy.KILO_WATT_HOUR
@@ -520,7 +520,7 @@ class SunFlowEnergySensor(SunFlowEntity, RestoreSensor):
     _attr_state_class = SensorStateClass.TOTAL_INCREASING
     _attr_suggested_display_precision = 3
 
-    def __init__(self, coordinator: SunFlowCoordinator, description: SensorEntityDescription):
+    def __init__(self, coordinator: DayMillCoordinator, description: SensorEntityDescription):
         super().__init__(coordinator, description.key, "sensor")
         self.entity_description = description
         self._attr_translation_key = description.key
@@ -541,7 +541,7 @@ class SunFlowEnergySensor(SunFlowEntity, RestoreSensor):
         return self.coordinator.energy.get(self._energy_key)
 
 
-class SunFlowCarPowerSensor(SunFlowEntity, SensorEntity):
+class DayMillCarPowerSensor(DayMillEntity, SensorEntity):
     """Charging power of one car while it charges at home, else 0."""
 
     _attr_native_unit_of_measurement = UnitOfPower.KILO_WATT
@@ -549,7 +549,7 @@ class SunFlowCarPowerSensor(SunFlowEntity, SensorEntity):
     _attr_state_class = SensorStateClass.MEASUREMENT
     _attr_translation_key = "car_home_charging_power"
 
-    def __init__(self, coordinator: SunFlowCoordinator, car: Car) -> None:
+    def __init__(self, coordinator: DayMillCoordinator, car: Car) -> None:
         super().__init__(coordinator, f"car_{car.slug}_home_charging_power", "sensor")
         self._car = car
         self._attr_translation_placeholders = {"car": car.name}

@@ -58,7 +58,7 @@ check("findings map to panels", () => {
 
 check("strategy: five views with panels", () => {
   const hass = addPanels(createFakeHass({}), { layout: "two" });
-  const dash = generateDashboard({ type: "custom:sunflow" }, hass);
+  const dash = generateDashboard({ type: "custom:daymill" }, hass);
   assert.deepEqual(dash.views.map((v) => v.path), ["home", "totals", "rates", "panels", "history"]);
   for (const v of dash.views) {
     assert.equal(v.type, "sections");
@@ -66,21 +66,21 @@ check("strategy: five views with panels", () => {
   }
   const home = dash.views[0];
   assert.equal(home.sections[0].column_span, 3);
-  assert.equal(home.sections[0].cards[0].type, "custom:sunflow-house-card");
+  assert.equal(home.sections[0].cards[0].type, "custom:daymill-house-card");
   assert.deepEqual(cardTypes(home), [
-    "custom:sunflow-house-card",
-    "heading", "custom:sunflow-now-card",
-    "heading", "custom:sunflow-today-card", "custom:sunflow-share-ring-card",
-    "heading", "custom:sunflow-power-chart-card",
-    "heading", "custom:sunflow-billing-card",
+    "custom:daymill-house-card",
+    "heading", "custom:daymill-now-card",
+    "heading", "custom:daymill-today-card", "custom:daymill-share-ring-card",
+    "heading", "custom:daymill-power-chart-card",
+    "heading", "custom:daymill-billing-card",
   ]);
 });
 
-check("strategy: only SunFlow and built-in cards", () => {
+check("strategy: only DayMill and built-in cards", () => {
   const hass = addPanels(createFakeHass({}), { layout: "two" });
   const builtIn = new Set(["heading", "statistics-graph", "markdown"]);
   for (const v of generateDashboard({}, hass).views) {
-    for (const type of cardTypes(v)) assert.ok(type.startsWith("custom:sunflow-") || builtIn.has(type), type);
+    for (const type of cardTypes(v)) assert.ok(type.startsWith("custom:daymill-") || builtIn.has(type), type);
   }
 });
 
@@ -96,7 +96,7 @@ check("strategy: statistics graphs use registry entity ids", () => {
   const totals = generateDashboard({}, hass).views.find((v) => v.path === "totals");
   const graphs = totals.sections.flatMap((s) => s.cards).filter((c) => c.type === "statistics-graph");
   assert.equal(graphs.length, 3);
-  for (const g of graphs) for (const id of g.entities) assert.ok(hass.entities[id]?.platform === "sunflow_solar", id);
+  for (const g of graphs) for (const id of g.entities) assert.ok(hass.entities[id]?.platform === "daymill", id);
   assert.deepEqual(graphs.map((g) => g.period), ["day", "day", "month"]);
 });
 
@@ -113,7 +113,7 @@ check("strategy: options pass through", () => {
   assert.equal(house.entities.solar_power, "sensor.mine");
 });
 
-check("strategy: hint when SunFlow is missing", () => {
+check("strategy: hint when DayMill is missing", () => {
   const dash = generateDashboard({}, { states: {}, entities: {} });
   assert.equal(dash.views.length, 1);
   assert.equal(dash.views[0].sections[0].cards[0].type, "markdown");

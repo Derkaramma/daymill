@@ -12,8 +12,8 @@ from homeassistant.const import ATTR_UNIT_OF_MEASUREMENT
 from homeassistant.core import HomeAssistant
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.sunflow_solar.const import DOMAIN, VERSION
-from custom_components.sunflow_solar.diagnostics import (
+from custom_components.daymill.const import DOMAIN, VERSION
+from custom_components.daymill.diagnostics import (
     async_get_config_entry_diagnostics,
     scrub,
 )
@@ -104,9 +104,7 @@ def _seed(hass: HomeAssistant) -> None:
 
 async def _setup(hass: HomeAssistant, options: dict[str, Any] | None = None) -> MockConfigEntry:
     _seed(hass)
-    entry = MockConfigEntry(
-        domain=DOMAIN, data=CONFIG, options=options or {}, title="SunFlow Solar"
-    )
+    entry = MockConfigEntry(domain=DOMAIN, data=CONFIG, options=options or {}, title="DayMill")
     entry.add_to_hass(hass)
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()

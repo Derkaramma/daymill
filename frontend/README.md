@@ -1,7 +1,7 @@
-# SunFlow cards
+# DayMill cards
 
 Source for the Lovelace cards that ship with the integration. Everything here
-gets bundled into one file, `custom_components/sunflow_solar/frontend/sunflow-cards.js`.
+gets bundled into one file, `custom_components/daymill/frontend/daymill-cards.js`.
 The cards are plain custom elements with no framework and no runtime dependencies.
 
 ## Setup
@@ -26,9 +26,10 @@ export NODE_PATH=/some/dir/node_modules
 
 | Command | What it does |
 |---|---|
-| `npm run build` | Minified build into `custom_components/sunflow_solar/frontend/` |
+| `npm run build` | Minified build into `custom_components/daymill/frontend/` |
 | `npm run watch` | Rebuild on every change (not minified) |
 | `node test/check.mjs` | Node-only checks: JS simulator vs `simulator.py`, entity lookup, formatting, websocket helpers |
+| `node test/check-aliases.mjs` | The old `sunflow-*` names still work, and both bundles can load together (needs a Chromium) |
 | `node test/shoot.mjs --card '<json>' --out card.png` | Render one card in headless Chromium and save a PNG |
 
 `test/check.mjs` runs the Python simulator to compare numbers, so it needs a
@@ -38,9 +39,9 @@ run pytest with.
 ### Screenshots
 
 ```sh
-node test/shoot.mjs --card '{"type":"custom:sunflow-test-card"}' --out /tmp/test.png
+node test/shoot.mjs --card '{"type":"custom:daymill-test-card"}' --out /tmp/test.png
 node test/shoot.mjs --card-file my-card.json --scenario car-charging --time night --out /tmp/night.png
-node test/shoot.mjs --card '{"type":"custom:sunflow-test-card"}' --hass '{"staleMinutes":30}' --light --out /tmp/stale.png
+node test/shoot.mjs --card '{"type":"custom:daymill-test-card"}' --hass '{"staleMinutes":30}' --light --out /tmp/stale.png
 ```
 
 Options: `--scenario`, `--time day|night`, `--hass '<json>'` (anything
@@ -65,9 +66,10 @@ src/
   index.js            imports every card
   cards/              one file per card, plus the dashboard strategy
   common/
-    base.js           SunFlowCard base class and defineCard()
+    base.js           DayMillCard base class and defineCard()
+    define.js         defines each element under its old sunflow-* name too
     dom.js            h()/s() element builders, sheet(), adopt(), asButton()
-    entities.js       find SunFlow entities, read states, unit conversion, data age
+    entities.js       find DayMill entities, read states, unit conversion, data age
     format.js         money, kW, kWh, %, times, and the string table t()
     theme.js          default colors (CSS variables) and the shared sheet
     ws.js             history and statistics over the websocket, cached
@@ -85,11 +87,11 @@ scripts/build.mjs     esbuild
 ## Writing a card
 
 ```js
-import { SunFlowCard, defineCard, h } from "../common/base.js";
+import { DayMillCard, defineCard, h } from "../common/base.js";
 import { powerKw } from "../common/entities.js";
 import { kw, t } from "../common/format.js";
 
-class NowCard extends SunFlowCard {
+class NowCard extends DayMillCard {
   static keys = ["solar_power"];   // translation keys to look up
   static styles = [`.big { font-size: 2em; }`];
 
@@ -103,14 +105,19 @@ class NowCard extends SunFlowCard {
   }
 }
 
-defineCard("sunflow-now-card", NowCard, { name: "SunFlow now", description: "..." });
+defineCard("daymill-now-card", NowCard, { name: "DayMill now", description: "..." });
 ```
+
+`defineCard()` also registers `sunflow-now-card` as an alias, so dashboards
+from before the rename keep working. Only the DayMill name shows up in the
+card picker.
 
 How it works:
 
 - **Finding entities.** Cards never hardcode entity ids. `this.entities` maps
   each key in `static keys` to an entity id. It looks through `hass.entities`
-  for entries from the `sunflow_solar` platform with that `translation_key`.
+  for entries from the `daymill` platform with that `translation_key`
+  (or the old `sunflow_solar` one, when there are no DayMill entities yet).
   A user can override any key in the card config:
   `entities: {solar_power: sensor.other}`.
 - **When it renders.** `render()` runs when one of the watched states changes,

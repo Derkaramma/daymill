@@ -71,8 +71,8 @@ const check = (ok, what) => {
   if (!ok) fails.push(what);
 };
 
-// SUNFLOW_BROWSER=webkit runs the same checks in WebKit (Safari's engine).
-const engine = process.env.SUNFLOW_BROWSER === "webkit" ? require("playwright-core").webkit : null;
+// DAYMILL_BROWSER=webkit runs the same checks in WebKit (Safari's engine).
+const engine = process.env.DAYMILL_BROWSER === "webkit" ? require("playwright-core").webkit : null;
 const browser = engine ? await engine.launch() : await chromium.launch({ executablePath: findChromium() });
 
 async function open({ width, height, scale = 2, mobile = false, reducedMotion = "no-preference" }) {
@@ -109,6 +109,9 @@ const settle = (page) => page.waitForTimeout(1900); // the day/night crossfade i
   l = await log();
   check(l.change.at(-1)?.scenario === "cloudy", "attribute change works");
 
+  check(JSON.stringify(l.oldReady) === JSON.stringify(l.ready) && JSON.stringify(l.oldChange) === JSON.stringify(l.change), "old sunflow-demo-* events match the new ones");
+  check(await page.evaluate(() => document.createElement("sunflow-demo") instanceof customElements.get("daymill-demo")), "<sunflow-demo> still works");
+
   const before = l.change.length;
   const r = await page.evaluate(() => {
     const el = document.getElementById("demo");
@@ -127,13 +130,13 @@ const settle = (page) => page.waitForTimeout(1900); // the day/night crossfade i
   // every scenario renders without errors
   for (const sc of SCENARIOS) await page.evaluate((s) => document.getElementById("demo").setScenario(s), sc);
   await page.waitForTimeout(300);
-  const night = await page.evaluate(() => document.getElementById("demo").shadowRoot.querySelector("sunflow-house-card").shadowRoot.querySelector(".scene").classList.contains("is-night"));
+  const night = await page.evaluate(() => document.getElementById("demo").shadowRoot.querySelector("daymill-house-card").shadowRoot.querySelector(".scene").classList.contains("is-night"));
   check(night, "night shows the night picture");
 
   l = await log();
   check(l.csp.length === 0, `no CSP violations${l.csp.length ? ": " + l.csp.join(", ") : ""}`);
   check(errors.length === 0, `no console errors${errors.length ? ": " + errors.join(" | ") : ""}`);
-  const outside = requests.filter((p) => !(p === "/" || p.startsWith("/test/") || p === "/demo/sunflow-demo.js" || p.startsWith("/demo/img/")));
+  const outside = requests.filter((p) => !(p === "/" || p.startsWith("/test/") || p === "/demo/daymill-demo.js" || p.startsWith("/demo/img/")));
   check(outside.length === 0, `only its own files are requested${outside.length ? ": " + outside.join(", ") : ""}`);
   check(requests.includes("/demo/img/house-day.webp") && requests.includes("/demo/img/house-night.webp"), "pictures load next to the script (with ?v=)");
   await page.close();
@@ -221,7 +224,7 @@ const settle = (page) => page.waitForTimeout(1900); // the day/night crossfade i
   await page.evaluate(() => document.getElementById("demo").setScenario("car-charging"));
   await page.waitForTimeout(400);
   const running = await page.evaluate(() => {
-    const card = document.getElementById("demo").shadowRoot.querySelector("sunflow-house-card");
+    const card = document.getElementById("demo").shadowRoot.querySelector("daymill-house-card");
     return card.shadowRoot.getAnimations().filter((a) => a.playState === "running" && a.effect?.getKeyframes?.().some((k) => "strokeDashoffset" in k)).length;
   });
   check(running === 0, "reduced motion: no flow animations running");

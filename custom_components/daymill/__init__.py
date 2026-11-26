@@ -1,4 +1,4 @@
-"""SunFlow Solar: solar, grid and time-of-use billing for Home Assistant."""
+"""DayMill: solar, grid and time-of-use billing for Home Assistant."""
 
 from __future__ import annotations
 
@@ -6,17 +6,17 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryError
 from homeassistant.helpers import entity_registry as er
+from homeassistant.helpers.storage import Store
 
-from .const import DOMAIN, MONEY_KEYS, PLATFORMS
-from .coordinator import SunFlowConfigEntry, SunFlowCoordinator
+from .const import DOMAIN, MONEY_KEYS, PLATFORMS, STORAGE_VERSION
+from .coordinator import DayMillConfigEntry, DayMillCoordinator
 from .frontend import async_remove_frontend, async_setup_frontend
-from .moving import async_setup_moving, remove_moving_issue
 from .repairs import async_setup_repairs
 from .tariff import TariffError
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: SunFlowConfigEntry) -> bool:
-    coordinator = SunFlowCoordinator(hass, entry)
+async def async_setup_entry(hass: HomeAssistant, entry: DayMillConfigEntry) -> bool:
+    coordinator = DayMillCoordinator(hass, entry)
     try:
         await coordinator.async_setup()
     except TariffError as err:
@@ -32,18 +32,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: SunFlowConfigEntry) -> b
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     await async_setup_frontend(hass, entry)
     async_setup_repairs(hass, entry)
-    await async_setup_moving(hass, entry)
     # First totals read in the background; the 5 minute timer takes over after.
-    entry.async_create_background_task(
-        hass, coordinator.async_refresh_totals(), "sunflow_solar_totals"
-    )
+    entry.async_create_background_task(hass, coordinator.async_refresh_totals(), "daymill_totals")
     return True
 
 
 _CAR_SUFFIXES = ("_home_charging_power", "_charging_at_home")
 
 
-def _remove_stale_entities(hass: HomeAssistant, coordinator: SunFlowCoordinator) -> None:
+def _remove_stale_entities(hass: HomeAssistant, coordinator: DayMillCoordinator) -> None:
     """Drop entities of cars that were renamed or removed, and money sensors
     once cost tracking is off, so they don't linger as unavailable."""
     entry_id = coordinator.config_entry.entry_id
@@ -61,16 +58,12 @@ def _remove_stale_entities(hass: HomeAssistant, coordinator: SunFlowCoordinator)
             registry.async_remove(entity.entity_id)
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: SunFlowConfigEntry) -> bool:
+async def async_unload_entry(hass: HomeAssistant, entry: DayMillConfigEntry) -> bool:
     # the coordinator's own unload hook saves the ledger
     return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
 
 
 async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
-    """Drop the dashboard resource and the move notice along with the entry.
-
-    The stored ledger stays on purpose: DayMill imports it, and people may
-    delete SunFlow before they get around to that.
-    """
+    """Delete the stored ledger and the dashboard resource along with the entry."""
     await async_remove_frontend(hass, entry)
-    remove_moving_issue(hass)
+    await Store(hass, STORAGE_VERSION, f"{DOMAIN}.{entry.entry_id}").async_remove()

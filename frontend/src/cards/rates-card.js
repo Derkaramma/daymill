@@ -1,15 +1,15 @@
-// sunflow-rates-card: price now, the season rate tables, how net metering
+// daymill-rates-card: price now, the season rate tables, how net metering
 // bills you, fixed charges and fine print, next holidays and the billing
 // cycle day.
 //
-//   type: custom:sunflow-rates-card
+//   type: custom:daymill-rates-card
 //   sections: [now, seasons, nem, fine_print, holidays, settings]
 //   holidays: 4                      # how many upcoming holidays
 //   billing_day_entity: number.x     # optional; else a link to the options
 //   title: "..."                     # false hides the header
 
-import { SunFlowCard, asButton, defineCard, h } from "../common/base.js";
-import { PLATFORM, attr, num, numAttr, state } from "../common/entities.js";
+import { DayMillCard, asButton, defineCard, h } from "../common/base.js";
+import { PLATFORM, PLATFORMS, attr, num, numAttr, state } from "../common/entities.js";
 import { DASH, date, money, num as fmtNum, periodLabel, price, seasonLabel, t, time } from "../common/format.js";
 import { periodColor } from "../common/theme.js";
 import { duration, humanize, localDate, nemMode } from "../common/chart-helpers.js";
@@ -41,7 +41,7 @@ const css = `
 .ct-hero .price-now { display: flex; flex-direction: column; gap: 4px; }
 `;
 
-class RatesCard extends SunFlowCard {
+class RatesCard extends DayMillCard {
   static styles = [chartStyles, css];
   static keys = ["import_rate", "export_rate", "tou_period", "tou_holiday", "bill_estimate"];
   static cardSize = 10;
@@ -55,12 +55,12 @@ class RatesCard extends SunFlowCard {
     if (bad) throw new Error(`Unknown section: ${bad}. Use ${SECTIONS.join(", ")}`);
   }
 
-  // Billing day control: config entity, else a SunFlow number entity if the
+  // Billing day control: config entity, else a DayMill number entity if the
   // integration ever adds one.
   get dayEntity() {
     if (this.config.billing_day_entity) return this.config.billing_day_entity;
     for (const e of Object.values(this.hass?.entities || {})) {
-      if (e?.platform === PLATFORM && DAY_KEYS.includes(e.translation_key)) return e.entity_id;
+      if (PLATFORMS.includes(e?.platform) && DAY_KEYS.includes(e.translation_key)) return e.entity_id;
     }
     return undefined;
   }
@@ -300,7 +300,7 @@ class RatesCard extends SunFlowCard {
   }
 }
 
-defineCard("sunflow-rates-card", RatesCard, {
-  name: "SunFlow rates",
+defineCard("daymill-rates-card", RatesCard, {
+  name: "DayMill rates",
   description: "Price now, season rate tables, how net metering bills you, fine print and holidays.",
 });

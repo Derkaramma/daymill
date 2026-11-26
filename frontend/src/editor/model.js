@@ -164,10 +164,10 @@ export function removeSolarLine(config, i) {
 }
 
 // Cars as an editable list. With no cars in the config the card shows the
-// cars SunFlow found; editing turns them into config entries linked by slug.
+// cars DayMill found; editing turns them into config entries linked by slug.
 export function carsFor(config, known = []) {
   if (Array.isArray(config?.cars)) return config.cars;
-  return known.map((k, i) => ({ sunflow: k.slug || undefined, name: k.name || "", ...(i % 2 ? { flip: true } : {}) }));
+  return known.map((k, i) => ({ daymill: k.slug || undefined, name: k.name || "", ...(i % 2 ? { flip: true } : {}) }));
 }
 
 export function setCar(config, known, i, patch) {
@@ -294,10 +294,22 @@ export class History {
   }
 }
 
+// Cars saved before the rename link to their entities with `sunflow: <slug>`.
+// The card still reads that, but anything the editor saves uses `daymill`.
+export function renameCarKeys(config) {
+  if (!Array.isArray(config?.cars)) return config;
+  const cars = config.cars.map((c) => {
+    if (!c || typeof c !== "object" || c.sunflow === undefined) return c;
+    const { sunflow, ...rest } = c;
+    return { ...rest, daymill: rest.daymill ?? sunflow };
+  });
+  return { ...config, cars };
+}
+
 // ---- import / export ----
 
 export function exportLayout(config) {
-  const out = { sunflow_layout: 1 };
+  const out = { daymill_layout: 1 };
   for (const k of LAYOUT_KEYS) if (config?.[k] !== undefined) out[k] = clone(config[k]);
   return out;
 }

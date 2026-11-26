@@ -1,4 +1,4 @@
-"""Setup wizard and options for SunFlow Solar.
+"""Setup wizard and options for DayMill.
 
 Setup: welcome (pick a detected system, set it up by hand, or use demo
 data) -> sources -> panels -> battery -> cars -> rates (-> NEM 3.0) ->
@@ -150,7 +150,7 @@ POWER_ENTITIES = (
 ENERGY_ENTITIES = (CONF_SOLAR_ENERGY, CONF_IMPORT_ENERGY, CONF_EXPORT_ENERGY)
 BATTERY_KEYS = (CONF_BATTERY_SOC, CONF_BATTERY_POWER, CONF_BATTERY_POSITIVE_IS_DISCHARGE)
 RATE_KEYS = (CONF_TARIFF, CONF_NEM, CONF_CYCLE_DAY, CONF_TRACK_COST)
-# SunFlow itself only needs to know when the car charges; the rest is shown
+# DayMill itself only needs to know when the car charges; the rest is shown
 # on the cards when it's there.
 REQUIRED_CAR_ROLES = (CONF_CAR_CHARGING,)
 PERCENT_UNITS = frozenset({"%"})
@@ -302,16 +302,16 @@ def energy_guide(conf: Mapping[str, Any]) -> str:
     if conf.get(CONF_SOURCE) == SOURCE_DEMO:
         return (
             "You're on demo data, so skip the Energy dashboard for now. Once your solar "
-            "is in Home Assistant, open SunFlow's **Configure** > **Power and energy "
+            "is in Home Assistant, open DayMill's **Configure** > **Power and energy "
             "sensors** to switch over."
         )
     cost = conf.get(CONF_TRACK_COST, DEFAULT_TRACK_COST)
     lines = [
-        "1. **Solar production:** `sensor.sunflow_energy_produced`",
-        "2. **Grid consumption:** `sensor.sunflow_energy_imported`"
-        + (", with the cost entity `sensor.sunflow_import_cost`" if cost else ""),
-        "3. **Return to grid:** `sensor.sunflow_energy_exported`"
-        + (", with the compensation entity `sensor.sunflow_export_credit`" if cost else ""),
+        "1. **Solar production:** `sensor.daymill_energy_produced`",
+        "2. **Grid consumption:** `sensor.daymill_energy_imported`"
+        + (", with the cost entity `sensor.daymill_import_cost`" if cost else ""),
+        "3. **Return to grid:** `sensor.daymill_energy_exported`"
+        + (", with the compensation entity `sensor.daymill_export_credit`" if cost else ""),
     ]
     if conf.get(CONF_BATTERY_POWER) or conf.get(CONF_BATTERY_SOC):
         lines.append(
@@ -327,7 +327,7 @@ async def _create_dashboard(hass: HomeAssistant) -> str:
     try:
         created = await async_create_dashboard(hass)
     except HomeAssistantError as err:
-        _LOGGER.warning("Could not create the SunFlow dashboard: %s", err)
+        _LOGGER.warning("Could not create the DayMill dashboard: %s", err)
         return "failed"
     return "created" if created else "exists"
 
@@ -847,7 +847,7 @@ class _Steps:
 # ---- setup ----
 
 
-class SunFlowConfigFlow(_Steps, ConfigFlow, domain=DOMAIN):
+class DayMillConfigFlow(_Steps, ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
     def __init__(self) -> None:
@@ -928,14 +928,14 @@ class SunFlowConfigFlow(_Steps, ConfigFlow, domain=DOMAIN):
 
     @staticmethod
     @callback
-    def async_get_options_flow(config_entry: ConfigEntry) -> SunFlowOptionsFlow:
-        return SunFlowOptionsFlow()
+    def async_get_options_flow(config_entry: ConfigEntry) -> DayMillOptionsFlow:
+        return DayMillOptionsFlow()
 
 
 # ---- options ----
 
 
-class SunFlowOptionsFlow(_Steps, OptionsFlowWithReload):
+class DayMillOptionsFlow(_Steps, OptionsFlowWithReload):
     """Edit one part at a time. Saving writes the full config to options."""
 
     def __init__(self) -> None:

@@ -1,7 +1,8 @@
-// Finding SunFlow entities and reading them safely.
+// Finding DayMill entities and reading them safely.
 //
 // Cards never hardcode entity ids. They look in the entity registry
-// (hass.entities) for entries of the sunflow_solar platform and match on
+// (hass.entities) for entries of the daymill platform (or sunflow_solar, the
+// old name, until people move over) and match on
 // translation_key, so renamed entities keep working. A card config can still
 // point any key at another entity:
 //
@@ -9,7 +10,10 @@
 //     solar_power: sensor.my_solar
 //     cost_today: sensor.my_cost
 
-export const PLATFORM = "sunflow_solar";
+export const PLATFORM = "daymill";
+// The old SunFlow platform. Read only when no DayMill entities exist, so the
+// cards keep working on a SunFlow install that hasn't moved yet.
+export const PLATFORMS = [PLATFORM, "sunflow_solar"];
 
 // translation_key -> domain. Car keys repeat once per car.
 export const KEYS = {
@@ -58,16 +62,18 @@ export const ON_STATES = new Set(["on", "true", "charging", "starting", "home"])
 
 const indexCache = new WeakMap();
 
-// {translation_key: [entity_id, ...]} for all SunFlow entities. Cached per
+// {translation_key: [entity_id, ...]} for all DayMill entities. Cached per
 // hass.entities object, which HA replaces whenever the registry changes.
-export function sunflowIndex(hass) {
+export function daymillIndex(hass) {
   const reg = hass?.entities;
   if (!reg) return {};
   let idx = indexCache.get(reg);
   if (idx) return idx;
   idx = {};
-  for (const entry of Object.values(reg)) {
-    if (entry?.platform !== PLATFORM || !entry.translation_key) continue;
+  const entries = Object.values(reg);
+  const platform = PLATFORMS.find((p) => entries.some((e) => e?.platform === p && e.translation_key));
+  for (const entry of entries) {
+    if (entry?.platform !== platform || !entry.translation_key) continue;
     (idx[entry.translation_key] ||= []).push(entry.entity_id);
   }
   for (const list of Object.values(idx)) list.sort();
@@ -75,15 +81,15 @@ export function sunflowIndex(hass) {
   return idx;
 }
 
-// True when at least one SunFlow entity is registered.
-export const hasSunflow = (hass) => Object.keys(sunflowIndex(hass)).length > 0;
+// True when at least one DayMill entity is registered.
+export const hasDayMill = (hass) => Object.keys(daymillIndex(hass)).length > 0;
 
 // Entity id for a key: config override first, then the registry.
 // overrides is usually config.entities.
 export function entityId(hass, key, overrides) {
   const o = overrides?.[key];
   if (typeof o === "string" && o) return o;
-  return sunflowIndex(hass)[key]?.[0];
+  return daymillIndex(hass)[key]?.[0];
 }
 
 // All entity ids for a key (for keys with one entity per car).
@@ -91,7 +97,7 @@ export function entityIds(hass, key, overrides) {
   const o = overrides?.[key];
   if (Array.isArray(o)) return o.filter((x) => typeof x === "string");
   if (typeof o === "string" && o) return [o];
-  return sunflowIndex(hass)[key] || [];
+  return daymillIndex(hass)[key] || [];
 }
 
 // Resolve many keys at once: {solar_power: "sensor.x", ...}. Missing keys are left out.
@@ -104,11 +110,11 @@ export function resolve(hass, keys, overrides) {
   return out;
 }
 
-// SunFlow cars, paired by the slug in car_<slug>_charging_at_home /
+// DayMill cars, paired by the slug in car_<slug>_charging_at_home /
 // car_<slug>_home_charging_power. Entities renamed past recognition are
 // paired by order.
-export function sunflowCars(hass) {
-  const idx = sunflowIndex(hass);
+export function daymillCars(hass) {
+  const idx = daymillIndex(hass);
   const charging = idx.car_charging_at_home || [];
   const power = idx.car_home_charging_power || [];
   const slug = (id, re) => id.split(".")[1]?.match(re)?.[1];
@@ -124,7 +130,7 @@ export function sunflowCars(hass) {
   for (const id of leftover) cars.push({ slug: slug(id, /car_(.+)_home_charging_power$/), power: id });
   for (const car of cars) {
     car.name = carName(hass, car);
-    // picture and extra sensors picked in SunFlow's setup
+    // picture and extra sensors picked in DayMill's setup
     const at = hass?.states?.[car.charging]?.attributes || {};
     if (["sedan", "suv", "truck"].includes(at.car_image)) car.image = `builtin:${at.car_image}`;
     for (const key of ["battery_entity", "plugged_entity", "limit_entity"]) {
@@ -134,11 +140,12 @@ export function sunflowCars(hass) {
   return cars;
 }
 
-// Car name from the entity name "SunFlow <car> charging at home" (English
-// names only); otherwise the slug in title case.
+// Car name from the entity name "DayMill <car> charging at home", or the old
+// "SunFlow <car> charging at home" (English names only); otherwise the slug in
+// title case.
 function carName(hass, car) {
   const fn = hass?.states?.[car.charging]?.attributes?.friendly_name;
-  const m = typeof fn === "string" && fn.match(/^(?:SunFlow\s+)?(.+?)\s+charging at home$/i);
+  const m = typeof fn === "string" && fn.match(/^(?:(?:DayMill|SunFlow)\s+)?(.+?)\s+charging at home$/i);
   if (m) return m[1];
   if (!car.slug) return null;
   return car.slug.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());

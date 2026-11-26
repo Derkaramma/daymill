@@ -1,7 +1,7 @@
 // A throwaway card for checking the harness and the shared helpers.
 // Not part of the bundle.
 
-import { SunFlowCard, defineCard, h, asButton } from "../src/common/base.js";
+import { DayMillCard, defineCard, h, asButton } from "../src/common/base.js";
 import { powerKw, num, attr } from "../src/common/entities.js";
 import { kw, money, price, pct, t, periodLabel } from "../src/common/format.js";
 import { donut } from "../src/common/svg.js";
@@ -15,7 +15,7 @@ const css = `
 .k { color: var(--sf-text-2); }
 `;
 
-class SunFlowTestCard extends SunFlowCard {
+class DayMillTestCard extends DayMillCard {
   static styles = [css];
   static keys = ["solar_power", "home_power", "grid_power", "import_rate", "tou_period", "cost_today", "self_sufficiency", "data_age"];
   static cardSize = 3;
@@ -24,7 +24,7 @@ class SunFlowTestCard extends SunFlowCard {
     this.ring = h("div", { class: "ring" });
     this.rows = h("div", { class: "rows sf-num" });
     this.dot = h("span", { class: "sf-dot" });
-    this.head = h("div", { class: "sf-title sf-row" }, this.dot, h("span", { text: "SunFlow" }));
+    this.head = h("div", { class: "sf-title sf-row" }, this.dot, h("span", { text: "DayMill" }));
     this.pill = h("span", { class: "sf-pill warn" });
     asButton(this.head, () => this.moreInfo(this.entities.solar_power), "Solar");
     this.shadowRoot.append(h("ha-card", { class: "sf-pad" }, this.head, h("div", { class: "body" }, this.ring, this.rows), this.pill));
@@ -61,4 +61,4 @@ class SunFlowTestCard extends SunFlowCard {
   }
 }
 
-defineCard("sunflow-test-card", SunFlowTestCard, { name: "SunFlow test card" });
+defineCard("daymill-test-card", DayMillTestCard, { name: "DayMill test card" });

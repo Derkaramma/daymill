@@ -72,7 +72,7 @@ export async function reencode(file, { kind = "photo", maxWidth = 2400, quality 
 }
 
 // Upload to HA's image store. Returns the picture URL.
-export async function upload(hass, blob, name = "sunflow.jpg") {
+export async function upload(hass, blob, name = "daymill.jpg") {
   if (typeof hass?.fetchWithAuth !== "function") throw new Error("no_upload");
   const form = new FormData();
   form.append("file", blob, name);

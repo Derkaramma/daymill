@@ -1,13 +1,13 @@
 """Serve the card bundle and keep its Lovelace resource up to date.
 
-- The bundle in ./frontend is served at /sunflow_solar/ once per HA run.
-- Storage mode resources: add /sunflow_solar/sunflow-cards.js?v=<version>,
+- The bundle in ./frontend is served at /daymill/ once per HA run.
+- Storage mode resources: add /daymill/daymill-cards.js?v=<version>,
   bump the ?v= on upgrades, never add a second copy, and remove it when the
   integration is deleted.
 - YAML mode resources: we can't write them, so log it once and raise a
   repair issue that tells the user what to add.
-- async_create_dashboard() makes a "sunflow" dashboard that uses the
-  custom:sunflow strategy. Nothing calls it on its own.
+- async_create_dashboard() makes a "daymill" dashboard that uses the
+  custom:daymill strategy. Nothing calls it on its own.
 """
 
 from __future__ import annotations
@@ -31,14 +31,14 @@ from .const import DOMAIN, VERSION
 _LOGGER = logging.getLogger(__name__)
 
 URL_BASE = f"/{DOMAIN}"
-BUNDLE = "sunflow-cards.js"
+BUNDLE = "daymill-cards.js"
 FRONTEND_DIR = Path(__file__).parent / "frontend"
 ISSUE_YAML = "frontend_resource_yaml"
 
-DASHBOARD_URL = "sunflow"
-DASHBOARD_TITLE = "SunFlow"
+DASHBOARD_URL = "daymill"
+DASHBOARD_TITLE = "DayMill"
 DASHBOARD_ICON = "mdi:solar-power-variant"
-STRATEGY = {"type": "custom:sunflow"}
+STRATEGY = {"type": "custom:daymill"}
 
 LOVELACE = "lovelace"
 MODE_YAML = "yaml"
@@ -178,7 +178,7 @@ async def async_register_resource(hass: HomeAssistant) -> str | None:
         if not data.yaml_logged:
             _LOGGER.info(
                 "Dashboard resources are in YAML mode. Add this to your lovelace resources "
-                "to use the SunFlow cards: url: %s, type: module",
+                "to use the DayMill cards: url: %s, type: module",
                 url,
             )
             data.yaml_logged = True
@@ -231,7 +231,7 @@ async def async_create_dashboard(
     url_path: str = DASHBOARD_URL,
     title: str = DASHBOARD_TITLE,
 ) -> bool:
-    """Create a storage dashboard that runs the SunFlow strategy.
+    """Create a storage dashboard that runs the DayMill strategy.
 
     Returns False when a dashboard already uses url_path.
     """

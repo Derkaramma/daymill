@@ -25,7 +25,7 @@ const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "_");
 export function addPanels(hass, opts = {}) {
   const layout = LAYOUTS[opts.layout || "two"] || LAYOUTS.two;
   const states = { ...hass.states };
-  const solarId = Object.values(hass.entities).find((e) => e.platform === "sunflow_solar" && e.translation_key === "solar_power")?.entity_id;
+  const solarId = Object.values(hass.entities).find((e) => e.platform === "daymill" && e.translation_key === "solar_power")?.entity_id;
   const solarW = Math.max(0, Number(states[solarId]?.state) || 0);
   const total = layout.reduce((a, g) => a + g.n * g.factor, 0) || 1;
   const now = new Date(hass._now ?? Date.now()).toISOString();
@@ -75,8 +75,8 @@ export function addPanels(hass, opts = {}) {
     add("sensor.gateway_firmware", "2025.6.1", { friendly_name: "Gateway firmware" });
   }
 
-  const healthId = Object.values(hass.entities).find((e) => e.platform === "sunflow_solar" && e.translation_key === "panel_health")?.entity_id;
-  const problemId = Object.values(hass.entities).find((e) => e.platform === "sunflow_solar" && e.translation_key === "solar_problem")?.entity_id;
+  const healthId = Object.values(hass.entities).find((e) => e.platform === "daymill" && e.translation_key === "panel_health")?.entity_id;
+  const problemId = Object.values(hass.entities).find((e) => e.platform === "daymill" && e.translation_key === "solar_problem")?.entity_id;
   if (healthId) {
     const findings = fault ? `${fault} no output` : states[healthId].state;
     const attributes = { ...states[healthId].attributes };

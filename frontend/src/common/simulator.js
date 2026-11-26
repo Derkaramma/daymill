@@ -1,6 +1,6 @@
 // Synthetic data for the demo, the editor preview and tests.
 //
-// simulate() is a line-for-line port of custom_components/sunflow_solar/simulator.py
+// simulate() is a line-for-line port of custom_components/daymill/simulator.py
 // (and the few helpers it uses from sources.py). Keep the two in sync: the
 // Python tests and test/sim-check.mjs compare them.
 //

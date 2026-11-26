@@ -28,7 +28,7 @@ def auto_enable_custom_integrations(recorder_mock, enable_custom_integrations):
 
 
 def _state(hass: HomeAssistant, key: str, domain: str = "sensor"):
-    return hass.states.get(f"{domain}.sunflow_{key}")
+    return hass.states.get(f"{domain}.daymill_{key}")
 
 
 async def test_power_sensors(hass: HomeAssistant) -> None:
