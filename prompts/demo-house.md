@@ -36,6 +36,26 @@ Same chat, right after the day image:
 Exact same image, exact same camera, composition and slab, change nothing else: make it blue-hour dusk. Warm golden light glowing from every window, a thin warm LED glow along the roof edges and garage trim, small path lights glowing along the stepping stones, cool blue-hour light on the lawn. Keep the background perfectly flat solid gray (#2A2A2A), no glow, no vignette, no shadow under the slab.
 ```
 
+## Fixing the entry
+
+The first day render had the window by the front door mounted right on the
+wood slats, which isn't how anyone would build it. I fixed it with an edit
+instead of starting over, so the cars, battery and lines still fit. New chat,
+the day render attached:
+
+```text
+Attached is a render I made earlier. Edit ONLY the front entry area. Everything else must stay exactly the same: same camera, same framing, same image size, same house, roof, solar panels, lawn slab, trees, plants, stepping stones, driveway, garage door, wall charger, gray box on the left wall, lighting, and the same flat light gray (#E6E6E6) background. Do not move, resize or redraw anything outside the entry.
+
+What's wrong: to the right of the front door, the black-framed window is mounted on the front face of the wood-slat panel. That's not how it's built.
+
+Fix it like this: the entry is a recessed porch under the flat wood-trimmed entry roof. The back wall of the porch is white stucco and faces the street, parallel to the front of the house. The black-framed window is in that back white stucco wall, to the right of the front door, facing the street. On the right side of the porch is a wood-clad side wall that runs straight out toward the street, perpendicular to the front of the house. From this camera angle we see the inside face of that side wall, angled toward the left. Its front edge lines up with the front edge of the entry roof. That side wall has the same tight vertical wood slat cladding, same warm wood color and same look as the original. The window is set back behind the front edge of that wood wall and is not on the wood at all.
+
+Keep the same wood slat style as the original: solid cladding with tight slats, not an open screen and no gaps you can see through. Keep the wood-clad post on the left of the door, the dark front door and its handle, the entry roof with its wood fascia, and the front step exactly as they are.
+```
+
+Then I ran the night prompt again in that same chat. Flip between the old
+and new picture to check nothing else moved.
+
 ## If something's off
 
 - Background has a glow or gradient at the edges: "make the background a
@@ -98,21 +118,26 @@ soft wall shadow and the glow while it charges or discharges.
 
 The House image page shows a "before" photo next to the render, the kind of
 picture an owner would start from. The demo house isn't real, so I asked for
-an ordinary phone photo of it. Same chat as the house, with the day render
-attached again.
+an ordinary phone photo of it. New chat, with only the (fixed) day render
+attached. Calling the render a reference and asking for a new photo is what
+keeps it looking like a photo instead of another render.
 
 ```text
-Attached is a render of a house. Now show me what this exact house looks like in an ordinary real-life photo, the kind a homeowner snaps on their phone.
+The attached image is a 3D render I use only as a REFERENCE for what a house looks like. Do not edit the render or copy its style. Instead, create a brand-new, real photograph of this exact house, as if I walked up to the real house and took a picture with my iPhone.
 
-Same house, same materials, colors, windows, wood slats, gray garage door, black solar panels on the roof, wall charger and gray box on the left wall. Do not change or add any features.
+The house must match the reference exactly: same shape, same white stucco walls, same black-framed windows in the same places, same dark front door, same gray garage door, same wall charger, same gray box on the left side wall, same olive trees and plantings, black solar panels on the roof. Pay close attention to the front entry: it is a recessed porch under a flat roof with a wood fascia. The window to the right of the front door is on the white back wall of the porch. A wood-slat side wall on the right runs out toward the street, and the window sits behind its front edge, not on the wood. There is a wood-slat post to the left of the door. Do not add, remove or move any feature.
 
-Camera: a normal smartphone photo taken standing on the sidewalk at the front-left corner of the lot, at eye level (about 5 feet high), looking at the house at an angle, so the left side wall and the front are both visible. From this low angle only the front edge of the solar roof shows. Slight wide-angle phone lens look.
+Photo, not a render: taken standing on the sidewalk at the front-left corner of the lot, at eye level (about 5 feet high), looking at the house at an angle so the left side wall and the front are both visible. Only the front edge of the solar roof shows from this low angle. Slight wide-angle phone lens. Natural late-morning sun, real shadows, a little bit of sky, slightly uneven real lawn, a concrete sidewalk and the edge of the street in the foreground, an ordinary suburban neighborhood. A bit of phone-camera noise and imperfect exposure. Not stylized, not too perfect, no floating lawn slab, no studio background.
 
-Make it look like a real, unedited photo: natural late-morning daylight, a few soft shadows, slightly uneven lawn, an ordinary suburban street feel, a little bit of sky. Not a render, not stylized, no studio look.
-
-Empty driveway: no cars, no people, no pets. No text anywhere: no house numbers, no street signs, no mailbox numbers, no license plates, no logos. Neighboring houses, if any show at the edges, are blurred and generic.
+Empty driveway: no cars, no people, no pets. No text anywhere: no house numbers, no street signs, no license plates, no logos. Any neighboring houses at the edges are blurred and generic.
 
 Landscape 4:3, at least 1600 px wide.
+```
+
+It put a blurry house next door, so I followed up with:
+
+```text
+Same photo, change nothing else: remove the blurry neighboring house. Where it was, show what would naturally be there instead: a few trees, shrubs and a wood fence along the side of the lot, softly out of focus like the rest of the background. Keep the house, the entry, the camera, the light and the phone-photo look exactly the same.
 ```
 
 ## Before it goes in the repo

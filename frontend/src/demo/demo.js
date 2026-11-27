@@ -19,8 +19,8 @@ import { BATTERY_IMG, DEMO_CARS, DEMO_LAYOUT } from "./layout.js";
 import { cardSheet, hostSheet } from "./styles.js";
 
 const IMG = {
-  day: new URL("img/house-day.webp", import.meta.url).href,
-  night: new URL("img/house-night.webp", import.meta.url).href,
+  day: new URL("img/house-day.webp?r=2", import.meta.url).href,
+  night: new URL("img/house-night.webp?r=2", import.meta.url).href,
 };
 const BATT_IMG = {
   day: new URL(`img/${BATTERY_IMG.day}`, import.meta.url).href,
